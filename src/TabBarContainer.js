@@ -51,7 +51,9 @@ define(function(require, exports, module) {
             }
         },
         tabBar: {
-            // default options
+            createRenderables: {
+                selectedItemOverlay: true
+            }
         },
         viewContainer: {
             autoHide: true,
@@ -87,7 +89,7 @@ define(function(require, exports, module) {
      */
     function _setListeners() {
         this.tabBar.on('tabchange', function(event) {
-            _updateView.call(this);
+            _updateView.call(this, event);
             this._eventOutput.emit(event);
         }.bind(this));
     }
@@ -95,10 +97,21 @@ define(function(require, exports, module) {
     /**
      * Updates the view-container with the selected view.
      */
-    function _updateView() {
+    function _updateView(event) {
         var index = this.tabBar.getSelectedItemIndex();
-        this.viewContainer.hide();
-        this.viewContainer.show(this._items[index].view);
+        var options;
+        if (this.options.viewContainer.animations && this.options.viewContainer.animations.slide && event && (event.oldIndex > index)) {
+            var slide;
+            switch (this.options.viewContainer.animations.slide) {
+                case 'left': slide = 'right'; break;
+                case 'right': slide = 'left'; break;
+                case 'up': slide = 'down'; break;
+                case 'down': slide = 'up'; break;
+            }
+            options = {animations: {slide: slide}};
+        }
+        this.viewContainer.hide(undefined, options);
+        this.viewContainer.show(this._items[index].view, options);
     }
 
     /**

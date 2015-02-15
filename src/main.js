@@ -30,7 +30,13 @@ define(function(require) {
     var mainContext = Engine.createContext();
 
     // Create tab-bar container
-    var tabBarContainer = new TabBarContainer();
+    var tabBarContainer = new TabBarContainer({
+        viewContainer: {
+            animations: {
+                slide: 'right'
+            }
+        }
+    });
     mainContext.add(tabBarContainer);
     tabBarContainer.setItems([
         {tabItem: 'Profile', view: new ProfileView()},
