@@ -3,21 +3,54 @@ body, div {
 
   /* prevent text selection */
   -moz-user-select: -moz-none;
- 	-khtml-user-select: none;
- 	-webkit-user-select: none;
- 	-ms-user-select: none;
- 	user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+body {
+  background-color: #333333;
 }
 
-.view.profile.background {
+.frame {
+  pointer-events: none;
+}
+.frame.background {
+  -background-color: #333333;
+  background-color: white;
+}
+.frame.background.inner {
   background-color: #FAFAFA;
 }
-.view.profile.image {
+
+
+.ff-tabbar.background {
+  background-color: #EEEEEE;
+  border-top: 1px solid #DDDDDD;
+}
+.ff-tabbar.item {
+  color: #666666;
+}
+.ff-tabbar.item.selected {
+  background-color: #1185c3;
+  color: white;
+}
+
+
+.view.background {
+  background-color: #FAFAFA;
+}
+.view.image {
   border-radius: 50%;
 }
-.view.profile.name > div {
+.view.text {
   text-align: center;
-  font-size: 20px;
+  font-size: 16px;
+}
+
+.view.navbar.title > div, .view.profile.name > div {
+  text-align: center;
+  font-size: 18px;
   color: #444444;
   /* align vertical */
   display: block;
@@ -33,4 +66,23 @@ body, div {
   padding: 0 25px;
   font-size: 16px;
   color: #888888;
+}
+.view.navbar.title > div {
+  color: #666666;
+}
+.view.navbar.background {
+  background-color: #EEEEEE;
+  border-bottom: 1px solid #DDDDDD;
+}
+.view.location.marker.back {
+  border-radius: 50%;
+  background-color: white;
+}
+.view.location.marker.pin > div {
+  margin-top: -2px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 20px 10px 0 10px;
+  border-color: white transparent transparent transparent;
 }

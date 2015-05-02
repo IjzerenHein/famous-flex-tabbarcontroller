@@ -22,46 +22,57 @@ define(function(require, exports, module) {
     var View = require('famous/core/View');
     var Surface = require('famous/core/Surface');
     var LayoutController = require('famous-flex/LayoutController');
+    var LayoutDockHelper = require('famous-flex/helpers/LayoutDockHelper');
     var BkImageSurface = require('famous-bkimagesurface/BkImageSurface');
 
     /**
      * @class
      * @param {Object} options Configurable options.
-     * @param {Object} options.factory Factory delegate for creating new renderables.
-     * @alias module:ProfileView
+     * @alias module:NavBarView
      */
-    function ProfileView(options) {
+    function NavBarView(options) {
         View.apply(this, arguments);
 
         _createRenderables.call(this);
         _createLayout.call(this);
     }
-    ProfileView.prototype = Object.create(View.prototype);
-    ProfileView.prototype.constructor = ProfileView;
+    NavBarView.prototype = Object.create(View.prototype);
+    NavBarView.prototype.constructor = NavBarView;
 
-    ProfileView.DEFAULT_OPTIONS = {
+    NavBarView.DEFAULT_OPTIONS = {
         classes: ['view', 'profile'],
-        imageSize: [200, 200],
-        imageScale: [1, 1, 1],
-        nameHeight: 60,
+        navBar: {
+            height: 50,
+            left: false
+        },
         profileText: 'Scarlett Johansson was born in New York City. Her mother, Melanie Sloan, is from an Ashkenazi Jewish family, and her father, Karsten Johansson, is Danish. Scarlett showed a passion for acting at a young age and starred in many plays.<br><br>She has a sister named Vanessa Johansson, a brother named Adrian, and a twin brother named Hunter Johansson born three minutes after her. She began her acting career starring as Laura Nelson in the comedy film North (1994).<br><br>The acclaimed drama film The Horse Whisperer (1998) brought Johansson critical praise and worldwide recognition. Following the film\'s success, she starred in many other films including the critically acclaimed cult film Ghost World (2001) and then the hit Lost in Translation (2003) with Bill Murray in which she again stunned critics. Later on, she appeared in the drama film Girl with a Pearl Earring (2003).'
     };
+
+    /*
+    NavBarView.prototype.getTransferable = function(id) {
+        if (id === 'image') {
+            this._navBar.getTransferable('')
+        }
+    }*/
 
     function _createRenderables() {
         this._renderables = {
             background: new Surface({
                 classes: this.options.classes.concat(['background'])
             }),
-            image: new BkImageSurface({
-                classes: this.options.classes.concat(['image']),
+            navBarBackground: new Surface({
+                classes: this.options.classes.concat(['navbar', 'background'])
+            }),
+            navBarTitle: new Surface({
+                classes: this.options.classes.concat(['navbar', 'title']),
+                content: '<div>' + 'Scarlett Johansson' + '</div>'
+            }),
+            navBarImage: new BkImageSurface({
+                classes: this.options.classes.concat(['navbar', 'image']),
                 content: require('../images/scarlett.jpg'),
                 sizeMode: 'cover'
             }),
-            name: new Surface({
-                classes: this.options.classes.concat(['name']),
-                content: '<div>Scarlett Johansson</div>'
-            }),
-            text: new Surface({
+            content: new Surface({
                 classes: this.options.classes.concat(['text']),
                 content: this.options.profileText
             })
@@ -72,22 +83,19 @@ define(function(require, exports, module) {
         this.layout = new LayoutController({
             autoPipeEvents: true,
             layout: function(context, options) {
-                context.set('background', {
-                    size: context.size
+                var dock = new LayoutDockHelper(context, options);
+                dock.fill('background');
+                dock.top('navBarBackground', this.options.navBar.height, 1);
+                context.set('navBarTitle', {
+                    size: [context.size[0], this.options.navBar.height],
+                    translate: [0, 0, 2]
                 });
-                var image = context.set('image', {
-                    size: this.options.imageSize,
-                    translate: [(context.size[0] - this.options.imageSize[0]) / 2, 20, 1],
-                    scale: this.options.imageScale
+                context.set('navBarImage', {
+                    size: [32, 32],
+                    translate: [this.options.navBar.left ? 20 : (context.size[0] - 20 - 32), 9, 2]
                 });
-                var name = context.set('name', {
-                    size: [context.size[0], this.options.nameHeight],
-                    translate: [0, image.size[1] + image.translate[1], 1]
-                });
-                context.set('text', {
-                    size: [context.size[0], context.size[1] - name.size[1] - name.translate[1]],
-                    translate: [0, name.translate[1] + name.size[1], 1]
-                });
+                dock.top(undefined, 20);
+                dock.fill('content', 1);
             }.bind(this),
             dataSource: this._renderables
         });
@@ -95,5 +103,5 @@ define(function(require, exports, module) {
         this.layout.pipe(this._eventOutput);
     }
 
-    module.exports = ProfileView;
+    module.exports = NavBarView;
 });

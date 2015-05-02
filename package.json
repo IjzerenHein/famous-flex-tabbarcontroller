@@ -1,5 +1,5 @@
 {
-  "name": "famous-flex-tabbarcontainer",
+  "name": "famous-flex-tabbarcontroller",
   "private": "true",
   "version": "0.0.1",
   "engines": {
@@ -10,8 +10,9 @@
     "expose-loader": "^0.5.3",
     "famous": "^0.3.5",
     "famous-bkimagesurface": "^1.0.2",
-    "famous-flex": "latest",
+    "famous-flex": "^0.3.1",
     "famous-lagometer": "latest",
+    "famous-map": "^0.1.0",
     "famous-polyfills": "^0.2.2",
     "fastclick": "^1.0.3",
     "file-loader": "^0.6.1",
@@ -22,6 +23,7 @@
     "grunt-ftp-deploy": "latest",
     "grunt-jscs": "latest",
     "html-loader": "^0.2.2",
+    "ismobilejs": "^0.3.5",
     "json-loader": "^0.5.1",
     "less": "^1.7.4",
     "less-loader": "^0.7.5",

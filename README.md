@@ -1,23 +1,19 @@
-famous-flex-viewcontainer
+famous-flex-tabbarcontroller
 ==========
 
-## Work in progress, check back later
+# Work in progress, come back later
 
-Animating from one famo.us view to another in awesome ways
+TabBarController demo for [famous-flex](https://github.com/IjzerenHein/famous-flex).
 
 ![Screenshot](screenshot.gif)
 
 
-[View the live demo here](https://rawgit.com/IjzerenHein/famous-flex-viewcontainer/master/dist/index.html)
+[View the live demo here](https://rawgit.com/IjzerenHein/famous-flex-tabbarcontroller/master/dist/index.html)
 
 
 ## Tutorial
 
--	[ViewContainer Tutorial](./tutorial/ViewContainer.md)
-
-
-## Examples
-
+-   [TabBarController Tutorial](./tutorial/TabBarController.md)
 
 
 ## Build
@@ -59,8 +55,8 @@ and give it a star.
 
 
 ## Contact
-- 	@IjzerenHein
-- 	http://www.gloey.nl
-- 	hrutjes@gmail.com (for hire)
+-   @IjzerenHein
+-   http://www.gloey.nl
+-   hrutjes@gmail.com (for hire)
 
 © 2015 - Hein Rutjes

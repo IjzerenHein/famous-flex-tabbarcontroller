@@ -23,7 +23,7 @@ module.exports = function(grunt) {
           authKey: 'gloey.nl'
         },
         src: 'dist',
-        dest: '/domains/gloey.nl/htdocs/www/apps/tabbarcontainer'
+        dest: '/domains/gloey.nl/htdocs/www/apps/tabbarcontroller'
       }
     },
     exec: {
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-exec');
 
   // Default task.
-  grunt.registerTask('default', ['eslint', 'jscs', 'build']);
+  grunt.registerTask('default', ['eslint', 'jscs', 'build-debug']);
   grunt.registerTask('clean', ['exec:clean']);
   grunt.registerTask('serve', ['eslint', 'jscs', 'exec:open-serve', 'exec:serve']);
   grunt.registerTask('deploy', ['eslint', 'jscs', 'exec:clean', 'exec:build-debug', 'ftp-deploy']);
