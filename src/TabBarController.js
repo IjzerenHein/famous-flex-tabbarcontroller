@@ -22,7 +22,6 @@ define(function(require, exports, module) {
     var LayoutDockHelper = require('famous-flex/helpers/LayoutDockHelper');
     var LayoutController = require('famous-flex/LayoutController');
     var Easing = require('famous/transitions/Easing');
-    var Transform = require('famous/core/Transform');
 
     /**
      * @class
@@ -128,7 +127,12 @@ define(function(require, exports, module) {
     function _updateView(event) {
         var index = this.tabBar.getSelectedItemIndex();
         this.animationController.halt();
-        this.animationController.show(this._items[index].view);
+        if (index >= 0) {
+            this.animationController.show(this._items[index].view);
+        }
+        else {
+            this.animationController.hide();
+        }
     }
 
     /**

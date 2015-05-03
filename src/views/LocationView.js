@@ -7,14 +7,7 @@
  * @license MIT
  * @copyright Gloey Apps, 2015
  */
-
 /*global google, ol, L*/
-
-/**
- * LocationView.
- *
- * @module
- */
 define(function(require, exports, module) {
 
     // import dependencies
@@ -29,7 +22,7 @@ define(function(require, exports, module) {
     /**
      * @class
      * @param {Object} options Configurable options.
-     * @alias module:NavBarView
+     * @alias module:LocationView
      */
     function LocationView(options) {
         View.apply(this, arguments);
@@ -44,8 +37,8 @@ define(function(require, exports, module) {
         classes: ['view', 'location'],
         mapView: {
             //type: MapView.MapType.OPENLAYERS3,
-            //type: MapView.MapType.GOOGLEMAPS,
-            type: MapView.MapType.LEAFLET,
+            type: MapView.MapType.GOOGLEMAPS,
+            //type: MapView.MapType.LEAFLET,
             mapOptions: {
                 zoom: 13,
                 center: {lat: 48.8570519, lng: 2.3457724}
@@ -128,9 +121,22 @@ define(function(require, exports, module) {
     }
 
     LocationView.prototype.getTransferable = function(id) {
-        if ((id !== 'image') || !this.mapView.isInitialized()) {
+        if (id !== 'image') {
             return undefined;
         }
+        var getSpec = function(callback) {
+            var pnt = this.mapView.pointFromPosition(this.mapMarker.mod.getPosition());
+            var imageSize = [this.options.marker.size[0] - (this.options.marker.borderWidth * 2), this.options.marker.size[0] - (this.options.marker.borderWidth * 2)];
+            var backHeight = this.options.marker.size[1] - this.options.marker.pinSize[1];
+            callback({
+                size: imageSize,
+                transform: Transform.translate(
+                    pnt.x - (imageSize[0] / 2),
+                    pnt.y - this.options.marker.size[1] + ((backHeight - imageSize[1]) / 2),
+                    0
+                )
+            });
+        }.bind(this);
         return {
             get: function() {
                 return this.mapMarker.image;
@@ -140,17 +146,10 @@ define(function(require, exports, module) {
             }.bind(this),
             getSpec: function(callback) {
                 if (this.mapView.isInitialized()) {
-                    var pnt = this.mapView.pointFromPosition(this.mapMarker.mod.getPosition());
-                    var imageSize = [this.options.marker.size[0] - (this.options.marker.borderWidth * 2), this.options.marker.size[0] - (this.options.marker.borderWidth * 2)];
-                    var backHeight = this.options.marker.size[1] - this.options.marker.pinSize[1];
-                    callback({
-                        size: imageSize,
-                        transform: Transform.translate(
-                            pnt.x - (imageSize[0] / 2),
-                            pnt.y - this.options.marker.size[1] + ((backHeight - imageSize[1]) / 2),
-                            0
-                        )
-                    });
+                    getSpec.call(this, callback);
+                }
+                else {
+                    this.mapView.on('load', getSpec.bind(this, callback));
                 }
             }.bind(this)
         };

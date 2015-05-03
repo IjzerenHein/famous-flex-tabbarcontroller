@@ -7,15 +7,6 @@
  * @license MIT
  * @copyright Gloey Apps, 2015
  */
-
-/*global define, console*/
-/*eslint no-use-before-define:0, no-console:0 */
-
-/**
- * ViewContainer.
- *
- * @module
- */
 define(function(require, exports, module) {
 
     // import dependencies

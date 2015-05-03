@@ -7,15 +7,6 @@
  * @license MIT
  * @copyright Gloey Apps, 2015
  */
-
-/*global define, console*/
-/*eslint no-use-before-define:0, no-console:0 */
-
-/**
- * ViewContainer.
- *
- * @module
- */
 define(function(require, exports, module) {
 
     // import dependencies
@@ -47,13 +38,6 @@ define(function(require, exports, module) {
         },
         profileText: 'Scarlett Johansson was born in New York City. Her mother, Melanie Sloan, is from an Ashkenazi Jewish family, and her father, Karsten Johansson, is Danish. Scarlett showed a passion for acting at a young age and starred in many plays.<br><br>She has a sister named Vanessa Johansson, a brother named Adrian, and a twin brother named Hunter Johansson born three minutes after her. She began her acting career starring as Laura Nelson in the comedy film North (1994).<br><br>The acclaimed drama film The Horse Whisperer (1998) brought Johansson critical praise and worldwide recognition. Following the film\'s success, she starred in many other films including the critically acclaimed cult film Ghost World (2001) and then the hit Lost in Translation (2003) with Bill Murray in which she again stunned critics. Later on, she appeared in the drama film Girl with a Pearl Earring (2003).'
     };
-
-    /*
-    NavBarView.prototype.getTransferable = function(id) {
-        if (id === 'image') {
-            this._navBar.getTransferable('')
-        }
-    }*/
 
     function _createRenderables() {
         this._renderables = {

@@ -23,17 +23,22 @@ define(function(require) {
 
     // import dependencies
     var Engine = require('famous/core/Engine');
+    var isMobile = require('ismobilejs');
     var TabBarController = require('./TabBarController');
-    //var ProfileView = require('./views/ProfileView');
     var FullImageView = require('./views/FullImageView');
     var NavBarView = require('./views/NavBarView');
     var LocationView = require('./views/LocationView');
     var PhoneFrameView = require('./PhoneFrameView');
-    //var AnimationController = require('famous-flex/AnimationController');
-    //var Easing = require('famous/transitions/Easing');
+    var MapView = require('famous-map/MapView');
+
+    // On mobile, disable app-mode and install the custom MapView
+    // touch-handler so that Google Maps works.
+    if (isMobile.any) {
+        Engine.setOptions({appMode: false});
+        MapView.installSelectiveTouchMoveHandler();
+    }
 
     // create the main context
-    //Engine.setOptions({appMode: false});
     var mainContext = Engine.createContext();
 
     // Create a nice phone frame
@@ -54,21 +59,8 @@ define(function(require) {
     });
     tabBarController.setItems([
         {tabItem: 'Image', view: new FullImageView()},
-        //{tabItem: 'Profile', view: new ProfileView()},
         {tabItem: 'Profile', view: new NavBarView()},
         {tabItem: 'Map', view: new LocationView()}
     ]);
     phoneFrameView.setContent(tabBarController);
-
-    // Since AppMode is disabled, we conditionally disable scrolling ourselves
-    // when a normal view is active, and enable it when the map-view is active.
-    /*var disableScrolling = true;
-    window.addEventListener('touchmove', function(event) {
-        if (disableScrolling) {
-            event.preventDefault();
-        }
-    });
-    tabBarController.tabBar.on('tabchange', function(event) {
-        disableScrolling = (event.index !== 2);
-    });*/
 });

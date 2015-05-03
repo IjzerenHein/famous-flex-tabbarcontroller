@@ -7,7 +7,6 @@
  * @license MIT
  * @copyright Gloey Apps, 2015
  */
-
 define(function(require, exports, module) {
 
     // import dependencies
