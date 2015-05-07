@@ -31,11 +31,10 @@ To use TabBarController in your project, install famous-flex using npm or bower:
     bower install famous-flex
 
 
-To create an TabBarController, use:
+To create a TabBarController, use:
 
 ```javascript
 var TabBarController = require('famous-flex/widgets/TabBarController');
-var Easing = require('famous/transitions/Easing');
 
 var tabBarController = new TabBarController({
     tabBarSize: 60,
@@ -66,7 +65,7 @@ tabBarController = new TabBarController({
 
 # Getting and setting tab-items
 
-To set the tabs use the `setItems` function:
+To set the tabs use `setItems`:
 
 ```javascript
 var tabBarController = new TabBarController();
@@ -77,7 +76,7 @@ tabBarController.setItems([
 ]);
 ```
 
-To get the tabs, use the `getItems` function:
+And `getItems` to get the items:
 
 ```javascript
 var items = tabBarController.getItems();
