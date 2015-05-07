@@ -12,7 +12,7 @@ automatically show a view when a tab is selected.
 # Index
 
 - [Getting started](#getting-started)
-- [API reference](https://github.com/IjzerenHein/famous-flex/blob/master/docs/TabBarController.md)
+- [API reference](https://github.com/IjzerenHein/famous-flex/blob/master/docs/widgets/TabBarController.md)
 - [Code examples](../src/main.js)
 - [Size and position of the TabBar](size-and-position-of-the-tabbar)
 - [Getting and setting tab-items](#getting-and-setting-tab-items)
