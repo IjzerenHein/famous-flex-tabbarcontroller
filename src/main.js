@@ -27,6 +27,7 @@ define(function(require) {
     var TabBarController = require('./TabBarController');
     var FullImageView = require('./views/FullImageView');
     var NavBarView = require('./views/NavBarView');
+    var ProfileView = require('./views/ProfileView');
     var LocationView = require('./views/LocationView');
     var PhoneFrameView = require('./PhoneFrameView');
     var MapView = require('famous-map/MapView');
@@ -59,7 +60,8 @@ define(function(require) {
     });
     tabBarController.setItems([
         {tabItem: 'Image', view: new FullImageView()},
-        {tabItem: 'Profile', view: new NavBarView()},
+        {tabItem: 'Profile', view: new ProfileView()},
+        {tabItem: 'NavBar', view: new NavBarView()},
         {tabItem: 'Map', view: new LocationView()}
     ]);
     phoneFrameView.setContent(tabBarController);

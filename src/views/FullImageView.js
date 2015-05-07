@@ -24,8 +24,8 @@ define(function(require, exports, module) {
     function FullImageView(options) {
         View.apply(this, arguments);
 
-        _createRenderables.call(this);
         _createLayout.call(this);
+        _createRenderables.call(this);
     }
     FullImageView.prototype = Object.create(View.prototype);
     FullImageView.prototype.constructor = FullImageView;
@@ -35,23 +35,6 @@ define(function(require, exports, module) {
         margins: [20, 20, 20, 20],
         textHeight: 30
     };
-
-    function _createRenderables() {
-        this._renderables = {
-            background: new Surface({
-                classes: this.options.classes.concat(['background'])
-            }),
-            image: new BkImageSurface({
-                classes: this.options.classes.concat(['image']),
-                content: require('../images/scarlett.jpg'),
-                sizeMode: 'cover'
-            }),
-            text: new Surface({
-                classes: this.options.classes.concat(['text']),
-                content: this.options.text
-            })
-        };
-    }
 
     function _createLayout() {
         this.layout = new LayoutController({
@@ -78,11 +61,28 @@ define(function(require, exports, module) {
                     size: [context.size[0], this.options.textHeight],
                     translate: [0, context.size[1] - this.options.textHeight, 1]
                 });
-            }.bind(this),
-            dataSource: this._renderables
+            }.bind(this)
         });
         this.add(this.layout);
         this.layout.pipe(this._eventOutput);
+    }
+
+    function _createRenderables() {
+        this._renderables = {
+            background: new Surface({
+                classes: this.options.classes.concat(['background'])
+            }),
+            image: new BkImageSurface({
+                classes: this.options.classes.concat(['image']),
+                content: require('../images/scarlett.jpg'),
+                sizeMode: 'cover'
+            }),
+            text: new Surface({
+                classes: this.options.classes.concat(['text']),
+                content: this.options.text
+            })
+        };
+        this.layout.setDataSource(this._renderables);
     }
 
     module.exports = FullImageView;

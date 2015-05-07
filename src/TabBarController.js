@@ -26,7 +26,9 @@ define(function(require, exports, module) {
     /**
      * @class
      * @param {Object} options Configurable options.
-     * @param {Object} [options.layoutController] Options that are passed to the LayoutController.
+     * @param {TabBarController.Position} [options.tabBarPosition] Position (default: BOTTOM).
+     * @param {Number} [options.tabBarSize] Size of the tabBar (default: 50).
+     * @param {Number} [options.tabBarZIndex] Z-index the tabBar is put above the content (AnimationController) (default: 10).
      * @param {Object} [options.tabBar] Options that are passed to the TabBar.
      * @param {Object} [options.animationController] Options that are passed to the AnimationController.
      * @alias module:TabBarController
@@ -37,11 +39,17 @@ define(function(require, exports, module) {
         _createRenderables.call(this);
         _createLayout.call(this);
         _setListeners.call(this);
+
+        this.tabBar.setOptions({
+            layoutController: {
+                direction: ((this.options.tabBarPosition === TabBarController.Position.TOP) || (this.options.tabBarPosition === TabBarController.Position.BOTTOM)) ? 0 : 1
+            }
+        });
     }
     TabBarController.prototype = Object.create(View.prototype);
     TabBarController.prototype.constructor = TabBarController;
 
-    TabBarController.TabBarPosition = {
+    TabBarController.Position = {
         TOP: 0,
         BOTTOM: 1,
         LEFT: 2,
@@ -54,32 +62,27 @@ define(function(require, exports, module) {
      */
     TabBarController.DEFAULT_LAYOUT = function(context, options) {
         var dock = new LayoutDockHelper(context, options);
-        switch (options.tabBarPosition) {
-            case TabBarController.TabBarPosition.TOP:
-                dock.top('tabBar', options.tabBarSize, options.tabBarZIndex);
+        switch (this.options.tabBarPosition) {
+            case TabBarController.Position.TOP:
+                dock.top('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
                 break;
-            case TabBarController.TabBarPosition.BOTTOM:
-                dock.bottom('tabBar', options.tabBarSize, options.tabBarZIndex);
+            case TabBarController.Position.BOTTOM:
+                dock.bottom('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
                 break;
-            case TabBarController.TabBarPosition.LEFT:
-                dock.left('tabBar', options.tabBarSize, options.tabBarZIndex);
+            case TabBarController.Position.LEFT:
+                dock.left('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
                 break;
-            case TabBarController.TabBarPosition.RIGHT:
-                dock.right('tabBar', options.tabBarSize, options.tabBarZIndex);
+            case TabBarController.Position.RIGHT:
+                dock.right('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
                 break;
         }
         dock.fill('content');
     };
 
     TabBarController.DEFAULT_OPTIONS = {
-        layoutController: {
-            layout: TabBarController.DEFAULT_LAYOUT,
-            layoutOptions: {
-                tabBarSize: 50,
-                tabBarZIndex: 10,
-                tabBarPosition: TabBarController.TabBarPosition.BOTTOM
-            }
-        },
+        tabBarPosition: TabBarController.Position.BOTTOM,
+        tabBarSize: 50,
+        tabBarZIndex: 10,
         tabBar: {
             createRenderables: {
                 background: true
@@ -108,6 +111,7 @@ define(function(require, exports, module) {
      */
     function _createLayout() {
         this.layout = new LayoutController(this.options.layoutController);
+        this.layout.setLayout(TabBarController.DEFAULT_LAYOUT.bind(this));
         this.layout.setDataSource(this._renderables);
         this.add(this.layout);
     }
@@ -118,6 +122,13 @@ define(function(require, exports, module) {
     function _setListeners() {
         this.tabBar.on('tabchange', function(event) {
             _updateView.call(this, event);
+            this._eventOutput.emit('tabchange', {
+                target: this,
+                index: event.index,
+                oldIndex: event.oldIndex,
+                item: this._items[event.index],
+                oldItem: ((event.oldIndex >= 0) && (event.oldIndex < this._items.length)) ? this._items[event.oldIndex] : undefined
+            });
         }.bind(this));
     }
 
@@ -139,7 +150,9 @@ define(function(require, exports, module) {
      * Patches the TabBarController instance's options with the passed-in ones.
      *
      * @param {Object} options Configurable options.
-     * @param {Object} [options.layoutController] Options that are passed to the LayoutController.
+     * @param {TabBarController.Position} [options.tabBarPosition] Position (default: BOTTOM).
+     * @param {Number} [options.tabBarSize] Size of the tabBar (default: 50).
+     * @param {Number} [options.tabBarZIndex] Z-index the tabBar is put above the content (AnimationController) (default: 10).
      * @param {Object} [options.tabBar] Options that are passed to the TabBar.
      * @param {Object} [options.animationController] Options that are passed to the AnimationController.
      * @return {TabBarController} this
@@ -154,6 +167,16 @@ define(function(require, exports, module) {
         }
         if (this.animationController && options.animationController) {
             this.animationController(options.animationController);
+        }
+        if (this.layout && (options.tabBarPosition !== undefined)) {
+            this.tabBar.setOptions({
+                layoutController: {
+                    direction: ((options.tabBarPosition === TabBarController.Position.TOP) || (options.tabBarPosition === TabBarController.Position.BOTTOM)) ? 0 : 1
+                }
+            });
+        }
+        if (this.layout) {
+            this.layout.reflowLayout();
         }
         return this;
     };
@@ -194,6 +217,26 @@ define(function(require, exports, module) {
      */
     TabBarController.prototype.getItems = function() {
         return this._items;
+    };
+
+    /**
+     * Sets the index of the selected tab.
+     *
+     * @param {Number} index selected index.
+     * @return {TabBar} this
+     */
+    TabBarController.prototype.setSelectedItemIndex = function(index) {
+        this.tabBar.setSelectedItemIndex(index);
+        return this;
+    };
+
+    /**
+     * Get the index of the selected tab-item.
+     *
+     * @return {Number} selected index
+     */
+    TabBarController.prototype.getSelectedItemIndex = function() {
+        return this.tabBar.getSelectedItemIndex();
     };
 
     module.exports = TabBarController;

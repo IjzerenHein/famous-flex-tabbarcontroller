@@ -12,8 +12,8 @@ define(function(require, exports, module) {
     // import dependencies
     var View = require('famous/core/View');
     var Surface = require('famous/core/Surface');
-    var LayoutController = require('famous-flex/LayoutController');
     var BkImageSurface = require('famous-bkimagesurface/BkImageSurface');
+    var ScrollController = require('famous-flex/ScrollController');
 
     /**
      * @class
@@ -24,8 +24,8 @@ define(function(require, exports, module) {
     function ProfileView(options) {
         View.apply(this, arguments);
 
-        _createRenderables.call(this);
         _createLayout.call(this);
+        _createRenderables.call(this);
     }
     ProfileView.prototype = Object.create(View.prototype);
     ProfileView.prototype.constructor = ProfileView;
@@ -37,6 +37,36 @@ define(function(require, exports, module) {
         nameHeight: 60,
         profileText: 'Scarlett Johansson was born in New York City. Her mother, Melanie Sloan, is from an Ashkenazi Jewish family, and her father, Karsten Johansson, is Danish. Scarlett showed a passion for acting at a young age and starred in many plays.<br><br>She has a sister named Vanessa Johansson, a brother named Adrian, and a twin brother named Hunter Johansson born three minutes after her. She began her acting career starring as Laura Nelson in the comedy film North (1994).<br><br>The acclaimed drama film The Horse Whisperer (1998) brought Johansson critical praise and worldwide recognition. Following the film\'s success, she starred in many other films including the critically acclaimed cult film Ghost World (2001) and then the hit Lost in Translation (2003) with Bill Murray in which she again stunned critics. Later on, she appeared in the drama film Girl with a Pearl Earring (2003).'
     };
+
+    function _createLayout() {
+        this.layout = new ScrollController({
+            autoPipeEvents: true,
+            layout: function(context, options) {
+                context.set('background', {
+                    size: context.size
+                });
+                var image = context.set('image', {
+                    size: this.options.imageSize,
+                    translate: [(context.size[0] - this.options.imageSize[0]) / 2, context.scrollOffset + 20, 1],
+                    scale: this.options.imageScale,
+                    scrollLength: 20 + this.options.imageSize[1]
+                });
+                var name = context.set('name', {
+                    size: [context.size[0], this.options.nameHeight],
+                    translate: [0, image.size[1] + image.translate[1], 1],
+                    scrollLength: this.options.nameHeight
+                });
+                var textSize = context.resolveSize('text', context.size);
+                context.set('text', {
+                    size: [context.size[0], textSize[1]],
+                    translate: [0, name.translate[1] + name.size[1], 1],
+                    scrollLength: textSize[1] + 20
+                });
+            }.bind(this)
+        });
+        this.add(this.layout);
+        this.layout.pipe(this._eventOutput);
+    }
 
     function _createRenderables() {
         this._renderables = {
@@ -54,36 +84,11 @@ define(function(require, exports, module) {
             }),
             text: new Surface({
                 classes: this.options.classes.concat(['text']),
-                content: this.options.profileText
+                content: this.options.profileText,
+                size: [undefined, true]
             })
         };
-    }
-
-    function _createLayout() {
-        this.layout = new LayoutController({
-            autoPipeEvents: true,
-            layout: function(context, options) {
-                context.set('background', {
-                    size: context.size
-                });
-                var image = context.set('image', {
-                    size: this.options.imageSize,
-                    translate: [(context.size[0] - this.options.imageSize[0]) / 2, 20, 1],
-                    scale: this.options.imageScale
-                });
-                var name = context.set('name', {
-                    size: [context.size[0], this.options.nameHeight],
-                    translate: [0, image.size[1] + image.translate[1], 1]
-                });
-                context.set('text', {
-                    size: [context.size[0], context.size[1] - name.size[1] - name.translate[1]],
-                    translate: [0, name.translate[1] + name.size[1], 1]
-                });
-            }.bind(this),
-            dataSource: this._renderables
-        });
-        this.add(this.layout);
-        this.layout.pipe(this._eventOutput);
+        this.layout.setDataSource(this._renderables);
     }
 
     module.exports = ProfileView;
