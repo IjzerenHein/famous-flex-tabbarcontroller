@@ -24,7 +24,7 @@ define(function(require) {
     // import dependencies
     var Engine = require('famous/core/Engine');
     var isMobile = require('ismobilejs');
-    var TabBarController = require('./TabBarController');
+    var TabBarController = require('famous-flex/widgets/TabBarController');
     var FullImageView = require('./views/FullImageView');
     var NavBarView = require('./views/NavBarView');
     var ProfileView = require('./views/ProfileView');
