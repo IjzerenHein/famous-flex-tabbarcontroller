@@ -1,8 +1,6 @@
 famous-flex-tabbarcontroller
 ==========
 
-# Work in progress, come back later
-
 TabBarController demo for [famous-flex](https://github.com/IjzerenHein/famous-flex).
 
 ![Screenshot](screenshot.gif)
