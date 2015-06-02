@@ -59,27 +59,27 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
 	
 	    //<webpack>
-	    __webpack_require__(/*! famous-polyfills */ 7);
+	    __webpack_require__(/*! famous-polyfills */ 6);
 	    __webpack_require__(/*! famous/core/famous.css */ 12);
 	    __webpack_require__(/*! famous-flex/widgets/styles.css */ 20);
-	    __webpack_require__(/*! ./styles.css */ 9);
-	    __webpack_require__(/*! ./index.html */ 11);
+	    __webpack_require__(/*! ./styles.css */ 8);
+	    __webpack_require__(/*! ./index.html */ 10);
 	    //</webpack>
 	
 	    // Fast-click
-	    var FastClick = __webpack_require__(/*! fastclick/lib/fastclick */ 15);
+	    var FastClick = __webpack_require__(/*! fastclick/lib/fastclick */ 11);
 	    FastClick.attach(document.body);
 	
 	    // import dependencies
 	    var Engine = __webpack_require__(/*! famous/core/Engine */ 14);
-	    var isMobile = __webpack_require__(/*! ismobilejs */ 16);
-	    var TabBarController = __webpack_require__(/*! ./TabBarController */ 1);
-	    var FullImageView = __webpack_require__(/*! ./views/FullImageView */ 2);
-	    var NavBarView = __webpack_require__(/*! ./views/NavBarView */ 3);
-	    var ProfileView = __webpack_require__(/*! ./views/ProfileView */ 4);
-	    var LocationView = __webpack_require__(/*! ./views/LocationView */ 5);
-	    var PhoneFrameView = __webpack_require__(/*! ./PhoneFrameView */ 6);
-	    var MapView = __webpack_require__(/*! famous-map/MapView */ 8);
+	    var isMobile = __webpack_require__(/*! ismobilejs */ 15);
+	    var TabBarController = __webpack_require__(/*! famous-flex/widgets/TabBarController */ 22);
+	    var FullImageView = __webpack_require__(/*! ./views/FullImageView */ 1);
+	    var NavBarView = __webpack_require__(/*! ./views/NavBarView */ 2);
+	    var ProfileView = __webpack_require__(/*! ./views/ProfileView */ 3);
+	    var LocationView = __webpack_require__(/*! ./views/LocationView */ 4);
+	    var PhoneFrameView = __webpack_require__(/*! ./PhoneFrameView */ 5);
+	    var MapView = __webpack_require__(/*! famous-map/MapView */ 7);
 	
 	    // On mobile, disable app-mode and install the custom MapView
 	    // touch-handler so that Google Maps works.
@@ -119,258 +119,6 @@
 
 /***/ },
 /* 1 */
-/*!*****************************!*\
-  !*** ./TabBarController.js ***!
-  \*****************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2015
-	 */
-	
-	/**
-	 * TabBarController.
-	 *
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var AnimationController = __webpack_require__(/*! famous-flex/AnimationController */ 22);
-	    var TabBar = __webpack_require__(/*! famous-flex/widgets/TabBar */ 23);
-	    var LayoutDockHelper = __webpack_require__(/*! famous-flex/helpers/LayoutDockHelper */ 26);
-	    var LayoutController = __webpack_require__(/*! famous-flex/LayoutController */ 24);
-	    var Easing = __webpack_require__(/*! famous/transitions/Easing */ 18);
-	
-	    /**
-	     * @class
-	     * @param {Object} options Configurable options.
-	     * @param {TabBarController.Position} [options.tabBarPosition] Position (default: BOTTOM).
-	     * @param {Number} [options.tabBarSize] Size of the tabBar (default: 50).
-	     * @param {Number} [options.tabBarZIndex] Z-index the tabBar is put above the content (AnimationController) (default: 10).
-	     * @param {Object} [options.tabBar] Options that are passed to the TabBar.
-	     * @param {Object} [options.animationController] Options that are passed to the AnimationController.
-	     * @alias module:TabBarController
-	     */
-	    function TabBarController(options) {
-	        View.apply(this, arguments);
-	
-	        _createRenderables.call(this);
-	        _createLayout.call(this);
-	        _setListeners.call(this);
-	
-	        this.tabBar.setOptions({
-	            layoutController: {
-	                direction: ((this.options.tabBarPosition === TabBarController.Position.TOP) || (this.options.tabBarPosition === TabBarController.Position.BOTTOM)) ? 0 : 1
-	            }
-	        });
-	    }
-	    TabBarController.prototype = Object.create(View.prototype);
-	    TabBarController.prototype.constructor = TabBarController;
-	
-	    TabBarController.Position = {
-	        TOP: 0,
-	        BOTTOM: 1,
-	        LEFT: 2,
-	        RIGHT: 3
-	    };
-	
-	    /**
-	     * Default layout-function for the TabBarController. Supports simple
-	     * docking to any of the four edges.
-	     */
-	    TabBarController.DEFAULT_LAYOUT = function(context, options) {
-	        var dock = new LayoutDockHelper(context, options);
-	        switch (this.options.tabBarPosition) {
-	            case TabBarController.Position.TOP:
-	                dock.top('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
-	                break;
-	            case TabBarController.Position.BOTTOM:
-	                dock.bottom('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
-	                break;
-	            case TabBarController.Position.LEFT:
-	                dock.left('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
-	                break;
-	            case TabBarController.Position.RIGHT:
-	                dock.right('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
-	                break;
-	        }
-	        dock.fill('content');
-	    };
-	
-	    TabBarController.DEFAULT_OPTIONS = {
-	        tabBarPosition: TabBarController.Position.BOTTOM,
-	        tabBarSize: 50,
-	        tabBarZIndex: 10,
-	        tabBar: {
-	            createRenderables: {
-	                background: true
-	            }
-	        },
-	        animationController: {
-	            transition: {duration: 300, curve: Easing.inOutQuad},
-	            animation: AnimationController.Animation.FadedZoom
-	        }
-	    };
-	
-	    /**
-	     * Creates the renderables (tabBar, animationController).
-	     */
-	    function _createRenderables() {
-	        this.tabBar = new TabBar(this.options.tabBar);
-	        this.animationController = new AnimationController(this.options.animationController);
-	        this._renderables = {
-	            tabBar: this.tabBar,
-	            content: this.animationController
-	        };
-	    }
-	
-	    /**
-	     * Creates the outer (header-footer) layout.
-	     */
-	    function _createLayout() {
-	        this.layout = new LayoutController(this.options.layoutController);
-	        this.layout.setLayout(TabBarController.DEFAULT_LAYOUT.bind(this));
-	        this.layout.setDataSource(this._renderables);
-	        this.add(this.layout);
-	    }
-	
-	    /**
-	     * Sets the listeners.
-	     */
-	    function _setListeners() {
-	        this.tabBar.on('tabchange', function(event) {
-	            _updateView.call(this, event);
-	            this._eventOutput.emit('tabchange', {
-	                target: this,
-	                index: event.index,
-	                oldIndex: event.oldIndex,
-	                item: this._items[event.index],
-	                oldItem: ((event.oldIndex >= 0) && (event.oldIndex < this._items.length)) ? this._items[event.oldIndex] : undefined
-	            });
-	        }.bind(this));
-	    }
-	
-	    /**
-	     * Updates the view-container with the selected view.
-	     */
-	    function _updateView(event) {
-	        var index = this.tabBar.getSelectedItemIndex();
-	        this.animationController.halt();
-	        if (index >= 0) {
-	            this.animationController.show(this._items[index].view);
-	        }
-	        else {
-	            this.animationController.hide();
-	        }
-	    }
-	
-	    /**
-	     * Patches the TabBarController instance's options with the passed-in ones.
-	     *
-	     * @param {Object} options Configurable options.
-	     * @param {TabBarController.Position} [options.tabBarPosition] Position (default: BOTTOM).
-	     * @param {Number} [options.tabBarSize] Size of the tabBar (default: 50).
-	     * @param {Number} [options.tabBarZIndex] Z-index the tabBar is put above the content (AnimationController) (default: 10).
-	     * @param {Object} [options.tabBar] Options that are passed to the TabBar.
-	     * @param {Object} [options.animationController] Options that are passed to the AnimationController.
-	     * @return {TabBarController} this
-	     */
-	    TabBarController.prototype.setOptions = function(options) {
-	        View.prototype.setOptions.call(this, options);
-	        if (this.layout && options.layoutController) {
-	            this.layout.setOptions(options.layoutController);
-	        }
-	        if (this.tabBar && options.tabBar) {
-	            this.tabBar.setOptions(options.tabBar);
-	        }
-	        if (this.animationController && options.animationController) {
-	            this.animationController(options.animationController);
-	        }
-	        if (this.layout && (options.tabBarPosition !== undefined)) {
-	            this.tabBar.setOptions({
-	                layoutController: {
-	                    direction: ((options.tabBarPosition === TabBarController.Position.TOP) || (options.tabBarPosition === TabBarController.Position.BOTTOM)) ? 0 : 1
-	                }
-	            });
-	        }
-	        if (this.layout) {
-	            this.layout.reflowLayout();
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Sets the items for the tab-bar controller.
-	     *
-	     * Example 1:
-	     *
-	     * ```javascript
-	     * var tabBarController = new TabBarController();
-	     * tabBarController.setItems([
-	     *   {tabItem: 'Profile', view: new ProfileView()},
-	     *   {tabItem: 'Map', view: new MapView()},
-	     *   {tabItem: 'Login', view: new LoginView()}
-	     *   {tabItem: 'Settings', view: new SettingsView()}
-	     * ]);
-	     *```
-	     *
-	     * @param {Array} items Array of tab-bar controller items.
-	     * @return {TabBarController} this
-	     */
-	    TabBarController.prototype.setItems = function(items) {
-	        this._items = items;
-	        var tabItems = [];
-	        for (var i = 0; i < items.length; i++) {
-	            tabItems.push(items[i].tabItem);
-	        }
-	        this.tabBar.setItems(tabItems);
-	        _updateView.call(this);
-	        return this;
-	    };
-	
-	    /**
-	     * Get the tab-items (also see `setItems`).
-	     *
-	     * @return {Array} tab-items
-	     */
-	    TabBarController.prototype.getItems = function() {
-	        return this._items;
-	    };
-	
-	    /**
-	     * Sets the index of the selected tab.
-	     *
-	     * @param {Number} index selected index.
-	     * @return {TabBar} this
-	     */
-	    TabBarController.prototype.setSelectedItemIndex = function(index) {
-	        this.tabBar.setSelectedItemIndex(index);
-	        return this;
-	    };
-	
-	    /**
-	     * Get the index of the selected tab-item.
-	     *
-	     * @return {Number} selected index
-	     */
-	    TabBarController.prototype.getSelectedItemIndex = function() {
-	        return this.tabBar.getSelectedItemIndex();
-	    };
-	
-	    module.exports = TabBarController;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 2 */
 /*!********************************!*\
   !*** ./views/FullImageView.js ***!
   \********************************/
@@ -388,10 +136,10 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
 	    var LayoutController = __webpack_require__(/*! famous-flex/LayoutController */ 24);
-	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 33);
+	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 29);
 	
 	    /**
 	     * @class
@@ -452,7 +200,7 @@
 	            }),
 	            image: new BkImageSurface({
 	                classes: this.options.classes.concat(['image']),
-	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 38),
+	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 30),
 	                sizeMode: 'cover'
 	            }),
 	            text: new Surface({
@@ -468,7 +216,7 @@
 
 
 /***/ },
-/* 3 */
+/* 2 */
 /*!*****************************!*\
   !*** ./views/NavBarView.js ***!
   \*****************************/
@@ -486,10 +234,10 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
-	    var ScrollController = __webpack_require__(/*! famous-flex/ScrollController */ 25);
-	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 33);
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
+	    var ScrollController = __webpack_require__(/*! famous-flex/ScrollController */ 23);
+	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 29);
 	
 	    /**
 	     * @class
@@ -527,11 +275,11 @@
 	                });
 	                context.set('navBarTitle', {
 	                    size: [context.size[0], this.options.navBar.height],
-	                    translate: [0, 0, 3]
+	                    translate: [0, 0, 5]
 	                });
 	                context.set('navBarImage', {
 	                    size: [32, 32],
-	                    translate: [this.options.navBar.left ? 20 : (context.size[0] - 20 - 32), 9, 3]
+	                    translate: [this.options.navBar.left ? 20 : (context.size[0] - 20 - 32), 9, 5]
 	                });
 	                var textSize = context.resolveSize('text', context.size);
 	                context.set('text', {
@@ -559,7 +307,7 @@
 	            }),
 	            navBarImage: new BkImageSurface({
 	                classes: this.options.classes.concat(['navbar', 'image']),
-	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 38),
+	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 30),
 	                sizeMode: 'cover'
 	            }),
 	            text: new Surface({
@@ -576,7 +324,7 @@
 
 
 /***/ },
-/* 4 */
+/* 3 */
 /*!******************************!*\
   !*** ./views/ProfileView.js ***!
   \******************************/
@@ -594,10 +342,10 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
-	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 33);
-	    var ScrollController = __webpack_require__(/*! famous-flex/ScrollController */ 25);
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
+	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 29);
+	    var ScrollController = __webpack_require__(/*! famous-flex/ScrollController */ 23);
 	
 	    /**
 	     * @class
@@ -624,6 +372,7 @@
 	
 	    function _createLayout() {
 	        this.layout = new ScrollController({
+	            mouseMove: true,
 	            autoPipeEvents: true,
 	            layout: function(context, options) {
 	                context.set('background', {
@@ -650,6 +399,16 @@
 	        });
 	        this.add(this.layout);
 	        this.layout.pipe(this._eventOutput);
+	
+	        this.layout.on(['swipestart', 'swipeupdate'], function(event) {
+	            console.log('swipestart, delta: ' + event.delta + ', total: ' + event.total);
+	        });
+	        /*this.layout.on('swipeupdate', function(event) {
+	            console.log('swipeupdate, delta: ' + event.delta + ', total: ' + event.total);
+	        });*/
+	        this.layout.on('swipeend', function(event) {
+	            console.log('swipeend, delta: ' + event.delta + ', total: ' + event.total + ', velocity: ' + event.velocity);
+	        });
 	    }
 	
 	    function _createRenderables() {
@@ -659,7 +418,7 @@
 	            }),
 	            image: new BkImageSurface({
 	                classes: this.options.classes.concat(['image']),
-	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 38),
+	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 30),
 	                sizeMode: 'cover'
 	            }),
 	            name: new Surface({
@@ -680,7 +439,7 @@
 
 
 /***/ },
-/* 5 */
+/* 4 */
 /*!*******************************!*\
   !*** ./views/LocationView.js ***!
   \*******************************/
@@ -699,13 +458,13 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var MapView = __webpack_require__(/*! famous-map/MapView */ 8);
-	    var MapModifier = __webpack_require__(/*! famous-map/MapModifier */ 27);
-	    var Transform = __webpack_require__(/*! famous/core/Transform */ 28);
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var MapView = __webpack_require__(/*! famous-map/MapView */ 7);
+	    var MapModifier = __webpack_require__(/*! famous-map/MapModifier */ 18);
+	    var Transform = __webpack_require__(/*! famous/core/Transform */ 19);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
 	    var LayoutController = __webpack_require__(/*! famous-flex/LayoutController */ 24);
-	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 33);
+	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 29);
 	
 	    /**
 	     * @class
@@ -767,7 +526,7 @@
 	        this.mapMarker = {
 	            image: new BkImageSurface({
 	                classes: this.options.classes.concat(['marker', 'image']),
-	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 38),
+	                content: __webpack_require__(/*! ../images/scarlett.jpg */ 30),
 	                sizeMode: 'cover'
 	            }),
 	            mod: new MapModifier({
@@ -786,7 +545,7 @@
 	                    var imageSize = [this.options.marker.size[0] - (this.options.marker.borderWidth * 2), this.options.marker.size[0] - (this.options.marker.borderWidth * 2)];
 	                    context.set('image', {
 	                        size: imageSize,
-	                        translate: [imageSize[0] / -2, top + ((backSize[1] - imageSize[1]) / 2), 2]
+	                        translate: [imageSize[0] / -2, top + ((backSize[1] - imageSize[1]) / 2), 5]
 	                    });
 	                    context.set('pin', {
 	                        size: marker.pinSize,
@@ -848,7 +607,7 @@
 
 
 /***/ },
-/* 6 */
+/* 5 */
 /*!***************************!*\
   !*** ./PhoneFrameView.js ***!
   \***************************/
@@ -872,11 +631,11 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
 	    var LayoutController = __webpack_require__(/*! famous-flex/LayoutController */ 24);
-	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 33);
-	    var isMobile = __webpack_require__(/*! ismobilejs */ 16);
+	    var BkImageSurface = __webpack_require__(/*! famous-bkimagesurface/BkImageSurface */ 29);
+	    var isMobile = __webpack_require__(/*! ismobilejs */ 15);
 	
 	    /**
 	     * @class
@@ -903,7 +662,7 @@
 	        this._renderables = {
 	            image: new BkImageSurface({
 	                classes: this.options.classes.concat(['image']),
-	                content: __webpack_require__(/*! ./images/iphone.png */ 39),
+	                content: __webpack_require__(/*! ./images/iphone.png */ 31),
 	                sizeMode: 'contain'
 	            }),
 	            left: new Surface({
@@ -993,21 +752,22 @@
 	                    (context.size[1] - imageSize[1]) / 2,
 	                    100
 	                ];
+	                var z = 10;
 	                context.set('left', {
 	                    size: [imageTranslate[0] + margins[3], context.size[1]],
-	                    translate: [0, 0, 99]
+	                    translate: [0, 0, imageTranslate[2] - z]
 	                });
 	                context.set('right', {
 	                    size: [context.size[0] - imageTranslate[0] - imageSize[0] + margins[1], context.size[1]],
-	                    translate: [imageTranslate[0] + imageSize[0] - margins[1], 0, 99]
+	                    translate: [imageTranslate[0] + imageSize[0] - margins[1], 0, imageTranslate[2] - z]
 	                });
 	                context.set('top', {
 	                    size: [context.size[0], imageTranslate[1] + margins[0]],
-	                    translate: [0, 0, 99]
+	                    translate: [0, 0, imageTranslate[2] - z]
 	                });
 	                context.set('bottom', {
 	                    size: [context.size[0], context.size[1] - imageTranslate[1] - imageSize[1] + margins[2]],
-	                    translate: [0, imageTranslate[1] + imageSize[1] - margins[2], 99]
+	                    translate: [0, imageTranslate[1] + imageSize[1] - margins[2], imageTranslate[2] - z]
 	                });
 	                var content = context.set('content', {
 	                    size: [
@@ -1040,18 +800,18 @@
 
 
 /***/ },
-/* 7 */
+/* 6 */
 /*!**************************************!*\
   !*** ../~/famous-polyfills/index.js ***!
   \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(/*! ./classList.js */ 30);
-	__webpack_require__(/*! ./functionPrototypeBind.js */ 31);
-	__webpack_require__(/*! ./requestAnimationFrame.js */ 32);
+	__webpack_require__(/*! ./classList.js */ 26);
+	__webpack_require__(/*! ./functionPrototypeBind.js */ 27);
+	__webpack_require__(/*! ./requestAnimationFrame.js */ 28);
 
 /***/ },
-/* 8 */
+/* 7 */
 /*!**********************************!*\
   !*** ../~/famous-map/MapView.js ***!
   \**********************************/
@@ -1067,7 +827,7 @@
 	 * @copyright Gloey Apps, 2014/2015
 	 */
 	
-	/*global google, L, ol*/
+	/*global google, L, ol, mapboxgl*/
 	
 	/**
 	 * MapView encapsulates a Google maps view so it can be used with famo.us.
@@ -1082,18 +842,19 @@
 	 * |MapType.GOOGLEMAPS (default)|Google-maps|
 	 * |MapType.LEAFLET|Leaflet.js|
 	 * |MapType.OPENLAYERS3|Open layers 3|
+	 * |MapType.MAPBOXGL|Mapbox GL|
 	 * @module
 	 */
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    'use strict';
 	
 	    // import dependencies
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var Transitionable = __webpack_require__(/*! famous/transitions/Transitionable */ 34);
-	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 35);
-	    var MapPositionTransitionable = __webpack_require__(/*! ./MapPositionTransitionable */ 36);
-	    var MapTransition = __webpack_require__(/*! ./MapTransition */ 37);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
+	    var SizeAwareView = __webpack_require__(/*! famous/views/SizeAwareView */ 32);
+	    var Transitionable = __webpack_require__(/*! famous/transitions/Transitionable */ 33);
+	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 34);
+	    var MapPositionTransitionable = __webpack_require__(/*! ./MapPositionTransitionable */ 35);
+	    var MapTransition = __webpack_require__(/*! ./MapTransition */ 36);
 	    Transitionable.registerMethod('map-speed', MapTransition);
 	    var globalMapViewId = 1;
 	
@@ -1105,7 +866,8 @@
 	    var MapType = {
 	        GOOGLEMAPS: 1,
 	        LEAFLET: 2,
-	        OPENLAYERS3: 3
+	        OPENLAYERS3: 3,
+	        MAPBOXGL: 4
 	    };
 	
 	    /**
@@ -1118,7 +880,7 @@
 	     * @alias module:MapView
 	     */
 	    function MapView() {
-	        View.apply(this, arguments);
+	        SizeAwareView.apply(this, arguments);
 	
 	        // Initialize
 	        this.map = null;
@@ -1156,7 +918,7 @@
 	            this._surface = surface;
 	        }
 	    }
-	    MapView.prototype = Object.create(View.prototype);
+	    MapView.prototype = Object.create(SizeAwareView.prototype);
 	    MapView.prototype.constructor = MapView;
 	    MapView.MapType = MapType;
 	
@@ -1185,6 +947,7 @@
 	        }
 	
 	        // Supported map-types
+	        var options;
 	        switch (this.mapType) {
 	
 	        // Create google.maps.Map
@@ -1205,9 +968,9 @@
 	            this._initComplete = true;
 	            break;
 	
-	        // Create ol3 Map
+	        // Create open layers 3 Map
 	        case MapType.OPENLAYERS3:
-	            var options = this.options.mapOptions;
+	            options = this.options.mapOptions;
 	            var center = options.center;
 	            this.map = new ol.Map({
 	                target: elm,
@@ -1232,6 +995,17 @@
 	            this.map.once('postrender', function() {
 	                this._initComplete = true;
 	            }.bind(this));
+	            break;
+	
+	        // Create mapbox GL Map
+	        case MapType.MAPBOXGL:
+	            options = {};
+	            for (var key in this.options.mapOptions) {
+	                options[key] = this.options.mapOptions[key];
+	            }
+	            options.container = elm;
+	            this.map = new mapboxgl.Map(options);
+	            this._initComplete = true;
 	            break;
 	        }
 	    };
@@ -1308,6 +1082,8 @@
 	            return 0;
 	        case MapType.OPENLAYERS3:
 	            return this.map.getView().getRotation();
+	        case MapType.MAPBOXGL:
+	            return (this.map.getBearing() * Math.PI) / -180;
 	        }
 	    };
 	
@@ -1337,6 +1113,8 @@
 	            // Note: updates during map interaction are not yet supported
 	            pnt = this.map.getPixelFromCoordinate(ol.proj.transform([MapUtility.lng(position), MapUtility.lat(position)], 'EPSG:4326', 'EPSG:3857'));
 	            return {x: pnt[0], y: pnt[1]};
+	        case MapType.MAPBOXGL:
+	            return this.map.project([MapUtility.lat(position), MapUtility.lng(position)]);
 	        }
 	    };
 	
@@ -1361,6 +1139,8 @@
 	            // Note: updates during map interaction are not yet supported
 	            var lonLat = ol.proj.transform(this.map.getCoordinateFromPixel([point.x, point.y]), 'EPSG:3857', 'EPSG:4326');
 	            return {lat: lonLat[1], lng: lonLat[0]};
+	        case MapType.MAPBOXGL:
+	            return this.map.unproject(point);
 	        }
 	    };
 	
@@ -1427,6 +1207,9 @@
 	        case MapType.OPENLAYERS3:
 	            this._cache.size = this.map.getSize();
 	            break;
+	        case MapType.MAPBOXGL:
+	            this._cache.size = this.getParentSize();
+	            break;
 	        }
 	
 	        // Calculate current world point edges and scale
@@ -1449,6 +1232,7 @@
 	            break;
 	        case MapType.LEAFLET:
 	        case MapType.OPENLAYERS3:
+	        case MapType.MAPBOXGL:
 	
 	            // Note: smooth zooming is not yet supported for leaflet, and
 	            // updates during map interaction are not yet supported for ol3
@@ -1530,6 +1314,15 @@
 	                northEast: {lat: bounds[3], lng: bounds[2]},
 	                rotation: view.getRotation()
 	            };
+	        case MapType.MAPBOXGL:
+	            bounds = this.map.getBounds();
+	            return {
+	                zoom: this.map.getZoom(),
+	                center: this.map.getCenter(),
+	                southWest: bounds.getSouthWest(),
+	                northEast: bounds.getNorthEast(),
+	                rotation: (this.map.getBearing() * Math.PI) / -180
+	            };
 	        }
 	    };
 	
@@ -1600,6 +1393,9 @@
 	                case MapType.OPENLAYERS3:
 	                    this.map.getView().setCenter(ol.proj.transform([MapUtility.lng(options.center), MapUtility.lat(options.center)], 'EPSG:4326', 'EPSG:3857'));
 	                    break;
+	                case MapType.MAPBOXGL:
+	                    this.map.setCenter([MapUtility.lat(options.center), MapUtility.lng(options.center)]);
+	                    break;
 	                }
 	            }
 	            if (!this._loadEventEmitted) {
@@ -1655,16 +1451,16 @@
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /*!********************!*\
   !*** ./styles.css ***!
   \********************/
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
-	var dispose = __webpack_require__(/*! ../~/style-loader/addStyle.js */ 29)
+	var dispose = __webpack_require__(/*! ../~/style-loader/addStyle.js */ 25)
 		// The css code:
-		(__webpack_require__(/*! !../~/css-loader!./styles.css */ 10));
+		(__webpack_require__(/*! !../~/css-loader!./styles.css */ 9));
 	// Hot Module Replacement
 	if(false) {
 		module.hot.accept();
@@ -1672,7 +1468,7 @@
 	}
 
 /***/ },
-/* 10 */
+/* 9 */
 /*!************************************!*\
   !*** ../~/css-loader!./styles.css ***!
   \************************************/
@@ -1682,7 +1478,7 @@
 		"body, div {\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif;\n\n  /* prevent text selection */\n  -moz-user-select: -moz-none;\n  -khtml-user-select: none;\n  -webkit-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\nbody {\n  background-color: #333333;\n}\n\n.frame {\n  pointer-events: none;\n}\n.frame.background {\n  -background-color: #333333;\n  background-color: white;\n}\n.frame.background.inner {\n  background-color: #FAFAFA;\n}\n\n\n.ff-tabbar.background {\n  background-color: #EEEEEE;\n  border-top: 1px solid #DDDDDD;\n}\n.ff-tabbar.item {\n  color: #666666;\n}\n.ff-tabbar.item.selected {\n  background-color: #1185c3;\n  color: white;\n}\n\n\n.view.background {\n  background-color: #FAFAFA;\n}\n.view.image {\n  border-radius: 50%;\n}\n.view.text {\n  text-align: center;\n  font-size: 16px;\n}\n\n.view.navbar.title > div, .view.profile.name > div {\n  text-align: center;\n  font-size: 18px;\n  color: #444444;\n  /* align vertical */\n  display: block;\n  position: relative;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n  -moz-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  -o-transform: translateY(-50%);\n  transform: translateY(-50%);\n}\n.view.profile.text {\n  padding: 0 25px;\n  font-size: 16px;\n  color: #888888;\n}\n.view.navbar.title > div {\n  color: #666666;\n}\n.view.navbar.background {\n  background-color: #EEEEEE;\n  border-bottom: 1px solid #DDDDDD;\n}\n.view.location.marker.back {\n  border-radius: 50%;\n  background-color: white;\n}\n.view.location.marker.pin > div {\n  margin-top: -2px;\n  width: 0;\n  height: 0;\n  border-style: solid;\n  border-width: 20px 10px 0 10px;\n  border-color: white transparent transparent transparent;\n}\n";
 
 /***/ },
-/* 11 */
+/* 10 */
 /*!********************!*\
   !*** ./index.html ***!
   \********************/
@@ -1691,223 +1487,7 @@
 	module.exports = __webpack_require__.p + "index.html"
 
 /***/ },
-/* 12 */
-/*!***********************************!*\
-  !*** ../~/famous/core/famous.css ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	var dispose = __webpack_require__(/*! ../~/style-loader/addStyle.js */ 29)
-		// The css code:
-		(__webpack_require__(/*! !../~/css-loader!../~/famous/core/famous.css */ 13));
-	// Hot Module Replacement
-	if(false) {
-		module.hot.accept();
-		module.hot.dispose(dispose);
-	}
-
-/***/ },
-/* 13 */
-/*!***************************************************!*\
-  !*** ../~/css-loader!../~/famous/core/famous.css ***!
-  \***************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports =
-		"/* This Source Code Form is subject to the terms of the Mozilla Public\n * License, v. 2.0. If a copy of the MPL was not distributed with this\n * file, You can obtain one at http://mozilla.org/MPL/2.0/.\n *\n * Owner: mark@famo.us\n * @license MPL 2.0\n * @copyright Famous Industries, Inc. 2015\n */\n\n.famous-root {\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    padding: 0px;\n    opacity: .999999; /* ios8 hotfix */\n    overflow: hidden;\n    -webkit-transform-style: preserve-3d;\n    transform-style: preserve-3d;\n}\n\n.famous-container, .famous-group {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    bottom: 0px;\n    right: 0px;\n    overflow: visible;\n    -webkit-transform-style: preserve-3d;\n    transform-style: preserve-3d;\n    -webkit-backface-visibility: visible;\n    backface-visibility: visible;\n    pointer-events: none;\n}\n\n.famous-group {\n    width: 0px;\n    height: 0px;\n    margin: 0px;\n    padding: 0px;\n}\n\n.famous-surface {\n    position: absolute;\n    -webkit-transform-origin: center center;\n    transform-origin: center center;\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n    -webkit-transform-style: preserve-3d;\n    transform-style: preserve-3d;\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    -webkit-tap-highlight-color: transparent;\n    pointer-events: auto;\n}\n\n.famous-container-group {\n    position: relative;\n    width: 100%;\n    height: 100%;\n}\n";
-
-/***/ },
-/* 14 */
-/*!**********************************!*\
-  !*** ../~/famous/core/Engine.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var Context = __webpack_require__(/*! ./Context */ 40);
-	var EventHandler = __webpack_require__(/*! ./EventHandler */ 41);
-	var OptionsManager = __webpack_require__(/*! ./OptionsManager */ 42);
-	var Engine = {};
-	var contexts = [];
-	var nextTickQueue = [];
-	var currentFrame = 0;
-	var nextTickFrame = 0;
-	var deferQueue = [];
-	var lastTime = Date.now();
-	var frameTime;
-	var frameTimeLimit;
-	var loopEnabled = true;
-	var eventForwarders = {};
-	var eventHandler = new EventHandler();
-	var options = {
-	    containerType: 'div',
-	    containerClass: 'famous-container',
-	    fpsCap: undefined,
-	    runLoop: true,
-	    appMode: true
-	};
-	var optionsManager = new OptionsManager(options);
-	var MAX_DEFER_FRAME_TIME = 10;
-	Engine.step = function step() {
-	    currentFrame++;
-	    nextTickFrame = currentFrame;
-	    var currentTime = Date.now();
-	    if (frameTimeLimit && currentTime - lastTime < frameTimeLimit)
-	        return;
-	    var i = 0;
-	    frameTime = currentTime - lastTime;
-	    lastTime = currentTime;
-	    eventHandler.emit('prerender');
-	    var numFunctions = nextTickQueue.length;
-	    while (numFunctions--)
-	        nextTickQueue.shift()(currentFrame);
-	    while (deferQueue.length && Date.now() - currentTime < MAX_DEFER_FRAME_TIME) {
-	        deferQueue.shift().call(this);
-	    }
-	    for (i = 0; i < contexts.length; i++)
-	        contexts[i].update();
-	    eventHandler.emit('postrender');
-	};
-	Engine.renderCycle = 0;
-	function loop() {
-	    if (options.runLoop) {
-	        Engine.renderCycle++;
-	        Engine.step();
-	        window.requestAnimationFrame(loop);
-	    } else
-	        loopEnabled = false;
-	}
-	window.requestAnimationFrame(loop);
-	function handleResize(event) {
-	    for (var i = 0; i < contexts.length; i++) {
-	        contexts[i].emit('resize');
-	    }
-	    eventHandler.emit('resize');
-	}
-	window.addEventListener('resize', handleResize, false);
-	handleResize();
-	function initialize() {
-	    window.addEventListener('touchmove', function (event) {
-	        event.preventDefault();
-	    }, true);
-	    addRootClasses();
-	}
-	var initialized = false;
-	function addRootClasses() {
-	    if (!document.body) {
-	        Engine.nextTick(addRootClasses);
-	        return;
-	    }
-	    document.body.classList.add('famous-root');
-	    document.documentElement.classList.add('famous-root');
-	}
-	Engine.pipe = function pipe(target) {
-	    if (target.subscribe instanceof Function)
-	        return target.subscribe(Engine);
-	    else
-	        return eventHandler.pipe(target);
-	};
-	Engine.unpipe = function unpipe(target) {
-	    if (target.unsubscribe instanceof Function)
-	        return target.unsubscribe(Engine);
-	    else
-	        return eventHandler.unpipe(target);
-	};
-	Engine.on = function on(type, handler) {
-	    if (!(type in eventForwarders)) {
-	        eventForwarders[type] = eventHandler.emit.bind(eventHandler, type);
-	        addEngineListener(type, eventForwarders[type]);
-	    }
-	    return eventHandler.on(type, handler);
-	};
-	function addEngineListener(type, forwarder) {
-	    if (!document.body) {
-	        Engine.nextTick(addEventListener.bind(this, type, forwarder));
-	        return;
-	    }
-	    document.body.addEventListener(type, forwarder);
-	}
-	Engine.emit = function emit(type, event) {
-	    return eventHandler.emit(type, event);
-	};
-	Engine.removeListener = function removeListener(type, handler) {
-	    return eventHandler.removeListener(type, handler);
-	};
-	Engine.getFPS = function getFPS() {
-	    return 1000 / frameTime;
-	};
-	Engine.setFPSCap = function setFPSCap(fps) {
-	    frameTimeLimit = Math.floor(1000 / fps);
-	};
-	Engine.getOptions = function getOptions(key) {
-	    return optionsManager.getOptions(key);
-	};
-	Engine.setOptions = function setOptions(options) {
-	    return optionsManager.setOptions.apply(optionsManager, arguments);
-	};
-	Engine.createContext = function createContext(el) {
-	    if (!initialized && options.appMode)
-	        Engine.nextTick(initialize);
-	    var needMountContainer = false;
-	    if (!el) {
-	        el = document.createElement(options.containerType);
-	        el.classList.add(options.containerClass);
-	        needMountContainer = true;
-	    }
-	    var context = new Context(el);
-	    Engine.registerContext(context);
-	    if (needMountContainer)
-	        mount(context, el);
-	    return context;
-	};
-	function mount(context, el) {
-	    if (!document.body) {
-	        Engine.nextTick(mount.bind(this, context, el));
-	        return;
-	    }
-	    document.body.appendChild(el);
-	    context.emit('resize');
-	}
-	Engine.registerContext = function registerContext(context) {
-	    contexts.push(context);
-	    return context;
-	};
-	Engine.getContexts = function getContexts() {
-	    return contexts;
-	};
-	Engine.deregisterContext = function deregisterContext(context) {
-	    var i = contexts.indexOf(context);
-	    if (i >= 0)
-	        contexts.splice(i, 1);
-	};
-	Engine.nextTick = function nextTick(fn) {
-	    nextTickQueue.push(fn);
-	};
-	Engine.defer = function defer(fn) {
-	    deferQueue.push(fn);
-	};
-	optionsManager.on('change', function (data) {
-	    if (data.id === 'fpsCap')
-	        Engine.setFPSCap(data.value);
-	    else if (data.id === 'runLoop') {
-	        if (!loopEnabled && data.value) {
-	            loopEnabled = true;
-	            window.requestAnimationFrame(loop);
-	        }
-	    }
-	});
-	module.exports = Engine;
-
-
-/***/ },
-/* 15 */
+/* 11 */
 /*!***************************************!*\
   !*** ../~/fastclick/lib/fastclick.js ***!
   \***************************************/
@@ -2757,7 +2337,223 @@
 
 
 /***/ },
-/* 16 */
+/* 12 */
+/*!***********************************!*\
+  !*** ../~/famous/core/famous.css ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	var dispose = __webpack_require__(/*! ../~/style-loader/addStyle.js */ 25)
+		// The css code:
+		(__webpack_require__(/*! !../~/css-loader!../~/famous/core/famous.css */ 13));
+	// Hot Module Replacement
+	if(false) {
+		module.hot.accept();
+		module.hot.dispose(dispose);
+	}
+
+/***/ },
+/* 13 */
+/*!***************************************************!*\
+  !*** ../~/css-loader!../~/famous/core/famous.css ***!
+  \***************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports =
+		"/* This Source Code Form is subject to the terms of the Mozilla Public\n * License, v. 2.0. If a copy of the MPL was not distributed with this\n * file, You can obtain one at http://mozilla.org/MPL/2.0/.\n *\n * Owner: mark@famo.us\n * @license MPL 2.0\n * @copyright Famous Industries, Inc. 2015\n */\n\n.famous-root {\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    padding: 0px;\n    opacity: .999999; /* ios8 hotfix */\n    overflow: hidden;\n    -webkit-transform-style: preserve-3d;\n    transform-style: preserve-3d;\n}\n\n.famous-container, .famous-group {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    bottom: 0px;\n    right: 0px;\n    overflow: visible;\n    -webkit-transform-style: preserve-3d;\n    transform-style: preserve-3d;\n    -webkit-backface-visibility: visible;\n    backface-visibility: visible;\n    pointer-events: none;\n}\n\n.famous-group {\n    width: 0px;\n    height: 0px;\n    margin: 0px;\n    padding: 0px;\n}\n\n.famous-surface {\n    position: absolute;\n    -webkit-transform-origin: center center;\n    transform-origin: center center;\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n    -webkit-transform-style: preserve-3d;\n    transform-style: preserve-3d;\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    -webkit-tap-highlight-color: transparent;\n    pointer-events: auto;\n}\n\n.famous-container-group {\n    position: relative;\n    width: 100%;\n    height: 100%;\n}\n";
+
+/***/ },
+/* 14 */
+/*!**********************************!*\
+  !*** ../~/famous/core/Engine.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var Context = __webpack_require__(/*! ./Context */ 37);
+	var EventHandler = __webpack_require__(/*! ./EventHandler */ 38);
+	var OptionsManager = __webpack_require__(/*! ./OptionsManager */ 39);
+	var Engine = {};
+	var contexts = [];
+	var nextTickQueue = [];
+	var currentFrame = 0;
+	var nextTickFrame = 0;
+	var deferQueue = [];
+	var lastTime = Date.now();
+	var frameTime;
+	var frameTimeLimit;
+	var loopEnabled = true;
+	var eventForwarders = {};
+	var eventHandler = new EventHandler();
+	var options = {
+	    containerType: 'div',
+	    containerClass: 'famous-container',
+	    fpsCap: undefined,
+	    runLoop: true,
+	    appMode: true
+	};
+	var optionsManager = new OptionsManager(options);
+	var MAX_DEFER_FRAME_TIME = 10;
+	Engine.step = function step() {
+	    currentFrame++;
+	    nextTickFrame = currentFrame;
+	    var currentTime = Date.now();
+	    if (frameTimeLimit && currentTime - lastTime < frameTimeLimit)
+	        return;
+	    var i = 0;
+	    frameTime = currentTime - lastTime;
+	    lastTime = currentTime;
+	    eventHandler.emit('prerender');
+	    var numFunctions = nextTickQueue.length;
+	    while (numFunctions--)
+	        nextTickQueue.shift()(currentFrame);
+	    while (deferQueue.length && Date.now() - currentTime < MAX_DEFER_FRAME_TIME) {
+	        deferQueue.shift().call(this);
+	    }
+	    for (i = 0; i < contexts.length; i++)
+	        contexts[i].update();
+	    eventHandler.emit('postrender');
+	};
+	Engine.renderCycle = 0;
+	function loop() {
+	    if (options.runLoop) {
+	        Engine.renderCycle++;
+	        Engine.step();
+	        window.requestAnimationFrame(loop);
+	    } else
+	        loopEnabled = false;
+	}
+	window.requestAnimationFrame(loop);
+	function handleResize(event) {
+	    for (var i = 0; i < contexts.length; i++) {
+	        contexts[i].emit('resize');
+	    }
+	    eventHandler.emit('resize');
+	}
+	window.addEventListener('resize', handleResize, false);
+	handleResize();
+	function initialize() {
+	    window.addEventListener('touchmove', function (event) {
+	        event.preventDefault();
+	    }, true);
+	    addRootClasses();
+	}
+	var initialized = false;
+	function addRootClasses() {
+	    if (!document.body) {
+	        Engine.nextTick(addRootClasses);
+	        return;
+	    }
+	    document.body.classList.add('famous-root');
+	    document.documentElement.classList.add('famous-root');
+	}
+	Engine.pipe = function pipe(target) {
+	    if (target.subscribe instanceof Function)
+	        return target.subscribe(Engine);
+	    else
+	        return eventHandler.pipe(target);
+	};
+	Engine.unpipe = function unpipe(target) {
+	    if (target.unsubscribe instanceof Function)
+	        return target.unsubscribe(Engine);
+	    else
+	        return eventHandler.unpipe(target);
+	};
+	Engine.on = function on(type, handler) {
+	    if (!(type in eventForwarders)) {
+	        eventForwarders[type] = eventHandler.emit.bind(eventHandler, type);
+	        addEngineListener(type, eventForwarders[type]);
+	    }
+	    return eventHandler.on(type, handler);
+	};
+	function addEngineListener(type, forwarder) {
+	    if (!document.body) {
+	        Engine.nextTick(addEventListener.bind(this, type, forwarder));
+	        return;
+	    }
+	    document.body.addEventListener(type, forwarder);
+	}
+	Engine.emit = function emit(type, event) {
+	    return eventHandler.emit(type, event);
+	};
+	Engine.removeListener = function removeListener(type, handler) {
+	    return eventHandler.removeListener(type, handler);
+	};
+	Engine.getFPS = function getFPS() {
+	    return 1000 / frameTime;
+	};
+	Engine.setFPSCap = function setFPSCap(fps) {
+	    frameTimeLimit = Math.floor(1000 / fps);
+	};
+	Engine.getOptions = function getOptions(key) {
+	    return optionsManager.getOptions(key);
+	};
+	Engine.setOptions = function setOptions(options) {
+	    return optionsManager.setOptions.apply(optionsManager, arguments);
+	};
+	Engine.createContext = function createContext(el) {
+	    if (!initialized && options.appMode)
+	        Engine.nextTick(initialize);
+	    var needMountContainer = false;
+	    if (!el) {
+	        el = document.createElement(options.containerType);
+	        el.classList.add(options.containerClass);
+	        needMountContainer = true;
+	    }
+	    var context = new Context(el);
+	    Engine.registerContext(context);
+	    if (needMountContainer)
+	        mount(context, el);
+	    return context;
+	};
+	function mount(context, el) {
+	    if (!document.body) {
+	        Engine.nextTick(mount.bind(this, context, el));
+	        return;
+	    }
+	    document.body.appendChild(el);
+	    context.emit('resize');
+	}
+	Engine.registerContext = function registerContext(context) {
+	    contexts.push(context);
+	    return context;
+	};
+	Engine.getContexts = function getContexts() {
+	    return contexts;
+	};
+	Engine.deregisterContext = function deregisterContext(context) {
+	    var i = contexts.indexOf(context);
+	    if (i >= 0)
+	        contexts.splice(i, 1);
+	};
+	Engine.nextTick = function nextTick(fn) {
+	    nextTickQueue.push(fn);
+	};
+	Engine.defer = function defer(fn) {
+	    deferQueue.push(fn);
+	};
+	optionsManager.on('change', function (data) {
+	    if (data.id === 'fpsCap')
+	        Engine.setFPSCap(data.value);
+	    else if (data.id === 'runLoop') {
+	        if (!loopEnabled && data.value) {
+	            loopEnabled = true;
+	            window.requestAnimationFrame(loop);
+	        }
+	    }
+	});
+	module.exports = Engine;
+
+
+/***/ },
+/* 15 */
 /*!***********************************!*\
   !*** ../~/ismobilejs/isMobile.js ***!
   \***********************************/
@@ -2877,7 +2673,7 @@
 
 
 /***/ },
-/* 17 */
+/* 16 */
 /*!********************************!*\
   !*** ../~/famous/core/View.js ***!
   \********************************/
@@ -2890,10 +2686,10 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var EventHandler = __webpack_require__(/*! ./EventHandler */ 41);
-	var OptionsManager = __webpack_require__(/*! ./OptionsManager */ 42);
-	var RenderNode = __webpack_require__(/*! ./RenderNode */ 43);
-	var Utility = __webpack_require__(/*! ../utilities/Utility */ 44);
+	var EventHandler = __webpack_require__(/*! ./EventHandler */ 38);
+	var OptionsManager = __webpack_require__(/*! ./OptionsManager */ 39);
+	var RenderNode = __webpack_require__(/*! ./RenderNode */ 41);
+	var Utility = __webpack_require__(/*! ../utilities/Utility */ 42);
 	function View(options) {
 	    this._node = new RenderNode();
 	    this._eventInput = new EventHandler();
@@ -2928,181 +2724,7 @@
 	module.exports = View;
 
 /***/ },
-/* 18 */
-/*!*****************************************!*\
-  !*** ../~/famous/transitions/Easing.js ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var Easing = {
-	    inQuad: function (t) {
-	        return t * t;
-	    },
-	    outQuad: function (t) {
-	        return -(t -= 1) * t + 1;
-	    },
-	    inOutQuad: function (t) {
-	        if ((t /= 0.5) < 1)
-	            return 0.5 * t * t;
-	        return -0.5 * (--t * (t - 2) - 1);
-	    },
-	    inCubic: function (t) {
-	        return t * t * t;
-	    },
-	    outCubic: function (t) {
-	        return --t * t * t + 1;
-	    },
-	    inOutCubic: function (t) {
-	        if ((t /= 0.5) < 1)
-	            return 0.5 * t * t * t;
-	        return 0.5 * ((t -= 2) * t * t + 2);
-	    },
-	    inQuart: function (t) {
-	        return t * t * t * t;
-	    },
-	    outQuart: function (t) {
-	        return -(--t * t * t * t - 1);
-	    },
-	    inOutQuart: function (t) {
-	        if ((t /= 0.5) < 1)
-	            return 0.5 * t * t * t * t;
-	        return -0.5 * ((t -= 2) * t * t * t - 2);
-	    },
-	    inQuint: function (t) {
-	        return t * t * t * t * t;
-	    },
-	    outQuint: function (t) {
-	        return --t * t * t * t * t + 1;
-	    },
-	    inOutQuint: function (t) {
-	        if ((t /= 0.5) < 1)
-	            return 0.5 * t * t * t * t * t;
-	        return 0.5 * ((t -= 2) * t * t * t * t + 2);
-	    },
-	    inSine: function (t) {
-	        return -1 * Math.cos(t * (Math.PI / 2)) + 1;
-	    },
-	    outSine: function (t) {
-	        return Math.sin(t * (Math.PI / 2));
-	    },
-	    inOutSine: function (t) {
-	        return -0.5 * (Math.cos(Math.PI * t) - 1);
-	    },
-	    inExpo: function (t) {
-	        return t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
-	    },
-	    outExpo: function (t) {
-	        return t === 1 ? 1 : -Math.pow(2, -10 * t) + 1;
-	    },
-	    inOutExpo: function (t) {
-	        if (t === 0)
-	            return 0;
-	        if (t === 1)
-	            return 1;
-	        if ((t /= 0.5) < 1)
-	            return 0.5 * Math.pow(2, 10 * (t - 1));
-	        return 0.5 * (-Math.pow(2, -10 * --t) + 2);
-	    },
-	    inCirc: function (t) {
-	        return -(Math.sqrt(1 - t * t) - 1);
-	    },
-	    outCirc: function (t) {
-	        return Math.sqrt(1 - --t * t);
-	    },
-	    inOutCirc: function (t) {
-	        if ((t /= 0.5) < 1)
-	            return -0.5 * (Math.sqrt(1 - t * t) - 1);
-	        return 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1);
-	    },
-	    inElastic: function (t) {
-	        var s = 1.70158;
-	        var p = 0;
-	        var a = 1;
-	        if (t === 0)
-	            return 0;
-	        if (t === 1)
-	            return 1;
-	        if (!p)
-	            p = 0.3;
-	        s = p / (2 * Math.PI) * Math.asin(1 / a);
-	        return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t - s) * (2 * Math.PI) / p));
-	    },
-	    outElastic: function (t) {
-	        var s = 1.70158;
-	        var p = 0;
-	        var a = 1;
-	        if (t === 0)
-	            return 0;
-	        if (t === 1)
-	            return 1;
-	        if (!p)
-	            p = 0.3;
-	        s = p / (2 * Math.PI) * Math.asin(1 / a);
-	        return a * Math.pow(2, -10 * t) * Math.sin((t - s) * (2 * Math.PI) / p) + 1;
-	    },
-	    inOutElastic: function (t) {
-	        var s = 1.70158;
-	        var p = 0;
-	        var a = 1;
-	        if (t === 0)
-	            return 0;
-	        if ((t /= 0.5) === 2)
-	            return 1;
-	        if (!p)
-	            p = 0.3 * 1.5;
-	        s = p / (2 * Math.PI) * Math.asin(1 / a);
-	        if (t < 1)
-	            return -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t - s) * (2 * Math.PI) / p));
-	        return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t - s) * (2 * Math.PI) / p) * 0.5 + 1;
-	    },
-	    inBack: function (t, s) {
-	        if (s === undefined)
-	            s = 1.70158;
-	        return t * t * ((s + 1) * t - s);
-	    },
-	    outBack: function (t, s) {
-	        if (s === undefined)
-	            s = 1.70158;
-	        return --t * t * ((s + 1) * t + s) + 1;
-	    },
-	    inOutBack: function (t, s) {
-	        if (s === undefined)
-	            s = 1.70158;
-	        if ((t /= 0.5) < 1)
-	            return 0.5 * (t * t * (((s *= 1.525) + 1) * t - s));
-	        return 0.5 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2);
-	    },
-	    inBounce: function (t) {
-	        return 1 - Easing.outBounce(1 - t);
-	    },
-	    outBounce: function (t) {
-	        if (t < 1 / 2.75) {
-	            return 7.5625 * t * t;
-	        } else if (t < 2 / 2.75) {
-	            return 7.5625 * (t -= 1.5 / 2.75) * t + 0.75;
-	        } else if (t < 2.5 / 2.75) {
-	            return 7.5625 * (t -= 2.25 / 2.75) * t + 0.9375;
-	        } else {
-	            return 7.5625 * (t -= 2.625 / 2.75) * t + 0.984375;
-	        }
-	    },
-	    inOutBounce: function (t) {
-	        if (t < 0.5)
-	            return Easing.inBounce(t * 2) * 0.5;
-	        return Easing.outBounce(t * 2 - 1) * 0.5 + 0.5;
-	    }
-	};
-	module.exports = Easing;
-
-/***/ },
-/* 19 */
+/* 17 */
 /*!***********************************!*\
   !*** ../~/famous/core/Surface.js ***!
   \***********************************/
@@ -3115,7 +2737,7 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var ElementOutput = __webpack_require__(/*! ./ElementOutput */ 45);
+	var ElementOutput = __webpack_require__(/*! ./ElementOutput */ 40);
 	function Surface(options) {
 	    ElementOutput.call(this);
 	    this.options = {};
@@ -3419,4437 +3041,7 @@
 	module.exports = Surface;
 
 /***/ },
-/* 20 */
-/*!***********************************************!*\
-  !*** ../~/famous-flex/src/widgets/styles.css ***!
-  \***********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	var dispose = __webpack_require__(/*! ../~/style-loader/addStyle.js */ 29)
-		// The css code:
-		(__webpack_require__(/*! !../~/css-loader!../~/famous-flex/src/widgets/styles.css */ 21));
-	// Hot Module Replacement
-	if(false) {
-		module.hot.accept();
-		module.hot.dispose(dispose);
-	}
-
-/***/ },
-/* 21 */
-/*!***************************************************************!*\
-  !*** ../~/css-loader!../~/famous-flex/src/widgets/styles.css ***!
-  \***************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports =
-		"/**\n * This Source Code is licensed under the MIT license. If a copy of the\n * MIT-license was not distributed with this file, You can obtain one at:\n * http://opensource.org/licenses/mit-license.html.\n *\n * @author: Hein Rutjes (IjzerenHein)\n * @license MIT\n * @copyright Gloey Apps, 2015\n */\n\n/* datepicker */\n.ff-datepicker.item {\n  text-align: center;\n}\n.ff-datepicker.item > div {\n  /* align content vertically */\n  position: relative;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  -moz-transform: translateY(-50%);\n  -o-transform: translateY(-50%);\n  transform: translateY(-50%);\n}\n.ff-datepicker.top, .ff-datepicker.middle, .ff-datepicker.bottom {\n  pointer-events: none;\n}\n\n\n/* tabbar common */\n.ff-tabbar.item {\n  text-align: center;\n  white-space: nowrap;\n  color: #333333;\n  cursor: pointer;\n}\n.ff-tabbar.item > div {\n  /* align content vertically */\n  position: relative;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  -moz-transform: translateY(-50%);\n  -o-transform: translateY(-50%);\n  transform: translateY(-50%);\n}\n.ff-tabbar.selectedItemOverlay {\n  border-bottom: 6px solid #1185c3;\n}\n";
-
-/***/ },
-/* 22 */
-/*!***************************************************!*\
-  !*** ../~/famous-flex/src/AnimationController.js ***!
-  \***************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2015
-	 */
-	
-	/**
-	 * Animating between famo.us views in awesome ways.
-	 *
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var LayoutController = __webpack_require__(/*! ./LayoutController */ 24);
-	    var Transform = __webpack_require__(/*! famous/core/Transform */ 28);
-	    var Modifier = __webpack_require__(/*! famous/core/Modifier */ 46);
-	    var StateModifier = __webpack_require__(/*! famous/modifiers/StateModifier */ 47);
-	    var RenderNode = __webpack_require__(/*! famous/core/RenderNode */ 43);
-	    var Timer = __webpack_require__(/*! famous/utilities/Timer */ 48);
-	    var Easing = __webpack_require__(/*! famous/transitions/Easing */ 18);
-	
-	    /**
-	     * @class
-	     * @param {Object} [options] Configurable options.
-	     * @param {Object} [options.transition] Transition options (default: `{duration: 400, curve: Easing.inOutQuad}`).
-	     * @param {Function} [options.animation] Animation function (default: `AnimationController.Animation.Slide.Left`).
-	     * @param {Number} [options.zIndexOffset] Optional z-index difference between the hiding & showing renderable (default: 0).
-	     * @param {Object} [options.show] Show specific options.
-	     * @param {Object} [options.show.transition] Show specific transition options.
-	     * @param {Function} [options.show.animation] Show specific animation function.
-	     * @param {Object} [options.hide] Hide specific options.
-	     * @param {Object} [options.hide.transition] Hide specific transition options.
-	     * @param {Function} [options.hide.animation] Hide specific animation function.
-	     * @param {Object} [options.transfer] Transfer options.
-	     * @param {Object} [options.transfer.transition] Transfer specific transition options.
-	     * @param {Number} [options.transfer.zIndex] Z-index the tranferables are moved on top while animating (default: 10).
-	     * @param {Bool} [options.transfer.fastResize] When enabled, scales the renderable i.s.o. resizing when doing the transfer animation (default: true).
-	     * @param {Array} [options.transfer.items] Ids (key/value) pairs (source-id/target-id) of the renderables that should be transferred.
-	     * @alias module:AnimationController
-	     */
-	    function AnimationController(options) {
-	        View.apply(this, arguments);
-	
-	        _createLayout.call(this);
-	
-	        if (options) {
-	            this.setOptions(options);
-	        }
-	    }
-	    AnimationController.prototype = Object.create(View.prototype);
-	    AnimationController.prototype.constructor = AnimationController;
-	
-	    /**
-	     * Out of the box supported animations.
-	     */
-	    AnimationController.Animation = {
-	        Slide: {
-	            Left: function(show, size) {
-	                return {transform: Transform.translate(show ? size[0] : -size[0], 0, 0)};
-	            },
-	            Right: function(show, size) {
-	                return {transform: Transform.translate(show ? -size[0] : size[0], 0, 0)};
-	            },
-	            Up: function(show, size) {
-	                return {transform: Transform.translate(0, show ? size[1] : -size[1], 0)};
-	            },
-	            Down: function(show, size) {
-	                return {transform: Transform.translate(0, show ? -size[1] : size[1], 0)};
-	            }
-	        },
-	        Fade: function(show, size) {
-	            return {
-	                opacity: (this && (this.opacity !== undefined)) ? this.opacity : 0
-	            };
-	        },
-	        Zoom: function(show, size) {
-	            var scale = (this && (this.scale !== undefined)) ? this.scale : 0.5;
-	            return {
-	                transform: Transform.scale(scale, scale, 1),
-	                align: [0.5, 0.5],
-	                origin: [0.5, 0.5]
-	            };
-	        },
-	        FadedZoom: function(show, size) {
-	            var scale = show ? ((this && (this.showScale !== undefined)) ? this.showScale : 0.9) : ((this && (this.hideScale !== undefined)) ? this.hideScale : 1.1);
-	            return {
-	                opacity: (this && (this.opacity !== undefined)) ? this.opacity : 0,
-	                transform: Transform.scale(scale, scale, 1),
-	                align: [0.5, 0.5],
-	                origin: [0.5, 0.5]
-	            };
-	        }
-	        /*,
-	        Flip: {
-	            Left: function(show, size) {
-	                return {transform: Transform.rotate(0, show ? Math.PI : -Math.PI, 0)};
-	            },
-	            Right: function(show, size) {
-	                return {transform: Transform.rotate(0, show ? -Math.PI : Math.PI, 0)};
-	            },
-	            Up: function(show, size) {
-	                return {transform: Transform.rotate(show ? Math.PI : -Math.PI, 0, 0)};
-	            },
-	            Down: function(show, size) {
-	                return {transform: Transform.rotate(show ? -Math.PI : Math.PI, 0, 0)};
-	            }
-	        }*/
-	    };
-	
-	    AnimationController.DEFAULT_OPTIONS = {
-	        transition: {duration: 400, curve: Easing.inOutQuad},
-	        animation: AnimationController.Animation.Fade,
-	        show: {
-	            // transition,
-	            // animation
-	        },
-	        hide: {
-	            // transition,
-	            // animation
-	        },
-	        transfer: {
-	            fastResize: true,
-	            zIndex: 10 // z-index offset the items are translated while transferring
-	            // transition,
-	            // items: {
-	            //   'image': 'image'
-	            //   'image': ['image', 'image2']
-	            // }
-	        },
-	        zIndexOffset: 0
-	    };
-	
-	    var ItemState = {
-	        NONE: 0,
-	        HIDE: 1,
-	        HIDING: 2,
-	        SHOW: 3,
-	        SHOWING: 4,
-	        VISIBLE: 5,
-	        QUEUED: 6
-	    };
-	
-	    /**
-	     * Stacks the renderables on top of each other
-	     * with a z-translation of this.options.zIndexOffset.
-	     */
-	    function ViewStackLayout(context, options) {
-	        var set = {
-	            size: context.size,
-	            translate: [0, 0, 0]
-	        };
-	        var views = context.get('views');
-	        var transferables = context.get('transferables');
-	        for (var i = 0; i < Math.min(views.length, 2); i++) {
-	            var item = this._viewStack[i];
-	            switch (item.state) {
-	                case ItemState.HIDE:
-	                case ItemState.HIDING:
-	                case ItemState.VISIBLE:
-	                case ItemState.SHOW:
-	                case ItemState.SHOWING:
-	
-	                    // Layout view
-	                    var view = views[i];
-	                    context.set(view, set);
-	
-	                    // Layout any transferables
-	                    for (var j = 0; j < transferables.length; j++) {
-	                        for (var k = 0; k < item.transferables.length; k++) {
-	                            if (transferables[j].renderNode === item.transferables[k].renderNode) {
-	                                context.set(transferables[j], {
-	                                    translate: [0, 0, set.translate[2]],
-	                                    size: [context.size[0], context.size[1]]
-	                                });
-	                            }
-	                        }
-	                    }
-	
-	                    // Increase z-index for next view
-	                    set.translate[2] += options.zIndexOffset;
-	                    break;
-	            }
-	        }
-	    }
-	
-	    /**
-	     * Creates the view-stack layout.
-	     */
-	    function _createLayout() {
-	        this._renderables = {
-	            views: [],
-	            transferables: []
-	        };
-	        this._viewStack = [];
-	        this.layout = new LayoutController({
-	            layout: ViewStackLayout.bind(this),
-	            layoutOptions: this.options,
-	            dataSource: this._renderables
-	        });
-	        this.add(this.layout);
-	        this.layout.on('layoutend', _startAnimations.bind(this));
-	    }
-	
-	    /**
-	     * Gets the spec from a spec.
-	     */
-	    function _getViewSpec(item, view, id, callback) {
-	        if (!item.view) {
-	            return;
-	        }
-	        var spec = view.getSpec(id);
-	        if (spec) {
-	            callback(spec);
-	        }
-	        else {
-	            Timer.after(_getViewSpec.bind(this, item, view, id, callback), 1);
-	        }
-	    }
-	
-	    /**
-	     * Gets the transferable delegate for the given id.
-	     */
-	    function _getTransferable(item, view, id) {
-	        // 1. If view supports getTransferable, use that
-	        if (view.getTransferable) {
-	            return view.getTransferable(id);
-	        }
-	        // 2. If view is derived from layoutcontroller, use that
-	        if (view.getSpec && view.get && view.replace) {
-	            if (view.get(id) !== undefined) {
-	                return {
-	                    get: function() {
-	                        return view.get(id);
-	                    },
-	                    show: function(renderable) {
-	                        view.replace(id, renderable);
-	                    },
-	                    getSpec: _getViewSpec.bind(this, item, view, id)
-	                };
-	            }
-	        }
-	        // 3. If view has an embedded layout, use that as fallback
-	        if (view.layout) {
-	            return _getTransferable.call(this, item, view.layout, id);
-	        }
-	    }
-	
-	    /**
-	     * Begins visual transfer or renderables from the previous item
-	     * to the new item.
-	     */
-	    function _startTransferableAnimations(item, prevItem) {
-	        for (var sourceId in item.options.transfer.items) {
-	            _startTransferableAnimation.call(this, item, prevItem, sourceId);
-	        }
-	    }
-	    function _startTransferableAnimation(item, prevItem, sourceId) {
-	        var target = item.options.transfer.items[sourceId];
-	        var transferable = {};
-	        transferable.source = _getTransferable.call(this, prevItem, prevItem.view, sourceId);
-	        if (Array.isArray(target)) {
-	            for (var i = 0; i < target.length; i++) {
-	                transferable.target = _getTransferable.call(this, item, item.view, target[i]);
-	                if (transferable.target) {
-	                    break;
-	                }
-	            }
-	        }
-	        else {
-	            transferable.target = _getTransferable.call(this, item, item.view, target);
-	        }
-	        if (transferable.source && transferable.target) {
-	            transferable.source.getSpec(function(sourceSpec) {
-	
-	                // Replace source & target renderables in the views
-	                // source: dummy-node
-	                // target: target-renderable with opacity: 0.
-	                transferable.originalSource = transferable.source.get();
-	                transferable.source.show(new RenderNode(new Modifier(sourceSpec)));
-	                transferable.originalTarget = transferable.target.get();
-	                var targetNode = new RenderNode(new Modifier({opacity: 0}));
-	                targetNode.add(transferable.originalTarget);
-	                transferable.target.show(targetNode);
-	
-	                // Take ownership of the source renderable.
-	                // This renderable will be layouted by the layout-function
-	                var zIndexMod = new Modifier({
-	                    transform: Transform.translate(0, 0, item.options.transfer.zIndex)
-	                });
-	                var mod = new StateModifier(sourceSpec);
-	                transferable.renderNode = new RenderNode(zIndexMod);
-	                transferable.renderNode.add(mod).add(transferable.originalSource);
-	                item.transferables.push(transferable);
-	                this._renderables.transferables.push(transferable.renderNode);
-	                this.layout.reflowLayout();
-	
-	                // Wait for the target spec to have settled. This may take a couple render
-	                // cycles if for instance, this involves a true-size renderable or the
-	                // renderable is affected by other true-size renderables around itsself.
-	                Timer.after(function() {
-	                    transferable.target.getSpec(function(targetSpec, transition) {
-	                        mod.halt();
-	                        if ((sourceSpec.opacity !== undefined) || (targetSpec.opacity !== undefined)) {
-	                            mod.setOpacity((targetSpec.opacity === undefined) ? 1 : targetSpec.opacity, transition|| item.options.transfer.transition);
-	                        }
-	                        if (item.options.transfer.fastResize) {
-	                            if (sourceSpec.transform || targetSpec.transform || sourceSpec.size || targetSpec.size) {
-	                                var transform = targetSpec.transform || Transform.identity;
-	                                if (sourceSpec.size && targetSpec.size) {
-	                                    transform = Transform.multiply(transform, Transform.scale(targetSpec.size[0] / sourceSpec.size[0], targetSpec.size[1] / sourceSpec.size[1], 1));
-	                                }
-	                                mod.setTransform(transform, transition || item.options.transfer.transition);
-	                            }
-	                        }
-	                        else {
-	                            if (sourceSpec.transform || targetSpec.transform) {
-	                                mod.setTransform(targetSpec.transform || Transform.identity, transition || item.options.transfer.transition);
-	                            }
-	                            if (sourceSpec.size || targetSpec.size) {
-	                                mod.setSize(targetSpec.size || sourceSpec.size, transition || item.options.transfer.transition);
-	                            }
-	                        }
-	                    }, true);
-	                }, 1);
-	            }.bind(this), false);
-	        }
-	    }
-	
-	    /**
-	     * Called whenever the view has been shown and the
-	     * transferable animations should be ended. This returns
-	     * the renderables to their original views.
-	     */
-	    function _endTransferableAnimations(item) {
-	        for (var j = 0; j < item.transferables.length; j++) {
-	            var transferable = item.transferables[j];
-	            for (var i = 0; i < this._renderables.transferables.length; i++) {
-	                if (this._renderables.transferables[i] === transferable.renderNode) {
-	                    this._renderables.transferables.splice(i, 1);
-	                    break;
-	                }
-	            }
-	            transferable.source.show(transferable.originalSource);
-	            transferable.target.show(transferable.originalTarget);
-	        }
-	        item.transferables = [];
-	        this.layout.reflowLayout();
-	    }
-	
-	    /**
-	     * Starts a show or hide animation.
-	     */
-	    function _startAnimations(event) {
-	        var prevItem;
-	        for (var i = 0; i < this._viewStack.length; i++) {
-	            var item = this._viewStack[i];
-	            switch (item.state) {
-	                case ItemState.HIDE:
-	                    item.state = ItemState.HIDING;
-	                    _startAnimation.call(this, item, prevItem, event.size, false);
-	                    _updateState.call(this);
-	                    break;
-	                case ItemState.SHOW:
-	                    item.state = ItemState.SHOWING;
-	                    _startAnimation.call(this, item, prevItem, event.size, true);
-	                    _updateState.call(this);
-	                    break;
-	            }
-	            prevItem = item;
-	        }
-	    }
-	
-	    /**
-	     * Starts the view animation.
-	     */
-	    function _startAnimation(item, prevItem, size, show) {
-	        var animation = show ? item.options.show.animation : item.options.hide.animation;
-	        var spec = animation ? animation.call(undefined, show, size) : {};
-	        item.mod.halt();
-	        var callback;
-	        if (show) {
-	            callback = item.showCallback;
-	            if (spec.transform) {
-	                item.mod.setTransform(spec.transform);
-	                item.mod.setTransform(Transform.identity, item.options.show.transition, callback);
-	                callback = undefined;
-	            }
-	            if (spec.opacity !== undefined) {
-	                item.mod.setOpacity(spec.opacity);
-	                item.mod.setOpacity(1, item.options.show.transition, callback);
-	                callback = undefined;
-	            }
-	            if (spec.align) {
-	                item.mod.setAlign(spec.align);
-	            }
-	            if (spec.origin) {
-	                item.mod.setOrigin(spec.origin);
-	            }
-	            if (prevItem) {
-	                _startTransferableAnimations.call(this, item, prevItem);
-	            }
-	            if (callback) {
-	                callback();
-	            }
-	        }
-	        else {
-	            callback = item.hideCallback;
-	            if (spec.transform) {
-	                item.mod.setTransform(spec.transform, item.options.hide.transition, callback);
-	                callback = undefined;
-	            }
-	            if (spec.opacity !== undefined) {
-	                item.mod.setOpacity(spec.opacity, item.options.hide.transition, callback);
-	                callback = undefined;
-	            }
-	            if (callback) {
-	                callback();
-	            }
-	        }
-	    }
-	
-	    /**
-	     * Sets the options for an item.
-	     */
-	    function _setItemOptions(item, options) {
-	        item.options = {
-	            show: {
-	                transition: this.options.show.transition || this.options.transition,
-	                animation: this.options.show.animation || this.options.animation
-	            },
-	            hide: {
-	                transition: this.options.hide.transition || this.options.transition,
-	                animation: this.options.hide.animation || this.options.animation
-	            },
-	            transfer: {
-	                transition: this.options.transfer.transition || this.options.transition,
-	                items: this.options.transfer.items || {},
-	                zIndex: this.options.transfer.zIndex,
-	                fastResize: this.options.transfer.fastResize
-	            }
-	        };
-	        if (options) {
-	            item.options.show.transition = (options.show ? options.show.transition : undefined) || options.transition || item.options.show.transition;
-	            if (options && options.show && (options.show.animation !== undefined)) {
-	                item.options.show.animation = options.show.animation;
-	            }
-	            else if (options && (options.animation !== undefined)) {
-	                item.options.show.animation = options.animation;
-	            }
-	            item.options.transfer.transition = (options.transfer ? options.transfer.transition : undefined) || options.transition || item.options.transfer.transition;
-	            item.options.transfer.items = (options.transfer ? options.transfer.items : undefined) || item.options.transfer.items;
-	            item.options.transfer.zIndex = (options.transfer && (options.transfer.zIndex !== undefined)) ? options.transfer.zIndex : item.options.transfer.zIndex;
-	            item.options.transfer.fastResize = (options.transfer && (options.transfer.fastResize !== undefined)) ? options.transfer.fastResize : item.options.transfer.fastResize;
-	        }
-	    }
-	
-	    /**
-	     * Updates the state.
-	     */
-	    function _updateState() {
-	        var prevItem;
-	        var invalidated = false;
-	        for (var i = 0; i < Math.min(this._viewStack.length, 2); i++) {
-	            var item = this._viewStack[i];
-	            if (item.state === ItemState.QUEUED) {
-	                if (!prevItem ||
-	                    (prevItem.state === ItemState.VISIBLE) ||
-	                    (prevItem.state === ItemState.HIDING)) {
-	                    if (prevItem && (prevItem.state === ItemState.VISIBLE)) {
-	                        prevItem.state = ItemState.HIDE;
-	                    }
-	                    item.state = ItemState.SHOW;
-	                    invalidated = true;
-	                }
-	                break;
-	            }
-	            else if ((item.state === ItemState.VISIBLE) && item.hide) {
-	                item.state = ItemState.HIDE;
-	            }
-	            if ((item.state === ItemState.SHOW) || (item.state === ItemState.HIDE)) {
-	                this.layout.reflowLayout();
-	            }
-	            prevItem = item;
-	        }
-	        if (invalidated) {
-	            _updateState.call(this);
-	            this.layout.reflowLayout();
-	        }
-	    }
-	
-	    /**
-	     * Shows a renderable using an animation and hides the old renderable.
-	     *
-	     * When multiple show operations are executed, they are queued and
-	     * shown in that sequence. Use `.halt` to cancel any pending show
-	     * operations from the queue.
-	     *
-	     * @param {Renderable} renderable View or surface to show
-	     * @param {Object} [options] Options.
-	     * @param {Object} [options.transition] Transition options for both show & hide.
-	     * @param {Function} [options.animation] Animation function for both show & hide.
-	     * @param {Object} [options.show] Show specific options.
-	     * @param {Object} [options.show.transition] Show specific transition options.
-	     * @param {Function} [options.show.animation] Show specific animation function.
-	     * @param {Object} [options.hide] Hide specific options.
-	     * @param {Object} [options.hide.transition] Hide specific transition options.
-	     * @param {Function} [options.hide.animation] Hide specific animation function.
-	     * @param {Object} [options.transfer] Transfer options.
-	     * @param {Object} [options.transfer.transition] Transfer specific transition options.
-	     * @param {Number} [options.transfer.zIndex] Z-index the tranferables are moved on top while animating.
-	     * @param {Array} [options.transfer.items] Ids (key/value) pairs (source-id/target-id) of the renderables that should be transferred.
-	     * @param {Function} [callback] Function that is called on completion.
-	     * @return {AnimationController} this
-	     */
-	    AnimationController.prototype.show = function(renderable, options, callback) {
-	        if (!renderable) {
-	            return this.hide(options, callback);
-	        }
-	        var item = this._viewStack.length ? this._viewStack[this._viewStack.length - 1] : undefined;
-	        if (item && (item.view === renderable)) {
-	            item.hide = false;
-	            if (item.state === ItemState.HIDE) {
-	                item.state = ItemState.QUEUED;
-	                _setItemOptions.call(this, item, options);
-	                _updateState.call(this);
-	            }
-	            return this;
-	        }
-	        if (item && (item.state !== ItemState.HIDING) && options) {
-	            item.options.hide.transition = (options.hide ? options.hide.transition : undefined) || options.transition || item.options.hide.transition;
-	            if (options && options.hide && (options.hide.animation !== undefined)) {
-	                item.options.hide.animation = options.hide.animation;
-	            }
-	            else if (options && (options.animation !== undefined)) {
-	                item.options.hide.animation = options.animation;
-	            }
-	        }
-	
-	        item = {
-	            view: renderable,
-	            mod: new StateModifier(),
-	            state: ItemState.QUEUED,
-	            callback: callback,
-	            transferables: [] // renderables currently being transfered
-	        };
-	        item.node = new RenderNode(item.mod);
-	        item.node.add(renderable);
-	        _setItemOptions.call(this, item, options);
-	        item.showCallback = function() {
-	            item.state = ItemState.VISIBLE;
-	            _updateState.call(this);
-	            _endTransferableAnimations.call(this, item);
-	            if (callback) {
-	                callback();
-	            }
-	        }.bind(this);
-	        item.hideCallback = function() {
-	            var index = this._viewStack.indexOf(item);
-	            this._renderables.views.splice(index, 1);
-	            this._viewStack.splice(index, 1);
-	            item.view = undefined;
-	            _updateState.call(this);
-	            this.layout.reflowLayout();
-	        }.bind(this);
-	        this._renderables.views.push(item.node);
-	        this._viewStack.push(item);
-	        _updateState.call(this);
-	        return this;
-	    };
-	
-	    /**
-	     * Hides the current view with an animation.
-	     *
-	     * @param {Object} [options] Hide options
-	     * @param {Object} [options.transition] Hide transition options.
-	     * @param {Function} [options.animation] Hide animation function.
-	     * @param {Function} [callback] Function that is called an completion.
-	     * @return {AnimationController} this
-	     */
-	    AnimationController.prototype.hide = function(options, callback) {
-	        var item = this._viewStack.length ? this._viewStack[this._viewStack.length - 1] : undefined;
-	        if (!item || (item.state === ItemState.HIDING)) {
-	            return this;
-	        }
-	        item.hide = true;
-	        if (options) {
-	            item.options.hide.transition = (options.hide ? options.hide.transition : undefined) || options.transition || item.options.hide.transition;
-	            if (options && options.hide && (options.hide.animation !== undefined)) {
-	                item.options.hide.animation = options.hide.animation;
-	            }
-	            else if (options && (options.animation !== undefined)) {
-	                item.options.hide.animation = options.animation;
-	            }
-	        }
-	        item.hideCallback = function() {
-	            var index = this._viewStack.indexOf(item);
-	            this._renderables.views.splice(index, 1);
-	            this._viewStack.splice(index, 1);
-	            item.view = undefined;
-	            _updateState.call(this);
-	            this.layout.reflowLayout();
-	            if (callback) {
-	                callback();
-	            }
-	        }.bind(this);
-	        _updateState.call(this);
-	        return this;
-	    };
-	
-	    /**
-	     * Clears the queue of any pending show animations.
-	     *
-	     * @return {AnimationController} this
-	     */
-	    AnimationController.prototype.halt = function() {
-	        for (var i = 0; i < this._viewStack.length; i++) {
-	            var item = this._viewStack[this._viewStack.length - 1];
-	            if ((item.state === ItemState.QUEUED) || (item.state === ItemState.SHOW)) {
-	                this._renderables.views.splice(this._viewStack.length - 1, 1);
-	                this._viewStack.splice(this._viewStack.length - 1, 1);
-	                item.view = undefined;
-	            }
-	            else {
-	                break;
-	            }
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Gets the currently visible or being shown renderable.
-	     *
-	     * @return {Renderable} currently visible view/surface
-	     */
-	    AnimationController.prototype.get = function() {
-	        for (var i = 0; i < this._viewStack.length; i++) {
-	            var item = this._viewStack[i];
-	            if ((item.state === ItemState.VISIBLE) ||
-	                (item.state === ItemState.SHOW) ||
-	                (item.state === ItemState.SHOWING)) {
-	                return item.view;
-	            }
-	        }
-	        return undefined;
-	    };
-	
-	    module.exports = AnimationController;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 23 */
-/*!**********************************************!*\
-  !*** ../~/famous-flex/src/widgets/TabBar.js ***!
-  \**********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2015
-	 */
-	
-	/**
-	 * TabBar widget for famo.us.
-	 *
-	 * ```javascript
-	 * var TabBar = require('famous-flex/widgets/TabBar');
-	 *
-	 * var tabBar = new TabBar({
-	 *   classes: ['black'],
-	 *   createRenderables: {
-	 *     background: true,
-	 *     selectedItemOverlay: true,
-	 *     spacers: true
-	 *   }
-	 * });
-	 * tabBar.setItems([
-	 *   'one',
-	 *   'two',
-	 *   'three'
-	 * ]);
-	 * this.add(tabBar); // add to the render-tree
-	 *
-	 * tabBar.on('tabchange', function(event) {
-	 *   console.log('new tab selected: ' + event.index);
-	 * });
-	 * ```
-	 *
-	 * The surfaces that are created, use the the css-classes `ff-widget` and `ff-tabbar`.
-	 * You can add additional css-classes by using the `classes` option in the constructor.
-	 *
-	 * Example css styles for a black theme:
-	 *
-	 * ```css
-	 * .ff-tabbar.background.black {
-	 *   background-color: #101010;
-	 * }
-	 * .ff-tabbar.item.black {
-	 *   color: #f7f3f7;
-	 * }
-	 * .ff-tabbar.selectedItemOverlay.black {
-	 *   border-bottom: 6px solid #30b6e7;
-	 * }
-	 * .ff-tabbar.spacer.black:after {
-	 *   content: "";
-	 *   background-color: #333333;
-	 *   width: 100%;
-	 *   top: 10px;
-	 *   bottom: 10px;
-	 *   position: absolute;
-	 * }
-	 * ```
-	 *
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
-	    var View = __webpack_require__(/*! famous/core/View */ 17);
-	    var LayoutController = __webpack_require__(/*! ../LayoutController */ 24);
-	    var TabBarLayout = __webpack_require__(/*! ../layouts/TabBarLayout */ 49);
-	
-	    /**
-	     * @class
-	     * @extends View
-	     * @param {Object} options Configurable options.
-	     * @param {Object} [options.tabBarLayout] Layout-options that are passed to the TabBarLayout.
-	     * @param {Object} [options.layoutController] Options that are passed to the underlying layout-controller.
-	     * @param {Array.String} [options.classes] Css-classes that are added to the surfaces that are created.
-	     * @param {Object} [options.createRenderables] Options that specify which renderables should be created.
-	     * @alias module:TabBar
-	     */
-	    function TabBar(options) {
-	        View.apply(this, arguments);
-	
-	        // init
-	        this._selectedItemIndex = -1;
-	        options = options || {};
-	        this.classes = options.classes ? this.classes.concat(options.classes) : this.classes;
-	
-	        // create TabBar layout
-	        this.layout = new LayoutController(this.options.layoutController);
-	        this.add(this.layout);
-	        this.layout.pipe(this._eventOutput);
-	
-	        // create initial renderables
-	        this._renderables = {
-	            items: [],
-	            spacers: [],
-	            background: _createRenderable.call(this, 'background'),
-	            selectedItemOverlay: _createRenderable.call(this, 'selectedItemOverlay')
-	        };
-	
-	        this.setOptions(this.options);
-	    }
-	    TabBar.prototype = Object.create(View.prototype);
-	    TabBar.prototype.constructor = TabBar;
-	    TabBar.prototype.classes = ['ff-widget', 'ff-tabbar'];
-	
-	    TabBar.DEFAULT_OPTIONS = {
-	        tabBarLayout: {
-	            margins: [0, 0, 0, 0],
-	            spacing: 0
-	        },
-	        createRenderables: {
-	            item: true,
-	            background: false,
-	            selectedItemOverlay: false,
-	            spacer: false
-	        },
-	        layoutController: {
-	            autoPipeEvents: true,
-	            layout: TabBarLayout,
-	            flow: true,
-	            flowOptions: {
-	                reflowOnResize: false,
-	                spring: {
-	                    dampingRatio: 0.8,
-	                    period: 300
-	                }
-	            }
-	        }
-	    };
-	
-	    /**
-	     * Helper function that is called whenever a new item is selected
-	     */
-	    function _setSelectedItem(index) {
-	        if (index !== this._selectedItemIndex) {
-	            var oldIndex = this._selectedItemIndex;
-	            this._selectedItemIndex = index;
-	            this.layout.setLayoutOptions({
-	                selectedItemIndex: index
-	            });
-	            if ((oldIndex >= 0) && this._renderables.items[oldIndex].removeClass){
-	                this._renderables.items[oldIndex].removeClass('selected');
-	            }
-	            if (this._renderables.items[index].addClass) {
-	                this._renderables.items[index].addClass('selected');
-	            }
-	            if (oldIndex >= 0) {
-	                this._eventOutput.emit('tabchange', {
-	                    target: this,
-	                    index: index,
-	                    oldIndex: oldIndex,
-	                    item: this._renderables.items[index],
-	                    oldItem: ((oldIndex >= 0) && (oldIndex < this._renderables.items.length)) ? this._renderables.items[oldIndex] : undefined
-	                });
-	            }
-	        }
-	    }
-	
-	    /**
-	     * Creates a new renderable for the given renderable-id.
-	     *
-	     */
-	    function _createRenderable (id, data) {
-	        var option = this.options.createRenderables[id];
-	        if (option instanceof Function) {
-	            return option.call(this, id, data);
-	        }
-	        else if (!option) {
-	            return undefined;
-	        }
-	        if ((data !== undefined) && (data instanceof Object)) {
-	            return data;
-	        }
-	        var surface = new Surface({
-	            classes: this.classes,
-	            content: data ? ('<div>' + data + '</div>') : undefined
-	        });
-	        surface.addClass(id);
-	        if (id === 'item') {
-	            if (this.options.tabBarLayout && this.options.tabBarLayout.itemSize && (this.options.tabBarLayout.itemSize === true)) {
-	                surface.setSize(this.layout.getDirection() ? [undefined, true] : [true, undefined]);
-	            }
-	        }
-	        return surface;
-	    }
-	
-	    /**
-	     * Patches the TabBar instance's options with the passed-in ones.
-	     *
-	     * @param {Object} options Configurable options.
-	     * @param {Object} [options.tabBarLayout] Layout-options that are passed to the TabBarLayout.
-	     * @param {Object} [options.layoutController] Options that are passed to the underlying layout-controller.
-	     * @return {TabBar} this
-	     */
-	    TabBar.prototype.setOptions = function(options) {
-	        View.prototype.setOptions.call(this, options);
-	        if (!this.layout) {
-	            return this;
-	        }
-	        if (options.tabBarLayout !== undefined) {
-	            this.layout.setLayoutOptions(options.tabBarLayout);
-	        }
-	        if (options.layoutController) {
-	            this.layout.setOptions(options.layoutController);
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Sets the items for the tab-bar.
-	     *
-	     * Example 1:
-	     *
-	     * ```javascript
-	     * var tabBar = new TabBar();
-	     * tabBar.setItems([
-	     *   'one',
-	     *   'two',
-	     *   'three'
-	     * ]);
-	     *```
-	     *
-	     * Example using Ionic icons:
-	     *
-	     * ```javascript
-	     * var tabBar = new TabBar();
-	     * tabBar.setItems([
-	     *   '<div class="icon ion-flag"></div>Flag',
-	     *   '<div class="icon ion-map"></div>Map',
-	     *   '<div class="icon ion-gear-a"></div>Settings'
-	     * ]);
-	     *```
-	     *
-	     * CSS:
-	     *
-	     * ```css
-	     * .ff-tabbar.item {
-	     *   font-size: 12px;
-	     * }
-	     * .ff-tabbar.item .icon {
-	     *   font-size: 24px;
-	     * }
-	     * ```
-	     *
-	     * @param {Array} items Array of tab-item renderables.
-	     * @return {TabBar} this
-	     */
-	    TabBar.prototype.setItems = function(items) {
-	        var currentIndex = this._selectedItemIndex;
-	        this._selectedItemIndex = -1;
-	        this._renderables.items = [];
-	        this._renderables.spacers = [];
-	        if (items) {
-	            for (var i = 0; i < items.length; i++) {
-	                var item = _createRenderable.call(this, 'item', items[i]);
-	                if (item.on) {
-	                    item.on('click', _setSelectedItem.bind(this, i));
-	                }
-	                this._renderables.items.push(item);
-	                if ((i < (items.length - 1))) {
-	                    var spacer = _createRenderable.call(this, 'spacer', ' ');
-	                    if (spacer) {
-	                        this._renderables.spacers.push(spacer);
-	                    }
-	                }
-	            }
-	        }
-	        this.layout.setDataSource(this._renderables);
-	        if (this._renderables.items.length) {
-	            _setSelectedItem.call(this, Math.max(Math.min(currentIndex, this._renderables.items.length - 1), 0));
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Get the tab-item renderables for the tab-bar.
-	     *
-	     * @return {Array} tab-item renderables
-	     */
-	    TabBar.prototype.getItems = function() {
-	        return this._renderables.items;
-	    };
-	
-	    /**
-	     * Get the spec (size, transform, etc..) of the given tab-item.
-	     *
-	     * @param {Number} index Index of the tab-item.
-	     * @return {Spec} item spec
-	     */
-	    TabBar.prototype.getItemSpec = function(index, normalize) {
-	        return this.layout.getSpec(this._renderables.items[index], normalize);
-	    };
-	
-	    /**
-	     * Sets the index of the selected tab.
-	     *
-	     * @param {Number} index selected index.
-	     * @return {TabBar} this
-	     */
-	    TabBar.prototype.setSelectedItemIndex = function(index) {
-	        _setSelectedItem.call(this, index);
-	        return this;
-	    };
-	
-	    /**
-	     * Get the index of the selected tab-item.
-	     *
-	     * @return {Number} selected index
-	     */
-	    TabBar.prototype.getSelectedItemIndex = function() {
-	        return this._selectedItemIndex;
-	    };
-	
-	    /**
-	     * Get the size of the widget.
-	     *
-	     * @return {Array} size.
-	     */
-	    TabBar.prototype.getSize = function() {
-	        return this.options.size || (this.layout ? this.layout.getSize() : View.prototype.getSize.call(this));
-	    };
-	
-	    module.exports = TabBar;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 24 */
-/*!************************************************!*\
-  !*** ../~/famous-flex/src/LayoutController.js ***!
-  \************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2014 - 2015
-	 */
-	
-	/*global console*/
-	/*eslint no-console: 0*/
-	
-	/**
-	 * LayoutController lays out renderables according to a layout-
-	 * function and a data-source.
-	 *
-	 * Events:
-	 *
-	 * |event      |description|
-	 * |-----------|-----------|
-	 * |layoutstart|Emitted before the layout function is executed.|
-	 * |layoutend  |Emitted after the layout function has been executed.|
-	 * |reflow     |Emitted after one or more renderables have been changed.|
-	 *
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var Utility = __webpack_require__(/*! famous/utilities/Utility */ 44);
-	    var Entity = __webpack_require__(/*! famous/core/Entity */ 50);
-	    var ViewSequence = __webpack_require__(/*! famous/core/ViewSequence */ 51);
-	    var OptionsManager = __webpack_require__(/*! famous/core/OptionsManager */ 42);
-	    var EventHandler = __webpack_require__(/*! famous/core/EventHandler */ 41);
-	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 52);
-	    var LayoutNodeManager = __webpack_require__(/*! ./LayoutNodeManager */ 53);
-	    var LayoutNode = __webpack_require__(/*! ./LayoutNode */ 54);
-	    var FlowLayoutNode = __webpack_require__(/*! ./FlowLayoutNode */ 55);
-	    var Transform = __webpack_require__(/*! famous/core/Transform */ 28);
-	    __webpack_require__(/*! ./helpers/LayoutDockHelper */ 26);
-	
-	    /**
-	     * @class
-	     * @param {Object} options Options.
-	     * @param {Function|Object} [options.layout] Layout function or layout-literal.
-	     * @param {Object} [options.layoutOptions] Options to pass in to the layout-function.
-	     * @param {Array|ViewSequence|Object} [options.dataSource] Array, ViewSequence or Object with key/value pairs.
-	     * @param {Utility.Direction} [options.direction] Direction to layout into (e.g. Utility.Direction.Y) (when omitted the default direction of the layout is used)
-	     * @param {Bool} [options.flow] Enables flow animations when the layout changes (default: `false`).
-	     * @param {Object} [options.flowOptions] Options used by nodes when reflowing.
-	     * @param {Bool} [options.flowOptions.reflowOnResize] Smoothly reflows renderables on resize (only used when flow = true) (default: `true`).
-	     * @param {Object} [options.flowOptions.spring] Spring options used by nodes when reflowing (default: `{dampingRatio: 0.8, period: 300}`).
-	     * @param {Object} [options.flowOptions.properties] Properties which should be enabled or disabled for flowing.
-	     * @param {Spec} [options.flowOptions.insertSpec] Size, transform, opacity... to use when inserting new renderables into the scene (default: `{}`).
-	     * @param {Spec} [options.flowOptions.removeSpec] Size, transform, opacity... to use when removing renderables from the scene (default: `{}`).
-	     * @param {Bool} [options.alwaysLayout] When set to true, always calls the layout function on every render-cycle (default: `false`).
-	     * @param {Bool} [options.autoPipeEvents] When set to true, automatically calls .pipe on all renderables when inserted (default: `false`).
-	     * @param {Object} [options.preallocateNodes] Optimisation option to improve initial scrolling/animation performance by pre-allocating nodes, e.g.: `{count: 50, spec: {size:[0, 0], transform: Transform.identity}}`.
-	     * @alias module:LayoutController
-	     */
-	    function LayoutController(options, nodeManager) {
-	
-	        // Commit
-	        this.id = Entity.register(this);
-	        this._isDirty = true;
-	        this._contextSizeCache = [0, 0];
-	        this._commitOutput = {};
-	
-	        // Create an object to we can capture the famo.us cleanup call on
-	        // LayoutController.
-	        this._cleanupRegistration = {
-	          commit: function() {
-	              return undefined;
-	          },
-	          cleanup: function(context) {
-	              this.cleanup(context);
-	          }.bind(this)
-	        };
-	        this._cleanupRegistration.target = Entity.register(this._cleanupRegistration);
-	        this._cleanupRegistration.render = function() {
-	          return this.target;
-	        }.bind(this._cleanupRegistration);
-	
-	        // Setup input event handler
-	        this._eventInput = new EventHandler();
-	        EventHandler.setInputHandler(this, this._eventInput);
-	
-	        // Setup event handlers
-	        this._eventOutput = new EventHandler();
-	        EventHandler.setOutputHandler(this, this._eventOutput);
-	
-	        // Data-source
-	        //this._dataSource = undefined;
-	        //this._nodesById = undefined;
-	        //this._viewSequence = undefined;
-	
-	        // Layout
-	        this._layout = {
-	            //function: undefined,
-	            //literal: undefined,
-	            //capabilities: undefined,
-	            options: Object.create({})
-	        };
-	        //this._direction = undefined;
-	        this._layout.optionsManager = new OptionsManager(this._layout.options);
-	        this._layout.optionsManager.on('change', function() {
-	            this._isDirty = true;
-	        }.bind(this));
-	
-	        // Create options
-	        this.options = Object.create(LayoutController.DEFAULT_OPTIONS);
-	        this._optionsManager = new OptionsManager(this.options);
-	
-	        // Create node manager that manages (Flow)LayoutNode instances
-	        if (nodeManager) {
-	            this._nodes = nodeManager;
-	        }
-	        else if (options && options.flow) {
-	            this._nodes = new LayoutNodeManager(FlowLayoutNode, _initFlowLayoutNode.bind(this));
-	        }
-	        else {
-	            this._nodes = new LayoutNodeManager(LayoutNode);
-	        }
-	
-	        // Set options
-	        this.setDirection(undefined);
-	        if (options) {
-	            this.setOptions(options);
-	        }
-	    }
-	
-	    LayoutController.DEFAULT_OPTIONS = {
-	        flow: false,
-	        flowOptions: {
-	            reflowOnResize: true,
-	            properties: {
-	                opacity: true,
-	                align: true,
-	                origin: true,
-	                size: true,
-	                translate: true,
-	                skew: true,
-	                rotate: true,
-	                scale: true
-	            },
-	            spring: {
-	                dampingRatio: 0.8,
-	                period: 300
-	            }
-	            /*insertSpec: {
-	                opacity: undefined,
-	                size: undefined,
-	                transform: undefined,
-	                origin: undefined,
-	                align: undefined
-	            },
-	            removeSpec: {
-	                opacity: undefined,
-	                size: undefined,
-	                transform: undefined,
-	                origin: undefined,
-	                align: undefined
-	            }*/
-	        }
-	    };
-	
-	    /**
-	     * Called whenever a layout-node is created/re-used. Initializes
-	     * the node with the `insertSpec` if it has been defined.
-	     */
-	    function _initFlowLayoutNode(node, spec) {
-	        if (!spec && this.options.flowOptions.insertSpec) {
-	            node.setSpec(this.options.flowOptions.insertSpec);
-	        }
-	    }
-	
-	    /**
-	     * Patches the LayoutController instance's options with the passed-in ones.
-	     *
-	     * @param {Options} options An object of configurable options for the LayoutController instance.
-	     * @param {Function|Object} [options.layout] Layout function or layout-literal.
-	     * @param {Object} [options.layoutOptions] Options to pass in to the layout-function.
-	     * @param {Array|ViewSequence|Object} [options.dataSource] Array, ViewSequence or Object with key/value pairs.
-	     * @param {Utility.Direction} [options.direction] Direction to layout into (e.g. Utility.Direction.Y) (when omitted the default direction of the layout is used)
-	     * @param {Object} [options.flowOptions] Options used by nodes when reflowing.
-	     * @param {Bool} [options.flowOptions.reflowOnResize] Smoothly reflows renderables on resize (only used when flow = true) (default: `true`).
-	     * @param {Object} [options.flowOptions.spring] Spring options used by nodes when reflowing (default: `{dampingRatio: 0.8, period: 300}`).
-	     * @param {Object} [options.flowOptions.properties] Properties which should be enabled or disabled for flowing.
-	     * @param {Spec} [options.flowOptions.insertSpec] Size, transform, opacity... to use when inserting new renderables into the scene (default: `{}`).
-	     * @param {Spec} [options.flowOptions.removeSpec] Size, transform, opacity... to use when removing renderables from the scene (default: `{}`).
-	     * @param {Bool} [options.alwaysLayout] When set to true, always calls the layout function on every render-cycle (default: `false`).
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.setOptions = function(options) {
-	        if ((options.alignment !== undefined) && (options.alignment !== this.options.alignment)) {
-	            this._isDirty = true;
-	        }
-	        this._optionsManager.setOptions(options);
-	        if (options.nodeSpring) {
-	            console.warn('nodeSpring options have been moved inside `flowOptions`. Use `flowOptions.spring` instead.');
-	            this._optionsManager.setOptions({
-	                flowOptions: {
-	                    spring: options.nodeSpring
-	                }
-	            });
-	            this._nodes.setNodeOptions(this.options.flowOptions);
-	        }
-	        if (options.reflowOnResize !== undefined) {
-	            console.warn('reflowOnResize options have been moved inside `flowOptions`. Use `flowOptions.reflowOnResize` instead.');
-	            this._optionsManager.setOptions({
-	                flowOptions: {
-	                    reflowOnResize: options.reflowOnResize
-	                }
-	            });
-	            this._nodes.setNodeOptions(this.options.flowOptions);
-	        }
-	        if (options.insertSpec) {
-	            console.warn('insertSpec options have been moved inside `flowOptions`. Use `flowOptions.insertSpec` instead.');
-	            this._optionsManager.setOptions({
-	                flowOptions: {
-	                    insertSpec: options.insertSpec
-	                }
-	            });
-	            this._nodes.setNodeOptions(this.options.flowOptions);
-	        }
-	        if (options.removeSpec) {
-	            console.warn('removeSpec options have been moved inside `flowOptions`. Use `flowOptions.removeSpec` instead.');
-	            this._optionsManager.setOptions({
-	                flowOptions: {
-	                    removeSpec: options.removeSpec
-	                }
-	            });
-	            this._nodes.setNodeOptions(this.options.flowOptions);
-	        }
-	        if (options.dataSource) {
-	            this.setDataSource(options.dataSource);
-	        }
-	        if (options.layout) {
-	            this.setLayout(options.layout, options.layoutOptions);
-	        }
-	        else if (options.layoutOptions) {
-	            this.setLayoutOptions(options.layoutOptions);
-	        }
-	        if (options.direction !== undefined) {
-	            this.setDirection(options.direction);
-	        }
-	        if (options.flowOptions && this.options.flow) {
-	            this._nodes.setNodeOptions(this.options.flowOptions);
-	        }
-	        if (options.preallocateNodes) {
-	            this._nodes.preallocateNodes(options.preallocateNodes.count || 0, options.preallocateNodes.spec);
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Helper function to enumerate all the renderables in the datasource
-	     */
-	    function _forEachRenderable(callback) {
-	        var dataSource = this._dataSource;
-	        if (dataSource instanceof Array) {
-	            for (var i = 0, j = dataSource.length; i < j; i++) {
-	                callback(dataSource[i]);
-	            }
-	        }
-	        else if (dataSource instanceof ViewSequence) {
-	            var renderable;
-	            while (dataSource) {
-	                renderable = dataSource.get();
-	                if (!renderable) {
-	                    break;
-	                }
-	                callback(renderable);
-	                dataSource = dataSource.getNext();
-	            }
-	        }
-	        else {
-	            for (var key in dataSource) {
-	                callback(dataSource[key]);
-	            }
-	        }
-	    }
-	
-	    /**
-	     * Sets the collection of renderables which are layed out according to
-	     * the layout-function.
-	     *
-	     * The data-source can be either an Array, ViewSequence or Object
-	     * with key/value pairs.
-	     *
-	     * @param {Array|Object|ViewSequence} dataSource Array, ViewSequence or Object.
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.setDataSource = function(dataSource) {
-	        this._dataSource = dataSource;
-	        this._initialViewSequence = undefined;
-	        this._nodesById = undefined;
-	        if (dataSource instanceof Array) {
-	            this._viewSequence = new ViewSequence(dataSource);
-	            this._initialViewSequence = this._viewSequence;
-	        }
-	        else if ((dataSource instanceof ViewSequence) || dataSource.getNext) {
-	            this._viewSequence = dataSource;
-	            this._initialViewSequence = dataSource;
-	        }
-	        else if (dataSource instanceof Object){
-	            this._nodesById = dataSource;
-	        }
-	        if (this.options.autoPipeEvents) {
-	            if (this._dataSource.pipe) {
-	                this._dataSource.pipe(this);
-	                this._dataSource.pipe(this._eventOutput);
-	            }
-	            else {
-	                _forEachRenderable.call(this, function(renderable) {
-	                    if (renderable && renderable.pipe) {
-	                        renderable.pipe(this);
-	                        renderable.pipe(this._eventOutput);
-	                    }
-	                }.bind(this));
-	            }
-	        }
-	        this._isDirty = true;
-	        return this;
-	    };
-	
-	    /**
-	     * Get the data-source.
-	     *
-	     * @return {Array|ViewSequence|Object} data-source
-	     */
-	    LayoutController.prototype.getDataSource = function() {
-	        return this._dataSource;
-	    };
-	
-	    /**
-	     * Set the new layout.
-	     *
-	     * @param {Function|Object} layout Layout function or layout-literal
-	     * @param {Object} [options] Options to pass in to the layout-function
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.setLayout = function(layout, options) {
-	
-	        // Set new layout funtion
-	        if (layout instanceof Function) {
-	            this._layout._function = layout;
-	            this._layout.capabilities = layout.Capabilities;
-	            this._layout.literal = undefined;
-	
-	        // If the layout is an object, treat it as a layout-literal
-	        }
-	        else if (layout instanceof Object) {
-	            this._layout.literal = layout;
-	            this._layout.capabilities = undefined; // todo - derive from literal somehow?
-	            var helperName = Object.keys(layout)[0];
-	            var Helper = LayoutUtility.getRegisteredHelper(helperName);
-	            this._layout._function = Helper ? function(context, options2) {
-	                var helper = new Helper(context, options2);
-	                helper.parse(layout[helperName]);
-	            } : undefined;
-	        }
-	        else {
-	            this._layout._function = undefined;
-	            this._layout.capabilities = undefined;
-	            this._layout.literal = undefined;
-	        }
-	
-	        // Update options
-	        if (options) {
-	            this.setLayoutOptions(options);
-	        }
-	
-	        // Update direction
-	        this.setDirection(this._configuredDirection);
-	        this._isDirty = true;
-	        return this;
-	    };
-	
-	    /**
-	     * Get the current layout.
-	     *
-	     * @return {Function|Object} Layout function or layout literal
-	     */
-	    LayoutController.prototype.getLayout = function() {
-	        return this._layout.literal || this._layout._function;
-	    };
-	
-	    /**
-	     * Set the options for the current layout. Use this function after
-	     * `setLayout` to update one or more options for the layout-function.
-	     *
-	     * @param {Object} [options] Options to pass in to the layout-function
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.setLayoutOptions = function(options) {
-	        this._layout.optionsManager.setOptions(options);
-	        return this;
-	    };
-	
-	    /**
-	     * Get the current layout options.
-	     *
-	     * @return {Object} Layout options
-	     */
-	    LayoutController.prototype.getLayoutOptions = function() {
-	        return this._layout.options;
-	    };
-	
-	    /**
-	     * Calculates the actual in-use direction based on the given direction
-	     * and supported capabilities of the layout-function.
-	     */
-	    function _getActualDirection(direction) {
-	
-	        // When the direction is configured in the capabilities, look it up there
-	        if (this._layout.capabilities && this._layout.capabilities.direction) {
-	
-	            // Multiple directions are supported
-	            if (Array.isArray(this._layout.capabilities.direction)) {
-	                for (var i = 0; i < this._layout.capabilities.direction.length; i++) {
-	                    if (this._layout.capabilities.direction[i] === direction) {
-	                        return direction;
-	                    }
-	                }
-	                return this._layout.capabilities.direction[0];
-	            }
-	
-	            // Only one direction is supported, we must use that
-	            else {
-	                return this._layout.capabilities.direction;
-	            }
-	        }
-	
-	        // Use Y-direction as a fallback
-	        return (direction === undefined) ? Utility.Direction.Y : direction;
-	    }
-	
-	    /**
-	     * Set the direction of the layout. When no direction is set, the default
-	     * direction of the layout function is used.
-	     *
-	     * @param {Utility.Direction} direction Direction (e.g. Utility.Direction.X)
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.setDirection = function(direction) {
-	        this._configuredDirection = direction;
-	        var newDirection = _getActualDirection.call(this, direction);
-	        if (newDirection !== this._direction) {
-	            this._direction = newDirection;
-	            this._isDirty = true;
-	        }
-	    };
-	
-	    /**
-	     * Get the direction (e.g. Utility.Direction.Y). By default, this function
-	     * returns the direction that was configured by setting `setDirection`. When
-	     * the direction has not been set, `undefined` is returned.
-	     *
-	     * When no direction has been set, the first direction is used that is specified
-	     * in the capabilities of the layout-function. To obtain the actual in-use direction,
-	     * use `getDirection(true)`. This method returns the actual in-use direction and
-	     * never returns undefined.
-	     *
-	     * @param {Boolean} [actual] Set to true to obtain the actual in-use direction
-	     * @return {Utility.Direction} Direction or undefined
-	     */
-	    LayoutController.prototype.getDirection = function(actual) {
-	        return actual ? this._direction : this._configuredDirection;
-	    };
-	
-	    /**
-	     * Get the spec (size, transform, etc..) for the given renderable or
-	     * Id.
-	     *
-	     * @param {Renderable|String} node Renderabe or Id to look for
-	     * @param {Bool} [normalize] When set to `true` normalizes the origin/align into the transform translation (default: `false`).
-	     * @param {Bool} [endState] When set to `true` returns the flowing end-state spec rather than the current spec.
-	     * @return {Spec} spec or undefined
-	     */
-	    LayoutController.prototype.getSpec = function(node, normalize, endState) {
-	        if (!node) {
-	            return undefined;
-	        }
-	        if ((node instanceof String) || (typeof node === 'string')) {
-	            if (!this._nodesById) {
-	               return undefined;
-	            }
-	            node = this._nodesById[node];
-	            if (!node) {
-	                return undefined;
-	            }
-	
-	            // If the result was an array, return that instead
-	            if (node instanceof Array) {
-	                return node;
-	            }
-	        }
-	        if (this._specs) {
-	            for (var i = 0; i < this._specs.length; i++) {
-	                var spec = this._specs[i];
-	                if (spec.renderNode === node) {
-	                    if (endState && spec.endState) {
-	                        spec = spec.endState;
-	                    }
-	                    // normalize align & origin into transform
-	                    if (normalize && spec.transform && spec.size && (spec.align || spec.origin)) {
-	                        var transform = spec.transform;
-	                        if (spec.align && (spec.align[0] || spec.align[1])) {
-	                            transform = Transform.thenMove(transform, [spec.align[0] * this._contextSizeCache[0], spec.align[1] * this._contextSizeCache[1], 0]);
-	                        }
-	                        if (spec.origin && (spec.origin[0] || spec.origin[1])) {
-	                            transform = Transform.moveThen([-spec.origin[0] * spec.size[0], -spec.origin[1] * spec.size[1], 0], transform);
-	                        }
-	                        return {
-	                            opacity: spec.opacity,
-	                            size: spec.size,
-	                            transform: transform
-	                        };
-	                    }
-	                    return spec;
-	                }
-	            }
-	        }
-	        return undefined;
-	    };
-	
-	    /**
-	     * Forces a reflow of the layout the next render cycle.
-	     *
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.reflowLayout = function() {
-	        this._isDirty = true;
-	        return this;
-	    };
-	
-	    /**
-	     * Resets the current flow state, so that all renderables
-	     * are immediately displayed in their end-state.
-	     *
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.resetFlowState = function() {
-	        if (this.options.flow) {
-	            this._resetFlowState = true;
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Inserts a renderable into the data-source.
-	     *
-	     * The optional argument `insertSpec` is only used `flow` mode is enabled.
-	     * When specified, the renderable is inserted using an animation starting with
-	     * size, origin, opacity, transform, etc... as specified in `insertSpec'.
-	     *
-	     * @param {Number|String} indexOrId Index (0 = before first, -1 at end), within dataSource array or id (String)
-	     * @param {Object} renderable Renderable to add to the data-source
-	     * @param {Spec} [insertSpec] Size, transform, etc.. to start with when inserting
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.insert = function(indexOrId, renderable, insertSpec) {
-	
-	        // Add the renderable in case of an id (String)
-	        if ((indexOrId instanceof String) || (typeof indexOrId === 'string')) {
-	
-	            // Create data-source if neccesary
-	            if (this._dataSource === undefined) {
-	                this._dataSource = {};
-	                this._nodesById = this._dataSource;
-	            }
-	
-	            // Insert renderable
-	            if (this._nodesById[indexOrId] === renderable) {
-	                return this;
-	            }
-	            this._nodesById[indexOrId] = renderable;
-	        }
-	
-	        // Add the renderable using an index
-	        else {
-	
-	            // Create data-source if neccesary
-	            if (this._dataSource === undefined) {
-	                this._dataSource = [];
-	                this._viewSequence = new ViewSequence(this._dataSource);
-	                this._initialViewSequence = this._viewSequence;
-	            }
-	
-	            // Insert into array
-	            var dataSource = this._viewSequence || this._dataSource;
-	            var array = _getDataSourceArray.call(this);
-	            if (array && (indexOrId === array.length)) {
-	                indexOrId = -1;
-	            }
-	            if (indexOrId === -1) {
-	                dataSource.push(renderable);
-	            }
-	            else if (indexOrId === 0) {
-	                if (dataSource === this._viewSequence) {
-	                    dataSource.splice(0, 0, renderable);
-	                    if (this._viewSequence.getIndex() === 0) {
-	                        var nextViewSequence = this._viewSequence.getNext();
-	                        if (nextViewSequence && nextViewSequence.get()) {
-	                            this._viewSequence = nextViewSequence;
-	                        }
-	                    }
-	                }
-	                else {
-	                    dataSource.splice(0, 0, renderable);
-	                }
-	            }
-	            else {
-	                dataSource.splice(indexOrId, 0, renderable);
-	            }
-	        }
-	
-	        // When a custom insert-spec was specified, store that in the layout-node
-	        if (insertSpec) {
-	            this._nodes.insertNode(this._nodes.createNode(renderable, insertSpec));
-	        }
-	
-	        // Auto pipe events
-	        if (this.options.autoPipeEvents && renderable && renderable.pipe) {
-	            renderable.pipe(this);
-	            renderable.pipe(this._eventOutput);
-	        }
-	
-	        // Force a reflow
-	        this._isDirty = true;
-	
-	        return this;
-	    };
-	
-	    /**
-	     * Adds a renderable to the end of a sequential data-source.
-	     *
-	     * The optional argument `insertSpec` is only used `flow` mode is enabled.
-	     * When specified, the renderable is inserted using an animation starting with
-	     * size, origin, opacity, transform, etc... as specified in `insertSpec'.
-	     *
-	     * @param {Object} renderable Renderable to add to the data-source
-	     * @param {Spec} [insertSpec] Size, transform, etc.. to start with when inserting
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.push = function(renderable, insertSpec) {
-	        return this.insert(-1, renderable, insertSpec);
-	    };
-	
-	    /**
-	     * Helper function for finding the view-sequence node at the given position.
-	     */
-	    function _getViewSequenceAtIndex(index, startViewSequence) {
-	        var viewSequence = startViewSequence || this._viewSequence;
-	        var i = viewSequence ? viewSequence.getIndex() : index;
-	        if (index > i) {
-	            while (viewSequence) {
-	                viewSequence = viewSequence.getNext();
-	                if (!viewSequence) {
-	                    return undefined;
-	                }
-	                i = viewSequence.getIndex();
-	                if (i === index) {
-	                    return viewSequence;
-	                }
-	                else if (index < i) {
-	                    return undefined;
-	                }
-	            }
-	        }
-	        else if (index < i) {
-	            while (viewSequence) {
-	                viewSequence = viewSequence.getPrevious();
-	                if (!viewSequence) {
-	                    return undefined;
-	                }
-	                i = viewSequence.getIndex();
-	                if (i === index) {
-	                    return viewSequence;
-	                }
-	                else if (index > i) {
-	                    return undefined;
-	                }
-	            }
-	        }
-	        return viewSequence;
-	    }
-	
-	    /**
-	     * Helper that return the underlying array datasource if available.
-	     */
-	    function _getDataSourceArray() {
-	      if (Array.isArray(this._dataSource)) {
-	        return this._dataSource;
-	      }
-	      else if (this._viewSequence || this._viewSequence._) {
-	        return this._viewSequence._.array;
-	      }
-	      return undefined;
-	    }
-	
-	    /**
-	     * Get the renderable at the given index or Id.
-	     *
-	     * @param {Number|String} indexOrId Index within dataSource array or id (String)
-	     * @return {Renderable} renderable or `undefined`
-	     */
-	    LayoutController.prototype.get = function(indexOrId) {
-	      if (this._nodesById || (indexOrId instanceof String) || (typeof indexOrId === 'string')) {
-	        return this._nodesById[indexOrId];
-	      }
-	      var viewSequence = _getViewSequenceAtIndex.call(this, indexOrId);
-	      return viewSequence ? viewSequence.get() : undefined;
-	    };
-	
-	    /**
-	     * Swaps two renderables at the given positions.
-	     *
-	     * This method is only supported for dataSources of type Array or ViewSequence.
-	     *
-	     * @param {Number} index Index of the renderable to swap
-	     * @param {Number} index2 Index of the renderable to swap with
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.swap = function(index, index2) {
-	        var array = _getDataSourceArray.call(this);
-	        if (!array) {
-	            throw '.swap is only supported for dataSources of type Array or ViewSequence';
-	        }
-	        if (index === index2) {
-	          return this;
-	        }
-	        if ((index < 0) || (index >= array.length)) {
-	          throw 'Invalid index (' + index + ') specified to .swap';
-	        }
-	        if ((index2 < 0) || (index2 >= array.length)) {
-	          throw 'Invalid second index (' + index2 + ') specified to .swap';
-	        }
-	        var renderNode = array[index];
-	        array[index] = array[index2];
-	        array[index2] = renderNode;
-	        this._isDirty = true;
-	        return this;
-	    };
-	
-	    /**
-	     * Replaces a renderable at the given index or id.
-	     *
-	     * @param {Number|String} indexOrId Index within dataSource array or id (String)
-	     * @param {Renderable} renderable renderable to replace with
-	     * @param {Bool} [noAnimation] When set to `true`, replaces the renderable without any flowing animation.
-	     * @return {Renderable} old renderable that has been replaced
-	     */
-	    LayoutController.prototype.replace = function(indexOrId, renderable, noAnimation) {
-	        var oldRenderable;
-	        if (this._nodesById || (indexOrId instanceof String) || (typeof indexOrId === 'string')) {
-	            oldRenderable = this._nodesById[indexOrId];
-	            if (oldRenderable !== renderable) {
-	                if (noAnimation && oldRenderable) {
-	                    var node = this._nodes.getNodeByRenderNode(oldRenderable);
-	                    if (node) {
-	                        node.setRenderNode(renderable);
-	                    }
-	                }
-	                this._nodesById[indexOrId] = renderable;
-	                this._isDirty = true;
-	            }
-	            return oldRenderable;
-	        }
-	        var array = _getDataSourceArray.call(this);
-	        if (!array) {
-	          return undefined;
-	        }
-	        if ((indexOrId < 0) || (indexOrId >= array.length)) {
-	          throw 'Invalid index (' + indexOrId + ') specified to .replace';
-	        }
-	        oldRenderable = array[indexOrId];
-	        if (oldRenderable !== renderable) {
-	          array[indexOrId] = renderable;
-	          this._isDirty = true;
-	        }
-	        return oldRenderable;
-	    };
-	
-	    /**
-	     * Moves a renderable to a new index.
-	     *
-	     * This method is only supported for dataSources of type Array or ViewSequence.
-	     *
-	     * @param {Number} index Index of the renderable to move.
-	     * @param {Number} newIndex New index of the renderable.
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.move = function(index, newIndex) {
-	        var array = _getDataSourceArray.call(this);
-	        if (!array) {
-	            throw '.move is only supported for dataSources of type Array or ViewSequence';
-	        }
-	        if ((index < 0) || (index >= array.length)) {
-	          throw 'Invalid index (' + index + ') specified to .move';
-	        }
-	        if ((newIndex < 0) || (newIndex >= array.length)) {
-	          throw 'Invalid newIndex (' + newIndex + ') specified to .move';
-	        }
-	        var item = array.splice(index, 1)[0];
-	        array.splice(newIndex, 0, item);
-	        this._isDirty = true;
-	        return this;
-	    };
-	
-	    /**
-	     * Removes a renderable from the data-source.
-	     *
-	     * The optional argument `removeSpec` is only used `flow` mode is enabled.
-	     * When specified, the renderable is removed using an animation ending at
-	     * the size, origin, opacity, transform, etc... as specified in `removeSpec'.
-	     *
-	     * @param {Number|String|Renderable} indexOrId Index, id (String) or renderable to remove.
-	     * @param {Spec} [removeSpec] Size, transform, etc.. to end with when removing
-	     * @return {Renderable} renderable that has been removed
-	     */
-	    LayoutController.prototype.remove = function(indexOrId, removeSpec) {
-	        var renderNode;
-	
-	        // Remove the renderable in case of an id (String)
-	        if (this._nodesById || (indexOrId instanceof String) || (typeof indexOrId === 'string')) {
-	
-	            // Find and remove renderable from data-source
-	            if ((indexOrId instanceof String) || (typeof indexOrId === 'string')) {
-	                renderNode = this._nodesById[indexOrId];
-	                if (renderNode) {
-	                    delete this._nodesById[indexOrId];
-	                }
-	            }
-	            else {
-	                for (var key in this._nodesById) {
-	                    if (this._nodesById[key] === indexOrId) {
-	                        delete this._nodesById[key];
-	                        renderNode = indexOrId;
-	                        break;
-	                    }
-	                }
-	            }
-	        }
-	
-	        // Remove the renderable using an index
-	        else if ((indexOrId instanceof Number) || (typeof indexOrId === 'number')) {
-	            var array = _getDataSourceArray.call(this);
-	            if (!array || (indexOrId < 0) || (indexOrId >= array.length)) {
-	                throw 'Invalid index (' + indexOrId + ') specified to .remove (or dataSource doesn\'t support remove)';
-	            }
-	            renderNode = array[indexOrId];
-	            this._dataSource.splice(indexOrId, 1);
-	        }
-	
-	        // Remove by renderable
-	        else {
-	            indexOrId = this._dataSource.indexOf(indexOrId);
-	            if (indexOrId >= 0) {
-	                this._dataSource.splice(indexOrId, 1);
-	                renderNode = indexOrId;
-	            }
-	        }
-	
-	        // When a node is removed from the view-sequence, the current this._viewSequence
-	        // node may not be part of the valid view-sequence anymore. This seems to be a bug
-	        // in the famo.us ViewSequence implementation/concept. The following check was added
-	        // to ensure that always a valid viewSequence node is selected into the ScrollView.
-	        if (this._viewSequence && renderNode) {
-	            var viewSequence = _getViewSequenceAtIndex.call(this, this._viewSequence.getIndex(), this._initialViewSequence);
-	            viewSequence = viewSequence || _getViewSequenceAtIndex.call(this, this._viewSequence.getIndex() - 1, this._initialViewSequence);
-	            viewSequence = viewSequence || this._dataSource;
-	            this._viewSequence = viewSequence;
-	        }
-	
-	        // When a custom remove-spec was specified, store that in the layout-node
-	        if (renderNode && removeSpec) {
-	            var node = this._nodes.getNodeByRenderNode(renderNode);
-	            if (node) {
-	                node.remove(removeSpec || this.options.flowOptions.removeSpec);
-	            }
-	        }
-	
-	        // Force a reflow
-	        if (renderNode) {
-	            this._isDirty = true;
-	        }
-	
-	        return renderNode;
-	    };
-	
-	    /**
-	     * Removes all renderables from the data-source.
-	     *
-	     * The optional argument `removeSpec` is only used when `flow` mode is enabled.
-	     * When specified, the renderables are removed using an animation ending at
-	     * the size, origin, opacity, transform, etc... as specified in `removeSpec'.
-	     *
-	     * @param {Spec} [removeSpec] Size, transform, etc.. to end with when removing
-	     * @return {LayoutController} this
-	     */
-	    LayoutController.prototype.removeAll = function(removeSpec) {
-	        if (this._nodesById) {
-	            var dirty = false;
-	            for (var key in this._nodesById) {
-	                delete this._nodesById[key];
-	                dirty = true;
-	            }
-	            if (dirty) {
-	                this._isDirty = true;
-	            }
-	        }
-	        else if (this._dataSource){
-	            this.setDataSource([]);
-	        }
-	        if (removeSpec) {
-	            var node = this._nodes.getStartEnumNode();
-	            while (node) {
-	                node.remove(removeSpec || this.options.flowOptions.removeSpec);
-	                node = node._next;
-	            }
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Return size of contained element or `undefined` when size is not defined.
-	     *
-	     * @return {Array.Number} [width, height]
-	     */
-	    LayoutController.prototype.getSize = function() {
-	        return this._size || this.options.size;
-	    };
-	
-	    /**
-	     * Generate a render spec from the contents of this component.
-	     *
-	     * @private
-	     * @method render
-	     * @return {Object} Render spec for this component
-	     */
-	    LayoutController.prototype.render = function render() {
-	        return this.id;
-	    };
-	
-	    /**
-	     * Apply changes from this component to the corresponding document element.
-	     * This includes changes to classes, styles, size, content, opacity, origin,
-	     * and matrix transforms.
-	     *
-	     * @private
-	     * @method commit
-	     * @param {Context} context commit context
-	     */
-	    LayoutController.prototype.commit = function commit(context) {
-	        var transform = context.transform;
-	        var origin = context.origin;
-	        var size = context.size;
-	        var opacity = context.opacity;
-	
-	        // Reset the flow-state when requested
-	        if (this._resetFlowState) {
-	            this._resetFlowState = false;
-	            this._isDirty = true;
-	            this._nodes.removeAll();
-	        }
-	
-	        // When the size or layout function has changed, reflow the layout
-	        if (size[0] !== this._contextSizeCache[0] ||
-	            size[1] !== this._contextSizeCache[1] ||
-	            this._isDirty ||
-	            this._nodes._trueSizeRequested ||
-	            this.options.alwaysLayout){
-	
-	            // Emit start event
-	            var eventData = {
-	                target: this,
-	                oldSize: this._contextSizeCache,
-	                size: size,
-	                dirty: this._isDirty,
-	                trueSizeRequested: this._nodes._trueSizeRequested
-	            };
-	            this._eventOutput.emit('layoutstart', eventData);
-	
-	            // When the layout has changed, and we are not just scrolling,
-	            // disable the locked state of the layout-nodes so that they
-	            // can freely transition between the old and new state.
-	            if (this.options.flow) {
-	                var lock = false;
-	                if (!this.options.flowOptions.reflowOnResize) {
-	                    if (!this._isDirty &&
-	                        ((size[0] !== this._contextSizeCache[0]) ||
-	                         (size[1] !== this._contextSizeCache[1]))) {
-	                        lock = undefined;
-	                    }
-	                    else {
-	                      lock = true;
-	                    }
-	                }
-	                if (lock !== undefined) {
-	                    var node = this._nodes.getStartEnumNode();
-	                    while (node) {
-	                        node.releaseLock(lock);
-	                        node = node._next;
-	                    }
-	                }
-	            }
-	
-	            // Update state
-	            this._contextSizeCache[0] = size[0];
-	            this._contextSizeCache[1] = size[1];
-	            this._isDirty = false;
-	
-	            // Prepare for layout
-	            var scrollEnd;
-	            if (this.options.size && (this.options.size[this._direction] === true)) {
-	                scrollEnd = 1000000; // calculate scroll-length
-	            }
-	            var layoutContext = this._nodes.prepareForLayout(
-	                this._viewSequence,     // first node to layout
-	                this._nodesById, {      // so we can do fast id lookups
-	                    size: size,
-	                    direction: this._direction,
-	                    scrollEnd: scrollEnd
-	                }
-	            );
-	
-	            // Layout objects
-	            if (this._layout._function) {
-	                this._layout._function(
-	                    layoutContext,          // context which the layout-function can use
-	                    this._layout.options    // additional layout-options
-	                );
-	            }
-	
-	            // Mark non-invalidated nodes for removal
-	            this._nodes.removeNonInvalidatedNodes(this.options.flowOptions.removeSpec);
-	
-	            // Cleanup any nodes in case of a VirtualViewSequence
-	            this._nodes.removeVirtualViewSequenceNodes();
-	
-	            // Calculate scroll-length and use that as the true-size (height)
-	            if (scrollEnd) {
-	                scrollEnd = 0;
-	                node = this._nodes.getStartEnumNode();
-	                while (node) {
-	                    if (node._invalidated && node.scrollLength) {
-	                        scrollEnd += node.scrollLength;
-	                    }
-	                    node = node._next;
-	                }
-	                this._size = this._size || [0, 0];
-	                this._size[0] = this.options.size[0];
-	                this._size[1] = this.options.size[1];
-	                this._size[this._direction] = scrollEnd;
-	            }
-	
-	            // Update output and optionally emit event
-	            var result = this._nodes.buildSpecAndDestroyUnrenderedNodes();
-	            this._specs = result.specs;
-	            this._commitOutput.target = result.specs;
-	            this._eventOutput.emit('layoutend', eventData);
-	            this._eventOutput.emit('reflow', {
-	                target: this
-	            });
-	        }
-	        else if (this.options.flow) {
-	
-	            // Update output and optionally emit event
-	            result = this._nodes.buildSpecAndDestroyUnrenderedNodes();
-	            this._specs = result.specs;
-	            this._commitOutput.target = result.specs;
-	            if (result.modified) {
-	                this._eventOutput.emit('reflow', {
-	                    target: this
-	                });
-	            }
-	        }
-	
-	        // Render child-nodes every commit
-	        var target = this._commitOutput.target;
-	        for (var i = 0, j = target.length; i < j; i++) {
-	            if (target[i].renderNode) {
-	                target[i].target = target[i].renderNode.render();
-	            }
-	        }
-	
-	        // Add our cleanup-registration id also to the list, so that the
-	        // cleanup function is called by famo.us when the LayoutController is
-	        // removed from the render-tree.
-	        if (!target.length || (target[target.length-1] !== this._cleanupRegistration)) {
-	            target.push(this._cleanupRegistration);
-	        }
-	
-	        // Translate dependent on origin
-	        if (origin && ((origin[0] !== 0) || (origin[1] !== 0))) {
-	            transform = Transform.moveThen([-size[0]*origin[0], -size[1]*origin[1], 0], transform);
-	        }
-	        this._commitOutput.size = size;
-	        this._commitOutput.opacity = opacity;
-	        this._commitOutput.transform = transform;
-	        return this._commitOutput;
-	    };
-	
-	    /**
-	     * Called whenever the layout-controller is removed from the render-tree.
-	     *
-	     * @private
-	     * @param {Context} context cleanup context
-	     */
-	    LayoutController.prototype.cleanup = function(context) {
-	        if (this.options.flow) {
-	            this._resetFlowState = true;
-	        }
-	    };
-	
-	    module.exports = LayoutController;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 25 */
-/*!************************************************!*\
-  !*** ../~/famous-flex/src/ScrollController.js ***!
-  \************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2014 - 2015
-	 */
-	
-	/**
-	 * Scrollable layout-controller.
-	 *
-	 * Key features:
-	 * -    Customizable layout
-	 * -    Insert/remove renderables into the scene using animations/spec
-	 * -    Support for `true` size renderables
-	 * -    Horizontal/vertical direction
-	 * -    Top/left or bottom/right alignment
-	 * -    Pagination
-	 * -    Option to embed in a ContainerSurface
-	 *
-	 * Events:
-	 *
-	 * |event      |description|
-	 * |-----------|-----------|
-	 * |scrollstart|Emitted when scrolling starts.|
-	 * |scroll     |Emitted as the content scrolls (once for each frame the visible offset has changed).|
-	 * |pagechange |Emitted whenever the visible page changes.|
-	 * |scrollend  |Emitted after scrolling stops (when the scroll particle settles).|
-	 *
-	 * Inherited from: [LayoutController](./LayoutController.md)
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 52);
-	    var LayoutController = __webpack_require__(/*! ./LayoutController */ 24);
-	    var LayoutNode = __webpack_require__(/*! ./LayoutNode */ 54);
-	    var FlowLayoutNode = __webpack_require__(/*! ./FlowLayoutNode */ 55);
-	    var LayoutNodeManager = __webpack_require__(/*! ./LayoutNodeManager */ 53);
-	    var ContainerSurface = __webpack_require__(/*! famous/surfaces/ContainerSurface */ 56);
-	    var Transform = __webpack_require__(/*! famous/core/Transform */ 28);
-	    var EventHandler = __webpack_require__(/*! famous/core/EventHandler */ 41);
-	    var Group = __webpack_require__(/*! famous/core/Group */ 57);
-	    var Vector = __webpack_require__(/*! famous/math/Vector */ 58);
-	    var PhysicsEngine = __webpack_require__(/*! famous/physics/PhysicsEngine */ 59);
-	    var Particle = __webpack_require__(/*! famous/physics/bodies/Particle */ 60);
-	    var Drag = __webpack_require__(/*! famous/physics/forces/Drag */ 61);
-	    var Spring = __webpack_require__(/*! famous/physics/forces/Spring */ 62);
-	    var ScrollSync = __webpack_require__(/*! famous/inputs/ScrollSync */ 63);
-	    var ViewSequence = __webpack_require__(/*! famous/core/ViewSequence */ 51);
-	
-	    /**
-	     * Boudary reached detection
-	     */
-	    var Bounds = {
-	        NONE: 0,
-	        PREV: 1, // top
-	        NEXT: 2, // bottom
-	        BOTH: 3
-	    };
-	
-	    /**
-	     * Source of the spring
-	     */
-	    var SpringSource = {
-	        NONE: 'none',
-	        NEXTBOUNDS: 'next-bounds', // top
-	        PREVBOUNDS: 'prev-bounds', // bottom
-	        MINSIZE: 'minimal-size',
-	        GOTOSEQUENCE: 'goto-sequence',
-	        ENSUREVISIBLE: 'ensure-visible',
-	        GOTOPREVDIRECTION: 'goto-prev-direction',
-	        GOTONEXTDIRECTION: 'goto-next-direction'
-	    };
-	
-	    /**
-	     * Pagination modes
-	     */
-	    var PaginationMode = {
-	        PAGE: 0,
-	        SCROLL: 1
-	    };
-	
-	    /**
-	     * @class
-	     * @extends LayoutController
-	     * @param {Object} options Configurable options (see LayoutController for all inherited options).
-	     * @param {Bool} [options.useContainer] Embeds the view in a ContainerSurface to hide any overflow and capture input events (default: `false`).
-	     * @param {String} [options.container] Options that are passed to the ContainerSurface in case `useContainer` is true.
-	     * @param {Bool} [options.paginated] Enabled pagination when set to `true` (default: `false`).
-	     * @param {Number} [options.paginationEnergyThresshold] Thresshold after which pagination kicks in (default: `0.01`).
-	     * @param {PaginationMode} [options.paginationMode] Pagination-mode (either page-based or scroll-based) (default: `PaginationMode.PAGE`).
-	     * @param {Number} [options.alignment] Alignment of the renderables (0 = top/left, 1 = bottom/right) (default: `0`).
-	     * @param {Bool} [options.mouseMove] Enables scrolling by holding the mouse-button down and moving the mouse (default: `false`).
-	     * @param {Bool} [options.enabled] Enables or disabled user input (default: `true`).
-	     * @param {Bool} [options.overscroll] Enables or disables overscroll (default: `true`).
-	     * @param {Object} [options.scrollParticle] Options for the scroll particle (default: `{}`)
-	     * @param {Object} [options.scrollSpring] Spring-force options that are applied on the scroll particle when e.g. bounds is reached (default: `{dampingRatio: 1.0, period: 350}`)
-	     * @param {Object} [options.scrollDrag] Drag-force options to apply on the scroll particle
-	     * @param {Object} [options.scrollFriction] Friction-force options to apply on the scroll particle
-	     * @param {Bool} [options.layoutAll] When set to true, always lays out all renderables in the datasource (default: `false`).
-	     * @alias module:ScrollController
-	     */
-	    function ScrollController(options) {
-	        options = LayoutUtility.combineOptions(ScrollController.DEFAULT_OPTIONS, options);
-	        var layoutManager = new LayoutNodeManager(options.flow ? FlowLayoutNode : LayoutNode, _initLayoutNode.bind(this));
-	        LayoutController.call(this, options, layoutManager);
-	
-	        // Scrolling
-	        this._scroll = {
-	            activeTouches: [],
-	            // physics-engine to use for scrolling
-	            pe: new PhysicsEngine(),
-	            // particle that represents the scroll-offset
-	            particle: new Particle(this.options.scrollParticle),
-	            // drag-force that slows the particle down after a "flick"
-	            dragForce: new Drag(this.options.scrollDrag),
-	            frictionForce: new Drag(this.options.scrollFriction),
-	            // spring
-	            springValue: undefined,
-	            springForce: new Spring(this.options.scrollSpring),
-	            springEndState: new Vector([0, 0, 0]),
-	            // group
-	            groupStart: 0,
-	            groupTranslate: [0, 0, 0],
-	            // delta
-	            scrollDelta: 0,
-	            normalizedScrollDelta: 0,
-	            scrollForce: 0,
-	            scrollForceCount: 0,
-	            unnormalizedScrollOffset: 0,
-	            // state
-	            isScrolling: false
-	        };
-	
-	        // Diagnostics
-	        this._debug = {
-	            layoutCount: 0,
-	            commitCount: 0
-	        };
-	
-	        // Create groupt for faster rendering
-	        this.group = new Group();
-	        this.group.add({render: _innerRender.bind(this)});
-	
-	        // Configure physics engine with particle and drag
-	        this._scroll.pe.addBody(this._scroll.particle);
-	        if (!this.options.scrollDrag.disabled) {
-	            this._scroll.dragForceId = this._scroll.pe.attach(this._scroll.dragForce, this._scroll.particle);
-	        }
-	        if (!this.options.scrollFriction.disabled) {
-	            this._scroll.frictionForceId = this._scroll.pe.attach(this._scroll.frictionForce, this._scroll.particle);
-	        }
-	        this._scroll.springForce.setOptions({ anchor: this._scroll.springEndState });
-	
-	        // Listen to touch events
-	        this._eventInput.on('touchstart', _touchStart.bind(this));
-	        this._eventInput.on('touchmove', _touchMove.bind(this));
-	        this._eventInput.on('touchend', _touchEnd.bind(this));
-	        this._eventInput.on('touchcancel', _touchEnd.bind(this));
-	
-	        // Listen to mouse-move events
-	        this._eventInput.on('mousedown', _mouseDown.bind(this));
-	        this._eventInput.on('mouseup', _mouseUp.bind(this));
-	        this._eventInput.on('mousemove', _mouseMove.bind(this));
-	
-	        // Listen to mouse-wheel events
-	        this._scrollSync = new ScrollSync(this.options.scrollSync);
-	        this._eventInput.pipe(this._scrollSync);
-	        this._scrollSync.on('update', _scrollUpdate.bind(this));
-	
-	        // Embed in container surface if neccesary
-	        if (this.options.useContainer) {
-	            this.container = new ContainerSurface(this.options.container);
-	
-	            // Create container surface, which has one child, which just returns
-	            // the entity-id of this scrollview. This causes the Commit function
-	            // of this scrollview to be called
-	            this.container.add({
-	                render: function() {
-	                    return this.id;
-	                }.bind(this)
-	            });
-	
-	            // Pipe events received in container to this scrollview
-	            if (!this.options.autoPipeEvents) {
-	                this.subscribe(this.container);
-	                EventHandler.setInputHandler(this.container, this);
-	                EventHandler.setOutputHandler(this.container, this);
-	            }
-	        }
-	    }
-	    ScrollController.prototype = Object.create(LayoutController.prototype);
-	    ScrollController.prototype.constructor = ScrollController;
-	    ScrollController.Bounds = Bounds;
-	    ScrollController.PaginationMode = PaginationMode;
-	
-	    ScrollController.DEFAULT_OPTIONS = {
-	        useContainer: false,    // when true embeds inside a ContainerSurface for capturing input events & clipping
-	        container: {
-	            properties: {
-	                overflow: 'hidden' // overflow mode when useContainer is enabled
-	            }
-	        },
-	        scrollParticle: {
-	            // use defaults
-	        },
-	        scrollDrag: {
-	            forceFunction: Drag.FORCE_FUNCTIONS.QUADRATIC,
-	            strength: 0.001,
-	            disabled: true
-	        },
-	        scrollFriction: {
-	            forceFunction: Drag.FORCE_FUNCTIONS.LINEAR,
-	            strength: 0.0025,
-	            disabled: false
-	        },
-	        scrollSpring: {
-	            dampingRatio: 1.0,
-	            period: 350
-	        },
-	        scrollSync: {
-	            scale: 0.2
-	        },
-	        overscroll: true,
-	        paginated: false,
-	        paginationMode: PaginationMode.PAGE,
-	        paginationEnergyThresshold: 0.01,
-	        alignment: 0,         // [0: top/left, 1: bottom/right]
-	        touchMoveDirectionThresshold: undefined, // 0..1
-	        touchMoveNoVelocityDuration: 100,
-	        mouseMove: false,
-	        enabled: true,          // set to false to disable scrolling
-	        layoutAll: false,       // set to true is you want all renderables layed out/rendered
-	        alwaysLayout: false,    // set to true to always call the layout function
-	        extraBoundsSpace: [100, 100],
-	        debug: false
-	    };
-	
-	    /**
-	     * Patches the ScrollController instance's options with the passed-in ones.
-	     *
-	     * @param {Object} options Configurable options (see LayoutController for all inherited options).
-	     * @param {Bool} [options.paginated] Enabled pagination when set to `true` (default: `false`).
-	     * @param {Number} [options.paginationEnergyThresshold] Thresshold after which pagination kicks in (default: `0.01`).
-	     * @param {PaginationMode} [options.paginationMode] Pagination-mode (either page-based or scroll-based) (default: `PaginationMode.PAGE`).
-	     * @param {Number} [options.alignment] Alignment of the renderables (0 = top/left, 1 = bottom/right) (default: `0`).
-	     * @param {Bool} [options.mouseMove] Enables scrolling by holding the mouse-button down and moving the mouse (default: `false`).
-	     * @param {Bool} [options.enabled] Enables or disables user input (default: `true`).
-	     * @param {Bool} [options.overscroll] Enables or disables overscroll (default: `true`).
-	     * @param {Object} [options.scrollParticle] Options for the scroll particle (default: `{}`)
-	     * @param {Object} [options.scrollSpring] Spring-force options that are applied on the scroll particle when e.g. bounds is reached (default: `{dampingRatio: 1.0, period: 500}`)
-	     * @param {Object} [options.scrollDrag] Drag-force options to apply on the scroll particle
-	     * @param {Object} [options.scrollFriction] Friction-force options to apply on the scroll particle
-	     * @param {Bool} [options.layoutAll] When set to true, always lays out all renderables in the datasource (default: `false`).
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.setOptions = function(options) {
-	        LayoutController.prototype.setOptions.call(this, options);
-	        if (this._scroll) {
-	            if (options.scrollSpring) {
-	                this._scroll.springForce.setOptions(options.scrollSpring);
-	            }
-	            if (options.scrollDrag) {
-	                this._scroll.dragForce.setOptions(options.scrollDrag);
-	            }
-	        }
-	        if (options.scrollSync && this._scrollSync) {
-	            this._scrollSync.setOptions(options.scrollSync);
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Called whenever a layout-node is created/re-used. Initializes
-	     * the node with the `insertSpec` if it has been defined and enabled
-	     * locking of the x/y translation so that the x/y position of the renderable
-	     * is immediately updated when the user scrolls the view.
-	     */
-	    function _initLayoutNode(node, spec) {
-	        if (!spec && this.options.flowOptions.insertSpec) {
-	            node.setSpec(this.options.flowOptions.insertSpec);
-	        }
-	    }
-	
-	    /**
-	     * Helper that detects when layout is scrolling optimized (default: true).
-	     */
-	    function _isSequentiallyScrollingOptimized() {
-	        return !this._layout.capabilities ||
-	                (this._layout.capabilities.sequentialScrollingOptimized === undefined) ||
-	                this._layout.capabilities.sequentialScrollingOptimized;
-	    }
-	
-	    /**
-	     * Helper function for logging debug statements to the console.
-	     */
-	    /*function _log(args) {
-	        if (!this.options.debug) {
-	            return;
-	        }
-	        var message = this._debug.commitCount + ': ';
-	        for (var i = 0, j = arguments.length; i < j; i++) {
-	            var arg = arguments[i];
-	            if ((arg instanceof Object) || (arg instanceof Array)) {
-	                message += JSON.stringify(arg);
-	            }
-	            else {
-	                message += arg;
-	            }
-	        }
-	        console.log(message);
-	    }*/
-	
-	    /**
-	     * Sets the value for the spring, or set to `undefined` to disable the spring
-	     */
-	    function _updateSpring() {
-	        var springValue = this._scroll.scrollForceCount ? undefined : this._scroll.springPosition;
-	        if (this._scroll.springValue !== springValue) {
-	            this._scroll.springValue = springValue;
-	            if (springValue === undefined) {
-	                if (this._scroll.springForceId !== undefined) {
-	                    this._scroll.pe.detach(this._scroll.springForceId);
-	                    this._scroll.springForceId = undefined;
-	                    //_log.call(this, 'disabled spring');
-	                }
-	            }
-	            else {
-	                if (this._scroll.springForceId === undefined) {
-	                    this._scroll.springForceId = this._scroll.pe.attach(this._scroll.springForce, this._scroll.particle);
-	                }
-	                this._scroll.springEndState.set1D(springValue);
-	                this._scroll.pe.wake();
-	                //_log.call(this, 'setting spring to: ', springValue, ' (', this._scroll.springSource, ')');
-	            }
-	        }
-	    }
-	
-	    /**
-	     * Returns the time from the given input event.
-	     */
-	    function _getEventTimestamp(event) {
-	        return event.timeStamp || Date.now();
-	    }
-	
-	    /**
-	     * Called whenever the user presses the mouse button on the scrollview
-	     */
-	    function _mouseDown(event) {
-	
-	        // Check whether mouse-scrolling is enabled
-	        if (!this.options.mouseMove) {
-	            return;
-	        }
-	
-	        // Reset any previous mouse-move operation that has not yet been
-	        // cleared.
-	        if (this._scroll.mouseMove) {
-	            this.releaseScrollForce(this._scroll.mouseMove.delta);
-	        }
-	
-	        // Calculate start of move operation
-	        var current = [event.clientX, event.clientY];
-	        var time = _getEventTimestamp(event);
-	        this._scroll.mouseMove = {
-	            delta: 0,
-	            start: current,
-	            current: current,
-	            prev: current,
-	            time: time,
-	            prevTime: time
-	        };
-	
-	        // Apply scroll force
-	        this.applyScrollForce(this._scroll.mouseMove.delta);
-	    }
-	    function _mouseMove(event) {
-	
-	        // Check if any mouse-move is active
-	        if (!this._scroll.mouseMove || !this.options.enabled) {
-	            return;
-	        }
-	
-	        // When a thresshold is configured, check whether the move operation (x/y ratio)
-	        // lies within the thresshold. A move of 10 pixels x and 10 pixels y is considered 45 deg,
-	        // which corresponds to a thresshold of 0.5.
-	        var moveDirection = Math.atan2(
-	            Math.abs(event.clientY - this._scroll.mouseMove.prev[1]),
-	            Math.abs(event.clientX - this._scroll.mouseMove.prev[0])) / (Math.PI / 2.0);
-	        var directionDiff = Math.abs(this._direction - moveDirection);
-	        if ((this.options.touchMoveDirectionThresshold === undefined) || (directionDiff <= this.options.touchMoveDirectionThresshold)){
-	            this._scroll.mouseMove.prev = this._scroll.mouseMove.current;
-	            this._scroll.mouseMove.current = [event.clientX, event.clientY];
-	            this._scroll.mouseMove.prevTime = this._scroll.mouseMove.time;
-	            this._scroll.mouseMove.direction = moveDirection;
-	            this._scroll.mouseMove.time = _getEventTimestamp(event);
-	        }
-	
-	        // Update scroll-force
-	        var delta = this._scroll.mouseMove.current[this._direction] - this._scroll.mouseMove.start[this._direction];
-	        this.updateScrollForce(this._scroll.mouseMove.delta, delta);
-	        this._scroll.mouseMove.delta = delta;
-	    }
-	    function _mouseUp(event) {
-	
-	        // Check if any mouse-move is active
-	        if (!this._scroll.mouseMove) {
-	            return;
-	        }
-	
-	        // Calculate delta and velocity
-	        var velocity = 0;
-	        var diffTime = this._scroll.mouseMove.time - this._scroll.mouseMove.prevTime;
-	        if ((diffTime > 0) && ((_getEventTimestamp(event) - this._scroll.mouseMove.time) <= this.options.touchMoveNoVelocityDuration)) {
-	            var diffOffset = this._scroll.mouseMove.current[this._direction] - this._scroll.mouseMove.prev[this._direction];
-	            velocity = diffOffset / diffTime;
-	        }
-	
-	        // Release scroll force
-	        this.releaseScrollForce(this._scroll.mouseMove.delta, velocity);
-	        this._scroll.mouseMove = undefined;
-	    }
-	
-	    /**
-	     * Called whenever the user starts moving the scroll-view, using
-	     * touch gestures.
-	     */
-	    function _touchStart(event) {
-	
-	        // Create touch-end event listener
-	        if (!this._touchEndEventListener) {
-	            this._touchEndEventListener = function(event2) {
-	                event2.target.removeEventListener('touchend', this._touchEndEventListener);
-	                _touchEnd.call(this, event2);
-	            }.bind(this);
-	        }
-	
-	        // Remove any touches that are no longer active
-	        var oldTouchesCount = this._scroll.activeTouches.length;
-	        var i = 0;
-	        var j;
-	        var touchFound;
-	        while (i < this._scroll.activeTouches.length) {
-	            var activeTouch = this._scroll.activeTouches[i];
-	            touchFound = false;
-	            for (j = 0; j < event.touches.length; j++) {
-	                var touch = event.touches[j];
-	                if (touch.identifier === activeTouch.id) {
-	                    touchFound = true;
-	                    break;
-	                }
-	            }
-	            if (!touchFound) {
-	                //_log.cal(this, 'removing touch with id: ', activeTouch.id);
-	                this._scroll.activeTouches.splice(i, 1);
-	            }
-	            else {
-	                i++;
-	            }
-	        }
-	
-	        // Process touch
-	        for (i = 0; i < event.touches.length; i++) {
-	            var changedTouch = event.touches[i];
-	            touchFound = false;
-	            for (j = 0; j < this._scroll.activeTouches.length; j++) {
-	                if (this._scroll.activeTouches[j].id === changedTouch.identifier) {
-	                    touchFound = true;
-	                    break;
-	                }
-	            }
-	            if (!touchFound) {
-	                var current = [changedTouch.clientX, changedTouch.clientY];
-	                var time = _getEventTimestamp(event);
-	                this._scroll.activeTouches.push({
-	                    id: changedTouch.identifier,
-	                    start: current,
-	                    current: current,
-	                    prev: current,
-	                    time: time,
-	                    prevTime: time
-	                });
-	
-	                // The following listener is automatically removed after touchend is received
-	                // and ensures that the scrollview always received touchend.
-	                changedTouch.target.addEventListener('touchend', this._touchEndEventListener);
-	            }
-	        }
-	
-	        // The first time a touch new touch gesture has arrived, emit event
-	        if (!oldTouchesCount && this._scroll.activeTouches.length) {
-	            this.applyScrollForce(0);
-	            this._scroll.touchDelta = 0;
-	        }
-	    }
-	
-	    /**
-	     * Called whenever the user is moving his/her fingers to scroll the view.
-	     * Updates the moveOffset so that the scroll-offset on the view is updated.
-	     */
-	    function _touchMove(event) {
-	        if (!this.options.enabled) {
-	            return;
-	        }
-	
-	        // Process the touch event
-	        var primaryTouch;
-	        for (var i = 0; i < event.changedTouches.length; i++) {
-	            var changedTouch = event.changedTouches[i];
-	            for (var j = 0; j < this._scroll.activeTouches.length; j++) {
-	                var touch = this._scroll.activeTouches[j];
-	                if (touch.id === changedTouch.identifier) {
-	
-	                    // When a thresshold is configured, check whether the move operation (x/y ratio)
-	                    // lies within the thresshold. A move of 10 pixels x and 10 pixels y is considered 45 deg,
-	                    // which corresponds to a thresshold of 0.5.
-	                    var moveDirection = Math.atan2(
-	                        Math.abs(changedTouch.clientY - touch.prev[1]),
-	                        Math.abs(changedTouch.clientX - touch.prev[0])) / (Math.PI / 2.0);
-	                    var directionDiff = Math.abs(this._direction - moveDirection);
-	                    if ((this.options.touchMoveDirectionThresshold === undefined) || (directionDiff <= this.options.touchMoveDirectionThresshold)){
-	                        touch.prev = touch.current;
-	                        touch.current = [changedTouch.clientX, changedTouch.clientY];
-	                        touch.prevTime = touch.time;
-	                        touch.direction = moveDirection;
-	                        touch.time = _getEventTimestamp(event);
-	                        primaryTouch = (j === 0) ? touch : undefined;
-	                    }
-	                }
-	            }
-	        }
-	
-	        // Update move offset and emit event
-	        if (primaryTouch) {
-	            var delta = primaryTouch.current[this._direction] - primaryTouch.start[this._direction];
-	            this.updateScrollForce(this._scroll.touchDelta, delta);
-	            this._scroll.touchDelta = delta;
-	        }
-	    }
-	
-	    /**
-	     * Called whenever the user releases his fingers and the touch gesture
-	     * has completed. This will set the new position and if the user used a 'flick'
-	     * gesture give the scroll-offset particle a velocity and momentum into a
-	     * certain direction.
-	     */
-	    function _touchEnd(event) {
-	
-	        // Remove touch
-	        var primaryTouch = this._scroll.activeTouches.length ? this._scroll.activeTouches[0] : undefined;
-	        for (var i = 0; i < event.changedTouches.length; i++) {
-	            var changedTouch = event.changedTouches[i];
-	            for (var j = 0; j < this._scroll.activeTouches.length; j++) {
-	                var touch = this._scroll.activeTouches[j];
-	                if (touch.id === changedTouch.identifier) {
-	
-	                    // Remove touch from active-touches
-	                    this._scroll.activeTouches.splice(j, 1);
-	
-	                    // When a different touch now becomes the primary touch, update
-	                    // its start position to match the current move offset.
-	                    if ((j === 0) && this._scroll.activeTouches.length) {
-	                        var newPrimaryTouch = this._scroll.activeTouches[0];
-	                        newPrimaryTouch.start[0] = newPrimaryTouch.current[0] - (touch.current[0] - touch.start[0]);
-	                        newPrimaryTouch.start[1] = newPrimaryTouch.current[1] - (touch.current[1] - touch.start[1]);
-	                    }
-	                    break;
-	                }
-	            }
-	        }
-	
-	        // Wait for all fingers to be released from the screen before resetting the move-spring
-	        if (!primaryTouch || this._scroll.activeTouches.length) {
-	            return;
-	        }
-	
-	        // Determine velocity and add to particle
-	        var velocity = 0;
-	        var diffTime = primaryTouch.time - primaryTouch.prevTime;
-	        if ((diffTime > 0) && ((_getEventTimestamp(event) - primaryTouch.time) <= this.options.touchMoveNoVelocityDuration)) {
-	            var diffOffset = primaryTouch.current[this._direction] - primaryTouch.prev[this._direction];
-	            velocity = diffOffset / diffTime;
-	        }
-	
-	        // Release scroll force
-	        var delta = this._scroll.touchDelta;
-	        this.releaseScrollForce(delta, velocity);
-	        this._scroll.touchDelta = 0;
-	    }
-	
-	    /**
-	     * Called whenever the user is scrolling the view using either a mouse
-	     * scroll wheel or a track-pad.
-	     */
-	    function _scrollUpdate(event) {
-	        if (!this.options.enabled) {
-	            return;
-	        }
-	        var offset = Array.isArray(event.delta) ? event.delta[this._direction] : event.delta;
-	        this.scroll(offset);
-	    }
-	
-	    /**
-	     * Updates the scroll offset particle.
-	     */
-	    function _setParticle(position, velocity, phase) {
-	        if (position !== undefined) {
-	            //var oldPosition = this._scroll.particle.getPosition1D();
-	            this._scroll.particleValue = position;
-	            this._scroll.particle.setPosition1D(position);
-	            //_log.call(this, 'setParticle.position: ', position, ' (old: ', oldPosition, ', delta: ', position - oldPosition, ', phase: ', phase, ')');
-	        }
-	        if (velocity !== undefined) {
-	            var oldVelocity = this._scroll.particle.getVelocity1D();
-	            if (oldVelocity !== velocity) {
-	                this._scroll.particle.setVelocity1D(velocity);
-	                //_log.call(this, 'setParticle.velocity: ', velocity, ' (old: ', oldVelocity, ', delta: ', velocity - oldVelocity, ', phase: ', phase, ')');
-	            }
-	        }
-	    }
-	
-	    /**
-	     * Get the in-use scroll-offset.
-	     */
-	    function _calcScrollOffset(normalize, refreshParticle) {
-	
-	        // When moving using touch-gestures, make the offset stick to the
-	        // finger. When the bounds is exceeded, decrease the scroll distance
-	        // by two.
-	        if (refreshParticle || (this._scroll.particleValue === undefined)) {
-	            this._scroll.particleValue = this._scroll.particle.getPosition1D();
-	            this._scroll.particleValue = Math.round(this._scroll.particleValue * 1000) / 1000;
-	        }
-	
-	        // do stuff
-	        var scrollOffset = this._scroll.particleValue;
-	        if (this._scroll.scrollDelta || this._scroll.normalizedScrollDelta) {
-	            scrollOffset += this._scroll.scrollDelta + this._scroll.normalizedScrollDelta;
-	            if (((this._scroll.boundsReached & Bounds.PREV) && (scrollOffset > this._scroll.springPosition)) ||
-	               ((this._scroll.boundsReached & Bounds.NEXT) && (scrollOffset < this._scroll.springPosition)) ||
-	               (this._scroll.boundsReached === Bounds.BOTH)) {
-	                scrollOffset = this._scroll.springPosition;
-	            }
-	            if (normalize) {
-	                if (!this._scroll.scrollDelta) {
-	                    this._scroll.normalizedScrollDelta = 0;
-	                    _setParticle.call(this, scrollOffset, undefined, '_calcScrollOffset');
-	                }
-	                this._scroll.normalizedScrollDelta += this._scroll.scrollDelta;
-	                this._scroll.scrollDelta = 0;
-	            }
-	        }
-	
-	        if (this._scroll.scrollForceCount && this._scroll.scrollForce) {
-	            if (this._scroll.springPosition !== undefined) {
-	                scrollOffset = (scrollOffset + this._scroll.scrollForce + this._scroll.springPosition) / 2.0;
-	            }
-	            else {
-	                scrollOffset += this._scroll.scrollForce;
-	            }
-	        }
-	
-	        // Prevent the scroll position from exceeding the bounds when overscroll is disabled
-	        if (!this.options.overscroll) {
-	            if ((this._scroll.boundsReached === Bounds.BOTH) ||
-	                ((this._scroll.boundsReached === Bounds.PREV) && (scrollOffset > this._scroll.springPosition)) ||
-	                ((this._scroll.boundsReached === Bounds.NEXT) && (scrollOffset < this._scroll.springPosition))) {
-	                scrollOffset = this._scroll.springPosition;
-	            }
-	        }
-	
-	        //_log.call(this, 'scrollOffset: ', scrollOffset, ', particle:', this._scroll.particle.getPosition1D(), ', moveToPosition: ', this._scroll.moveToPosition, ', springPosition: ', this._scroll.springPosition);
-	        return scrollOffset;
-	    }
-	
-	    /**
-	     * Helper function that calculates the next/prev layed out height.
-	     * @private
-	     */
-	    ScrollController.prototype._calcScrollHeight = function(next, lastNodeOnly) {
-	        var calcedHeight = 0;
-	        var node = this._nodes.getStartEnumNode(next);
-	        while (node) {
-	            if (node._invalidated) {
-	                if (node.trueSizeRequested) {
-	                    calcedHeight = undefined;
-	                    break;
-	                }
-	                if (node.scrollLength !== undefined) {
-	                    calcedHeight = lastNodeOnly ? node.scrollLength : (calcedHeight + node.scrollLength);
-	                    if (!next && lastNodeOnly) {
-	                        break;
-	                    }
-	                }
-	            }
-	            node = next ? node._next : node._prev;
-	        }
-	        return calcedHeight;
-	    };
-	
-	    /**
-	     * Calculates the scroll boundaries and sets the spring accordingly.
-	     */
-	    function _calcBounds(size, scrollOffset) {
-	
-	        // Local data
-	        var prevHeight = this._calcScrollHeight(false);
-	        var nextHeight = this._calcScrollHeight(true);
-	        var enforeMinSize = _isSequentiallyScrollingOptimized.call(this);
-	
-	        // 1. When the rendered height is smaller than the total height,
-	        //    then lock to the primary bounds
-	        var totalHeight;
-	        if (enforeMinSize) {
-	            if ((nextHeight !== undefined) && (prevHeight !== undefined)) {
-	                totalHeight = prevHeight + nextHeight;
-	            }
-	            if ((totalHeight !== undefined) && (totalHeight <= size[this._direction])) {
-	                this._scroll.boundsReached = Bounds.BOTH;
-	                this._scroll.springPosition = this.options.alignment ? -nextHeight : prevHeight;
-	                this._scroll.springSource = SpringSource.MINSIZE;
-	                return;
-	            }
-	        }
-	
-	        // 2. Check whether primary boundary has been reached
-	        if (this.options.alignment) {
-	            if (enforeMinSize) {
-	                if ((nextHeight !== undefined) && ((scrollOffset + nextHeight) <= 0)) {
-	                    this._scroll.boundsReached = Bounds.NEXT;
-	                    this._scroll.springPosition = -nextHeight;
-	                    this._scroll.springSource = SpringSource.NEXTBOUNDS;
-	                    return;
-	                }
-	            }
-	            else {
-	                var firstPrevItemHeight = this._calcScrollHeight(false, true);
-	                if ((nextHeight !== undefined) && firstPrevItemHeight && ((scrollOffset + nextHeight + size[this._direction]) <= firstPrevItemHeight)) {
-	                    this._scroll.boundsReached = Bounds.NEXT;
-	                    this._scroll.springPosition = nextHeight - (size[this._direction] - firstPrevItemHeight);
-	                    this._scroll.springSource = SpringSource.NEXTBOUNDS;
-	                    return;
-	                }
-	            }
-	        }
-	        else {
-	            if ((prevHeight !== undefined) && ((scrollOffset - prevHeight) >= 0)) {
-	                this._scroll.boundsReached = Bounds.PREV;
-	                this._scroll.springPosition = prevHeight;
-	                this._scroll.springSource = SpringSource.PREVBOUNDS;
-	                return;
-	            }
-	        }
-	
-	        // 3. Check if secondary bounds has been reached
-	        if (this.options.alignment) {
-	            if ((prevHeight !== undefined) && ((scrollOffset - prevHeight) >= -size[this._direction])) {
-	                this._scroll.boundsReached = Bounds.PREV;
-	                this._scroll.springPosition = -size[this._direction] + prevHeight;
-	                this._scroll.springSource = SpringSource.PREVBOUNDS;
-	                return;
-	            }
-	        }
-	        else {
-	            var nextBounds = enforeMinSize ? size[this._direction] : this._calcScrollHeight(true, true);
-	            if ((nextHeight !== undefined) && ((scrollOffset + nextHeight) <= nextBounds)){
-	                this._scroll.boundsReached = Bounds.NEXT;
-	                this._scroll.springPosition = nextBounds - nextHeight;
-	                this._scroll.springSource = SpringSource.NEXTBOUNDS;
-	                return;
-	            }
-	        }
-	
-	        // No bounds reached
-	        this._scroll.boundsReached = Bounds.NONE;
-	        this._scroll.springPosition = undefined;
-	        this._scroll.springSource = SpringSource.NONE;
-	    }
-	
-	    /**
-	     * Calculates the scrollto-offset to which the spring is set.
-	     */
-	    function _calcScrollToOffset(size, scrollOffset) {
-	        var scrollToRenderNode = this._scroll.scrollToRenderNode || this._scroll.ensureVisibleRenderNode;
-	        if (!scrollToRenderNode) {
-	            return;
-	        }
-	
-	        // 1. When boundary is reached, stop scrolling in that direction
-	        if ((this._scroll.boundsReached === Bounds.BOTH) ||
-	            (!this._scroll.scrollToDirection && (this._scroll.boundsReached === Bounds.PREV)) ||
-	            (this._scroll.scrollToDirection && (this._scroll.boundsReached === Bounds.NEXT))) {
-	            return;
-	        }
-	
-	        // 2. Find the node to scroll to
-	        var foundNode;
-	        var scrollToOffset = 0;
-	        var node = this._nodes.getStartEnumNode(true);
-	        var count = 0;
-	        while (node) {
-	            count++;
-	            if (!node._invalidated || (node.scrollLength === undefined)) {
-	                break;
-	            }
-	            if (this.options.alignment) {
-	                scrollToOffset -= node.scrollLength;
-	            }
-	            if (node.renderNode === scrollToRenderNode) {
-	                foundNode = node;
-	                break;
-	            }
-	            if (!this.options.alignment) {
-	                scrollToOffset -= node.scrollLength;
-	            }
-	            node = node._next;
-	        }
-	        if (!foundNode) {
-	            scrollToOffset = 0;
-	            node = this._nodes.getStartEnumNode(false);
-	            while (node) {
-	                if (!node._invalidated || (node.scrollLength === undefined)) {
-	                   break;
-	                }
-	                if (!this.options.alignment) {
-	                    scrollToOffset += node.scrollLength;
-	                }
-	                if (node.renderNode === scrollToRenderNode) {
-	                    foundNode = node;
-	                    break;
-	                }
-	                if (this.options.alignment) {
-	                    scrollToOffset += node.scrollLength;
-	                }
-	                node = node._prev;
-	            }
-	        }
-	
-	        // 3. Update springs
-	        if (foundNode) {
-	            if (this._scroll.ensureVisibleRenderNode) {
-	                if (this.options.alignment) {
-	                    if ((scrollToOffset - foundNode.scrollLength) < 0) {
-	                        this._scroll.springPosition = scrollToOffset;
-	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
-	                    }
-	                    else if (scrollToOffset > size[this._direction]) {
-	                        this._scroll.springPosition = size[this._direction] - scrollToOffset;
-	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
-	                    }
-	                    else {
-	                        if (!foundNode.trueSizeRequested) {
-	                            this._scroll.ensureVisibleRenderNode = undefined;
-	                        }
-	                    }
-	                }
-	                else {
-	                    scrollToOffset = -scrollToOffset;
-	                    if (scrollToOffset < 0) {
-	                        this._scroll.springPosition = scrollToOffset;
-	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
-	                    }
-	                    else if ((scrollToOffset + foundNode.scrollLength) > size[this._direction]) {
-	                        this._scroll.springPosition = size[this._direction] - (scrollToOffset + foundNode.scrollLength);
-	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
-	                    }
-	                    else {
-	                        if (!foundNode.trueSizeRequested) {
-	                          this._scroll.ensureVisibleRenderNode = undefined;
-	                        }
-	                    }
-	                }
-	            }
-	            else { // scrollToSequence
-	                this._scroll.springPosition = scrollToOffset;
-	                this._scroll.springSource = SpringSource.GOTOSEQUENCE;
-	            }
-	            return;
-	        }
-	
-	        // 4. When node not found, keep searching
-	        if (this._scroll.scrollToDirection) {
-	            this._scroll.springPosition = scrollOffset - size[this._direction];
-	            this._scroll.springSource = SpringSource.GOTONEXTDIRECTION;
-	
-	        }
-	        else {
-	            this._scroll.springPosition = scrollOffset + size[this._direction];
-	            this._scroll.springSource = SpringSource.GOTOPREVDIRECTION;
-	        }
-	
-	        // 5. In case of a VirtualViewSequnce, make sure all the view-sequence nodes are touched, so
-	        //    that they are not cleaned up.
-	        if (this._viewSequence.cleanup) {
-	            var viewSequence = this._viewSequence;
-	            while (viewSequence.get() !== scrollToRenderNode) {
-	                viewSequence = this._scroll.scrollToDirection ? viewSequence.getNext(true) : viewSequence.getPrevious(true);
-	                if (!viewSequence) {
-	                    break;
-	                }
-	            }
-	        }
-	    }
-	
-	    /**
-	     * Snaps to a page when pagination is enabled.
-	     */
-	    function _snapToPage() {
-	
-	        // Check whether pagination is active
-	        if (!this.options.paginated ||
-	            this._scroll.scrollForceCount || //don't paginate while moving
-	            (this._scroll.springPosition !== undefined)) {
-	            return;
-	        }
-	
-	        // When the energy is below the thresshold, paginate to the current page
-	        var item;
-	        switch (this.options.paginationMode) {
-	            case PaginationMode.SCROLL:
-	                if (!this.options.paginationEnergyThresshold || (Math.abs(this._scroll.particle.getEnergy()) <= this.options.paginationEnergyThresshold)) {
-	                    item = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
-	                    if (item && item.renderNode) {
-	                        this.goToRenderNode(item.renderNode);
-	                    }
-	                }
-	                break;
-	            case PaginationMode.PAGE:
-	                item = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
-	                if (item && item.renderNode) {
-	                    this.goToRenderNode(item.renderNode);
-	                }
-	                break;
-	        }
-	    }
-	
-	    /**
-	     * Normalizes the view-sequence node so that the view-sequence is near to 0.
-	     */
-	    function _normalizePrevViewSequence(scrollOffset) {
-	        var count = 0;
-	        var normalizedScrollOffset = scrollOffset;
-	        var normalizeNextPrev = false;
-	        var node = this._nodes.getStartEnumNode(false);
-	        while (node) {
-	            if (!node._invalidated || !node._viewSequence) {
-	                break;
-	            }
-	            if (normalizeNextPrev) {
-	                this._viewSequence = node._viewSequence;
-	                normalizedScrollOffset = scrollOffset;
-	                normalizeNextPrev = false;
-	            }
-	            if ((node.scrollLength === undefined) || node.trueSizeRequested || (scrollOffset < 0)) {
-	                break;
-	            }
-	            scrollOffset -= node.scrollLength;
-	            count++;
-	            if (node.scrollLength) {
-	                if (this.options.alignment) {
-	                    normalizeNextPrev = (scrollOffset >= 0);
-	                }
-	                else {
-	                    this._viewSequence = node._viewSequence;
-	                    normalizedScrollOffset = scrollOffset;
-	                }
-	            }
-	            node = node._prev;
-	        }
-	        return normalizedScrollOffset;
-	    }
-	    function _normalizeNextViewSequence(scrollOffset) {
-	        var count = 0;
-	        var normalizedScrollOffset = scrollOffset;
-	        var node = this._nodes.getStartEnumNode(true);
-	        while (node) {
-	            if (!node._invalidated || (node.scrollLength === undefined) || node.trueSizeRequested || !node._viewSequence ||
-	                ((scrollOffset > 0) && (!this.options.alignment || (node.scrollLength !== 0)))) {
-	                break;
-	            }
-	            if (this.options.alignment) {
-	                scrollOffset += node.scrollLength;
-	                count++;
-	            }
-	            if (node.scrollLength || this.options.alignment) {
-	                this._viewSequence = node._viewSequence;
-	                normalizedScrollOffset = scrollOffset;
-	            }
-	            if (!this.options.alignment) {
-	                scrollOffset += node.scrollLength;
-	                count++;
-	            }
-	            node = node._next;
-	        }
-	        return normalizedScrollOffset;
-	    }
-	    function _normalizeViewSequence(size, scrollOffset) {
-	
-	        // Check whether normalisation is disabled
-	        var caps = this._layout.capabilities;
-	        if (caps && caps.debug &&
-	            (caps.debug.normalize !== undefined) &&
-	            !caps.debug.normalize) {
-	            return scrollOffset;
-	        }
-	
-	        // Don't normalize when forces are at work
-	        if (this._scroll.scrollForceCount) {
-	            return scrollOffset;
-	        }
-	
-	        // 1. Normalize in primary direction
-	        var normalizedScrollOffset = scrollOffset;
-	        if (this.options.alignment && (scrollOffset < 0)) {
-	            normalizedScrollOffset = _normalizeNextViewSequence.call(this, scrollOffset);
-	        }
-	        else if (!this.options.alignment && (scrollOffset > 0)){
-	            normalizedScrollOffset = _normalizePrevViewSequence.call(this, scrollOffset);
-	        }
-	
-	        // 2. Normalize in secondary direction
-	        if (normalizedScrollOffset === scrollOffset) {
-	            if (this.options.alignment && (scrollOffset > 0)) {
-	                normalizedScrollOffset = _normalizePrevViewSequence.call(this, scrollOffset);
-	            }
-	            else if (!this.options.alignment && (scrollOffset < 0)) {
-	                normalizedScrollOffset = _normalizeNextViewSequence.call(this, scrollOffset);
-	            }
-	        }
-	
-	        // Adjust particle and springs
-	        if (normalizedScrollOffset !== scrollOffset) {
-	            var delta = normalizedScrollOffset - scrollOffset;
-	
-	            // Adjust particle
-	            var particleValue = this._scroll.particle.getPosition1D();
-	            //var particleValue = this._scroll.particleValue;
-	            _setParticle.call(this, particleValue + delta, undefined, 'normalize');
-	            //_log.call(this, 'normalized scrollOffset: ', normalizedScrollOffset, ', old: ', scrollOffset, ', particle: ', particleValue + delta);
-	
-	            // Adjust scroll spring
-	            if (this._scroll.springPosition !== undefined) {
-	                this._scroll.springPosition += delta;
-	            }
-	
-	            // Adjust group offset
-	            if (_isSequentiallyScrollingOptimized.call(this)) {
-	                this._scroll.groupStart -= delta;
-	            }
-	        }
-	        return normalizedScrollOffset;
-	    }
-	
-	    /**
-	     * Get all items that are partly or completely visible.
-	     *
-	     * The returned result is an array of objects containing the
-	     * following properties. Example:
-	     * ```javascript
-	     * {
-	     *   viewSequence: {ViewSequence},
-	     *   index: {Number},
-	     *   renderNode: {renderable},
-	     *   visiblePerc: {Number} 0..1
-	     * }
-	     * ```
-	     * @return {Array} array of items
-	     */
-	    ScrollController.prototype.getVisibleItems = function() {
-	        var size = this._contextSizeCache;
-	        var scrollOffset = this.options.alignment ? (this._scroll.unnormalizedScrollOffset + size[this._direction]) : this._scroll.unnormalizedScrollOffset;
-	        var result = [];
-	        var node = this._nodes.getStartEnumNode(true);
-	        while (node) {
-	            if (!node._invalidated || (node.scrollLength === undefined) || (scrollOffset > size[this._direction])) {
-	                break;
-	            }
-	            scrollOffset += node.scrollLength;
-	            if ((scrollOffset >= 0) && node._viewSequence){
-	                result.push({
-	                    index: node._viewSequence.getIndex(),
-	                    viewSequence: node._viewSequence,
-	                    renderNode: node.renderNode,
-	                    visiblePerc: node.scrollLength ? ((Math.min(scrollOffset, size[this._direction]) - Math.max(scrollOffset - node.scrollLength, 0)) / node.scrollLength) : 1,
-	                    scrollOffset: scrollOffset - node.scrollLength,
-	                    scrollLength: node.scrollLength,
-	                    _node: node
-	                });
-	            }
-	            node = node._next;
-	        }
-	        scrollOffset = this.options.alignment ? (this._scroll.unnormalizedScrollOffset + size[this._direction]) : this._scroll.unnormalizedScrollOffset;
-	        node = this._nodes.getStartEnumNode(false);
-	        while (node) {
-	            if (!node._invalidated || (node.scrollLength === undefined) || (scrollOffset < 0)) {
-	                break;
-	            }
-	            scrollOffset -= node.scrollLength;
-	            if ((scrollOffset < size[this._direction]) && node._viewSequence) {
-	                result.unshift({
-	                    index: node._viewSequence.getIndex(),
-	                    viewSequence: node._viewSequence,
-	                    renderNode: node.renderNode,
-	                    visiblePerc: node.scrollLength ? ((Math.min(scrollOffset + node.scrollLength, size[this._direction]) - Math.max(scrollOffset, 0)) / node.scrollLength) : 1,
-	                    scrollOffset: scrollOffset,
-	                    scrollLength: node.scrollLength,
-	                    _node: node
-	                });
-	            }
-	            node = node._prev;
-	        }
-	        return result;
-	    };
-	
-	    /**
-	     * Get the first or last visible item in the view.
-	     */
-	    function _getVisibleItem(first) {
-	        var result = {};
-	        var diff;
-	        var prevDiff = 10000000;
-	        var diffDelta = (first && this.options.alignment) ? -this._contextSizeCache[this._direction] : ((!first && !this.options.alignment) ? this._contextSizeCache[this._direction] : 0);
-	        var scrollOffset = this._scroll.unnormalizedScrollOffset;
-	        var node = this._nodes.getStartEnumNode(true);
-	        while (node) {
-	            if (!node._invalidated || (node.scrollLength === undefined)) {
-	                break;
-	            }
-	            if (node._viewSequence) {
-	                diff = Math.abs(diffDelta - (scrollOffset + (!first ? node.scrollLength : 0)));
-	                if (diff >= prevDiff) {
-	                    break;
-	                }
-	                prevDiff = diff;
-	                result.scrollOffset = scrollOffset;
-	                result._node = node;
-	                scrollOffset += node.scrollLength;
-	            }
-	            node = node._next;
-	        }
-	        scrollOffset = this._scroll.unnormalizedScrollOffset;
-	        node = this._nodes.getStartEnumNode(false);
-	        while (node) {
-	            if (!node._invalidated || (node.scrollLength === undefined)) {
-	                break;
-	            }
-	            if (node._viewSequence) {
-	                scrollOffset -= node.scrollLength;
-	                diff = Math.abs(diffDelta - (scrollOffset + (!first ? node.scrollLength : 0)));
-	                if (diff >= prevDiff) {
-	                    break;
-	                }
-	                prevDiff = diff;
-	                result.scrollOffset = scrollOffset;
-	                result._node = node;
-	            }
-	            node = node._prev;
-	        }
-	        if (!result._node) {
-	            return undefined;
-	        }
-	        result.scrollLength = result._node.scrollLength;
-	        if (this.options.alignment) {
-	            result.visiblePerc = (Math.min(result.scrollOffset + result.scrollLength, 0) - Math.max(result.scrollOffset, -this._contextSizeCache[this._direction])) / result.scrollLength;
-	        }
-	        else {
-	            result.visiblePerc = (Math.min(result.scrollOffset + result.scrollLength, this._contextSizeCache[this._direction]) - Math.max(result.scrollOffset, 0)) / result.scrollLength;
-	        }
-	        result.index = result._node._viewSequence.getIndex();
-	        result.viewSequence = result._node._viewSequence;
-	        result.renderNode = result._node.renderNode;
-	        return result;
-	    }
-	
-	    /**
-	     * Get the first visible item in the view.
-	     *
-	     * @return {Object} item or `undefined`
-	     */
-	    ScrollController.prototype.getFirstVisibleItem = function() {
-	        return _getVisibleItem.call(this, true);
-	    };
-	
-	    /**
-	     * Get the last visible item in the view.
-	     *
-	     * @return {Object} item or `undefined`
-	     */
-	    ScrollController.prototype.getLastVisibleItem = function() {
-	        return _getVisibleItem.call(this, false);
-	    };
-	
-	    /**
-	     * Helper function that goes to a view-sequence either by scrolling
-	     * or immediately without any scrolling animation.
-	     */
-	    function _goToSequence(viewSequence, next, noAnimation) {
-	        if (noAnimation) {
-	            this._viewSequence = viewSequence;
-	            this._scroll.springPosition = undefined;
-	            _updateSpring.call(this);
-	            this.halt();
-	            this._scroll.scrollDelta = 0;
-	            _setParticle.call(this, 0, 0, '_goToSequence');
-	            this._isDirty = true;
-	        }
-	        else {
-	            this._scroll.scrollToSequence = viewSequence;
-	            this._scroll.scrollToRenderNode = viewSequence.get();
-	            this._scroll.ensureVisibleRenderNode = undefined;
-	            this._scroll.scrollToDirection = next;
-	            this._scroll.scrollDirty = true;
-	        }
-	    }
-	
-	    /**
-	     * Helper function that scrolls the view towards a view-sequence node.
-	     */
-	    function _ensureVisibleSequence(viewSequence, next) {
-	        this._scroll.scrollToSequence = undefined;
-	        this._scroll.scrollToRenderNode = undefined;
-	        this._scroll.ensureVisibleRenderNode = viewSequence.get();
-	        this._scroll.scrollToDirection = next;
-	        this._scroll.scrollDirty = true;
-	    }
-	
-	    /**
-	     * Moves to the next node in the viewSequence.
-	     *
-	     * @param {Number} [amount] Amount of nodes to move
-	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
-	     */
-	    function _goToPage(amount, noAnimation) {
-	
-	        // Get current scroll-position. When a previous call was made to
-	        // `scroll' or `scrollTo` and that node has not yet been reached, then
-	        // the amount is accumalated onto that scroll target.
-	        var viewSequence = (!noAnimation ? this._scroll.scrollToSequence : undefined) || this._viewSequence;
-	        if (!this._scroll.scrollToSequence && !noAnimation) {
-	            var firstVisibleItem = this.getFirstVisibleItem();
-	            if (firstVisibleItem) {
-	                viewSequence = firstVisibleItem.viewSequence;
-	                if (((amount < 0) && (firstVisibleItem.scrollOffset < 0)) ||
-	                    ((amount > 0) && (firstVisibleItem.scrollOffset > 0))) {
-	                    amount = 0;
-	                }
-	            }
-	        }
-	        if (!viewSequence) {
-	            return;
-	        }
-	
-	        // Find scroll target
-	        for (var i = 0; i < Math.abs(amount); i++) {
-	            var nextViewSequence = (amount > 0) ? viewSequence.getNext() : viewSequence.getPrevious();
-	            if (nextViewSequence) {
-	                viewSequence = nextViewSequence;
-	            }
-	            else {
-	                break;
-	            }
-	        }
-	        _goToSequence.call(this, viewSequence, amount >= 0, noAnimation);
-	    }
-	
-	    /**
-	     * Goes to the first page, making it visible.
-	     *
-	     * NOTE: This function does not work on ViewSequences that have the `loop` property enabled.
-	     *
-	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.goToFirstPage = function(noAnimation) {
-	        if (!this._viewSequence) {
-	            return this;
-	        }
-	        if (this._viewSequence._ && this._viewSequence._.loop) {
-	            LayoutUtility.error('Unable to go to first item of looped ViewSequence');
-	            return this;
-	        }
-	        var viewSequence = this._viewSequence;
-	        while (viewSequence) {
-	            var prev = viewSequence.getPrevious();
-	            if (prev && prev.get()) {
-	                viewSequence = prev;
-	            }
-	            else {
-	                break;
-	            }
-	        }
-	        _goToSequence.call(this, viewSequence, false, noAnimation);
-	        return this;
-	    };
-	
-	    /**
-	     * Goes to the previous page, making it visible.
-	     *
-	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.goToPreviousPage = function(noAnimation) {
-	        _goToPage.call(this, -1, noAnimation);
-	        return this;
-	    };
-	
-	    /**
-	     * Goes to the next page, making it visible.
-	     *
-	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.goToNextPage = function(noAnimation) {
-	        _goToPage.call(this, 1, noAnimation);
-	        return this;
-	    };
-	
-	    /**
-	     * Goes to the last page, making it visible.
-	     *
-	     * NOTE: This function does not work on ViewSequences that have the `loop` property enabled.
-	     *
-	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.goToLastPage = function(noAnimation) {
-	        if (!this._viewSequence) {
-	            return this;
-	        }
-	        if (this._viewSequence._ && this._viewSequence._.loop) {
-	            LayoutUtility.error('Unable to go to last item of looped ViewSequence');
-	            return this;
-	        }
-	        var viewSequence = this._viewSequence;
-	        while (viewSequence) {
-	            var next = viewSequence.getNext();
-	            if (next && next.get()) {
-	                viewSequence = next;
-	            }
-	            else {
-	                break;
-	            }
-	        }
-	        _goToSequence.call(this, viewSequence, true, noAnimation);
-	        return this;
-	    };
-	
-	    /**
-	     * Goes to the given renderable in the datasource.
-	     *
-	     * @param {RenderNode} node renderable to scroll to.
-	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without scrolling animation.
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.goToRenderNode = function(node, noAnimation) {
-	
-	        // Verify arguments and state
-	        if (!this._viewSequence || !node) {
-	            return this;
-	        }
-	
-	        // Check current node
-	        if (this._viewSequence.get() === node) {
-	            var next = _calcScrollOffset.call(this) >= 0;
-	            _goToSequence.call(this, this._viewSequence, next, noAnimation);
-	            return this;
-	        }
-	
-	        // Find the sequence-node that we want to scroll to.
-	        // We look at both directions at the same time.
-	        // The first match that is encountered, that direction is chosen.
-	        var nextSequence = this._viewSequence.getNext();
-	        var prevSequence = this._viewSequence.getPrevious();
-	        while ((nextSequence || prevSequence) && (nextSequence !== this._viewSequence)){
-	            var nextNode = nextSequence ? nextSequence.get() : undefined;
-	            if (nextNode === node) {
-	                _goToSequence.call(this, nextSequence, true, noAnimation);
-	                break;
-	            }
-	            var prevNode = prevSequence ? prevSequence.get() : undefined;
-	            if (prevNode === node) {
-	                _goToSequence.call(this, prevSequence, false, noAnimation);
-	                break;
-	            }
-	            nextSequence = nextNode ? nextSequence.getNext() : undefined;
-	            prevSequence = prevNode ? prevSequence.getPrevious() : undefined;
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Ensures that a render-node is entirely visible.
-	     *
-	     * When the node is already visible, nothing happens. If the node is not entirely visible
-	     * the view is scrolled as much as needed to make it entirely visibl.
-	     *
-	     * @param {Number|ViewSequence|Renderable} node index, renderNode or ViewSequence
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.ensureVisible = function(node) {
-	
-	        // Convert argument into renderNode
-	        if (node instanceof ViewSequence) {
-	            node = node.get();
-	        }
-	        else if ((node instanceof Number) || (typeof node === 'number')) {
-	            var viewSequence = this._viewSequence;
-	            while (viewSequence.getIndex() < node) {
-	                viewSequence = viewSequence.getNext();
-	                if (!viewSequence) {
-	                    return this;
-	                }
-	            }
-	            while (viewSequence.getIndex() > node) {
-	                viewSequence = viewSequence.getPrevious();
-	                if (!viewSequence) {
-	                    return this;
-	                }
-	            }
-	        }
-	
-	        // Check current node
-	        if (this._viewSequence.get() === node) {
-	            var next = _calcScrollOffset.call(this) >= 0;
-	            _ensureVisibleSequence.call(this, this._viewSequence, next);
-	            return this;
-	        }
-	
-	        // Find the sequence-node that we want to scroll to.
-	        // We look at both directions at the same time.
-	        // The first match that is encountered, that direction is chosen.
-	        var nextSequence = this._viewSequence.getNext();
-	        var prevSequence = this._viewSequence.getPrevious();
-	        while ((nextSequence || prevSequence) && (nextSequence !== this._viewSequence)){
-	            var nextNode = nextSequence ? nextSequence.get() : undefined;
-	            if (nextNode === node) {
-	                _ensureVisibleSequence.call(this, nextSequence, true);
-	                break;
-	            }
-	            var prevNode = prevSequence ? prevSequence.get() : undefined;
-	            if (prevNode === node) {
-	                _ensureVisibleSequence.call(this, prevSequence, false);
-	                break;
-	            }
-	            nextSequence = nextNode ? nextSequence.getNext() : undefined;
-	            prevSequence = prevNode ? prevSequence.getPrevious() : undefined;
-	        }
-	
-	        return this;
-	    };
-	
-	    /**
-	     * Scrolls the view by the specified number of pixels.
-	     *
-	     * @param {Number} delta Delta in pixels (< 0 = down/right, > 0 = top/left).
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.scroll = function(delta) {
-	        this.halt();
-	        this._scroll.scrollDelta += delta;
-	        return this;
-	    };
-	
-	    /**
-	     * Checks whether the scrollview can scroll the given delta.
-	     * When the scrollView can scroll the whole delta, then
-	     * the return value is the same as the delta. If it cannot
-	     * scroll the entire delta, the return value is the number of
-	     * pixels that can be scrolled.
-	     *
-	     * @param {Number} delta Delta to test
-	     * @return {Number} Number of pixels the view is allowed to scroll
-	     */
-	    ScrollController.prototype.canScroll = function(delta) {
-	
-	        // Calculate height in both directions
-	        var scrollOffset = _calcScrollOffset.call(this);
-	        var prevHeight = this._calcScrollHeight(false);
-	        var nextHeight = this._calcScrollHeight(true);
-	
-	        // When the rendered height is smaller than the total height,
-	        // then no scrolling whatsover is allowed.
-	        var totalHeight;
-	        if ((nextHeight !== undefined) && (prevHeight !== undefined)) {
-	            totalHeight = prevHeight + nextHeight;
-	        }
-	        if ((totalHeight !== undefined) && (totalHeight <= this._contextSizeCache[this._direction])) {
-	            return 0; // no scrolling at all allowed
-	        }
-	
-	        // Determine the offset that we can scroll
-	        if ((delta < 0) && (nextHeight !== undefined)) {
-	            var nextOffset = this._contextSizeCache[this._direction] - (scrollOffset + nextHeight);
-	            return Math.max(nextOffset, delta);
-	        }
-	        else if ((delta > 0) && (prevHeight !== undefined)) {
-	            var prevOffset = -(scrollOffset - prevHeight);
-	            return Math.min(prevOffset, delta);
-	        }
-	        return delta;
-	    };
-	
-	    /**
-	     * Halts all scrolling going on. In essence this function sets
-	     * the velocity to 0 and cancels any `goToXxx` operation that
-	     * was applied.
-	     *
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.halt = function() {
-	        this._scroll.scrollToSequence = undefined;
-	        this._scroll.scrollToRenderNode = undefined;
-	        this._scroll.ensureVisibleRenderNode = undefined;
-	        _setParticle.call(this, undefined, 0, 'halt');
-	        return this;
-	    };
-	
-	    /**
-	     * Checks whether scrolling is in progress or not.
-	     *
-	     * @return {Bool} true when scrolling is active
-	     */
-	    ScrollController.prototype.isScrolling = function() {
-	        return this._scroll.isScrolling;
-	    };
-	
-	    /**
-	     * Checks whether any boundaries have been reached.
-	     *
-	     * @return {ScrollController.Bounds} Either, Bounds.PREV, Bounds.NEXT, Bounds.BOTH or Bounds.NONE
-	     */
-	    ScrollController.prototype.getBoundsReached = function() {
-	        return this._scroll.boundsReached;
-	    };
-	
-	    /**
-	     * Get the current scrolling velocity.
-	     *
-	     * @return {Number} Scroll velocity
-	     */
-	    ScrollController.prototype.getVelocity = function() {
-	        return this._scroll.particle.getVelocity1D();
-	    };
-	
-	    /**
-	     * Get the current energy of the scrolling particle.
-	     *
-	     * @return {Number} Energy
-	     */
-	    ScrollController.prototype.getEnergy = function() {
-	        return this._scroll.particle.getEnergy();
-	    };
-	
-	    /**
-	     * Set the scrolling velocity.
-	     *
-	     * @param {Number} velocity New scroll velocity
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.setVelocity = function(velocity) {
-	        return this._scroll.particle.setVelocity1D(velocity);
-	    };
-	
-	    /**
-	     * Applies a permanent scroll-force (delta) until it is released.
-	     * When the cumulative scroll-offset lies outside the allowed bounds
-	     * a strech effect is used, and the offset beyond the bounds is
-	     * substracted by halve. This function should always be accompanied
-	     * by a call to `releaseScrollForce`.
-	     *
-	     * This method is used for instance when using touch gestures to move
-	     * the scroll offset and corresponds to the `touchstart` event.
-	     *
-	     * @param {Number} delta Starting scroll-delta force to apply
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.applyScrollForce = function(delta) {
-	        this.halt();
-	        if (this._scroll.scrollForceCount === 0) {
-	            this._scroll.scrollForceStartItem = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
-	        }
-	        this._scroll.scrollForceCount++;
-	        this._scroll.scrollForce += delta;
-	        return this;
-	    };
-	
-	    /**
-	     * Updates a existing scroll-force previously applied by calling
-	     * `applyScrollForce`.
-	     *
-	     * This method is used for instance when using touch gestures to move
-	     * the scroll offset and corresponds to the `touchmove` event.
-	     *
-	     * @param {Number} prevDelta Previous delta
-	     * @param {Number} newDelta New delta
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.updateScrollForce = function(prevDelta, newDelta) {
-	        this.halt();
-	        newDelta -= prevDelta;
-	        this._scroll.scrollForce += newDelta;
-	        return this;
-	    };
-	
-	    /**
-	     * Releases a scroll-force and sets the velocity.
-	     *
-	     * This method is used for instance when using touch gestures to move
-	     * the scroll offset and corresponds to the `touchend` event.
-	     *
-	     * @param {Number} delta Scroll delta to release
-	     * @param {Number} [velocity] Velocity to apply after which the view keeps scrolling
-	     * @return {ScrollController} this
-	     */
-	    ScrollController.prototype.releaseScrollForce = function(delta, velocity) {
-	        this.halt();
-	        if (this._scroll.scrollForceCount === 1) {
-	            var scrollOffset = _calcScrollOffset.call(this);
-	            _setParticle.call(this, scrollOffset, velocity, 'releaseScrollForce');
-	            this._scroll.pe.wake();
-	            this._scroll.scrollForce = 0;
-	            this._scroll.scrollDirty = true;
-	            if (this._scroll.scrollForceStartItem && this.options.paginated && (this.options.paginationMode === PaginationMode.PAGE)) {
-	                var item = this.options.alignment ? this.getLastVisibleItem(true) : this.getFirstVisibleItem(true);
-	                if (item) {
-	                    if (item.renderNode !== this._scroll.scrollForceStartItem.renderNode) {
-	                        this.goToRenderNode(item.renderNode);
-	                    }
-	                    else if (this.options.paginationEnergyThresshold && (Math.abs(this._scroll.particle.getEnergy()) >= this.options.paginationEnergyThresshold)) {
-	                        velocity = velocity || 0;
-	                        if ((velocity < 0) && item._node._next && item._node._next.renderNode) {
-	                            this.goToRenderNode(item._node._next.renderNode);
-	                        }
-	                        else if ((velocity >= 0) && item._node._prev && item._node._prev.renderNode) {
-	                            this.goToRenderNode(item._node._prev.renderNode);
-	                        }
-	                    }
-	                    else {
-	                        this.goToRenderNode(item.renderNode);
-	                    }
-	                }
-	            }
-	            this._scroll.scrollForceStartItem = undefined;
-	        }
-	        else {
-	            this._scroll.scrollForce -= delta;
-	        }
-	        this._scroll.scrollForceCount--;
-	        return this;
-	    };
-	
-	     /**
-	     * Get the spec (size, transform, etc..) for the given renderable or
-	     * Id.
-	     *
-	     * @param {Renderable|String} node Renderabe or Id to look for.
-	     * @param {Bool} normalize When set to `true` normalizes the origin/align into the transform translation (default: `false`).
-	     * @return {Spec} spec or undefined
-	     */
-	    ScrollController.prototype.getSpec = function(node, normalize) {
-	        var spec = LayoutController.prototype.getSpec.apply(this, arguments);
-	        if (spec && _isSequentiallyScrollingOptimized.call(this)) {
-	            spec = {
-	                origin: spec.origin,
-	                align: spec.align,
-	                opacity: spec.opacity,
-	                size: spec.size,
-	                renderNode: spec.renderNode,
-	                transform: spec.transform
-	            };
-	            var translate = [0, 0, 0];
-	            translate[this._direction] = this._scrollOffsetCache + this._scroll.groupStart;
-	            spec.transform = Transform.thenMove(spec.transform, translate);
-	        }
-	        return spec;
-	    };
-	
-	    /**
-	     * Executes the layout and updates the state of the scrollview.
-	     */
-	    function _layout(size, scrollOffset, nested) {
-	
-	        // Track the number of times the layout-function was executed
-	        this._debug.layoutCount++;
-	        //_log.call(this, 'Layout, scrollOffset: ', scrollOffset, ', particle: ', this._scroll.particle.getPosition1D());
-	
-	        // Determine start & end
-	        var scrollStart = 0 - Math.max(this.options.extraBoundsSpace[0], 1);
-	        var scrollEnd = size[this._direction] + Math.max(this.options.extraBoundsSpace[1], 1);
-	        if (this.options.layoutAll) {
-	            scrollStart = -1000000;
-	            scrollEnd = 1000000;
-	        }
-	
-	        // Prepare for layout
-	        var layoutContext = this._nodes.prepareForLayout(
-	            this._viewSequence,     // first node to layout
-	            this._nodesById, {      // so we can do fast id lookups
-	                size: size,
-	                direction: this._direction,
-	                reverse: this.options.alignment ? true : false,
-	                scrollOffset: this.options.alignment ? (scrollOffset + size[this._direction]) : scrollOffset,
-	                scrollStart: scrollStart,
-	                scrollEnd: scrollEnd
-	            }
-	        );
-	
-	        // Layout objects
-	        if (this._layout._function) {
-	            this._layout._function(
-	                layoutContext,          // context which the layout-function can use
-	                this._layout.options    // additional layout-options
-	            );
-	        }
-	        this._scroll.unnormalizedScrollOffset = scrollOffset;
-	
-	        // Call post-layout function
-	        if (this._postLayout) {
-	            this._postLayout(size, scrollOffset);
-	        }
-	
-	        // Mark non-invalidated nodes for removal
-	        this._nodes.removeNonInvalidatedNodes(this.options.flowOptions.removeSpec);
-	
-	        // Check whether the bounds have been reached
-	        //var oldBoundsReached = this._scroll.boundsReached;
-	        _calcBounds.call(this, size, scrollOffset);
-	        //if (oldBoundsReached !== this._scroll.boundsReached) {
-	        //    _log.call(this, 'bounds reached changed (', oldBoundsReached, ' != ', this._scroll.boundsReached, ')');
-	        //}
-	
-	        // Update scroll-to spring
-	        _calcScrollToOffset.call(this, size, scrollOffset);
-	
-	        // When pagination is enabled, snap to page
-	        _snapToPage.call(this);
-	
-	        // If the bounds have changed, and the scroll-offset would be different
-	        // than before, then re-layout entirely using the new offset.
-	        var newScrollOffset = _calcScrollOffset.call(this, true);
-	        if (!nested && (newScrollOffset !== scrollOffset)) {
-	            //_log.call(this, 'offset changed, re-layouting... (', scrollOffset, ' != ', newScrollOffset, ')');
-	            return _layout.call(this, size, newScrollOffset, true);
-	        }
-	
-	        // Normalize scroll offset so that the current viewsequence node is as close to the
-	        // top as possible and the layout function will need to process the least amount
-	        // of renderables.
-	        scrollOffset = _normalizeViewSequence.call(this, size, scrollOffset);
-	
-	        // Update spring
-	        _updateSpring.call(this);
-	
-	        // Cleanup any nodes in case of a VirtualViewSequence
-	        this._nodes.removeVirtualViewSequenceNodes();
-	
-	        // Calculate scroll-length and use that as the true-size (height)
-	        if (this.options.size && (this.options.size[this._direction] === true)) {
-	            var scrollLength = 0;
-	            var node = this._nodes.getStartEnumNode();
-	            while (node) {
-	                if (node._invalidated && node.scrollLength) {
-	                    scrollLength += node.scrollLength;
-	                }
-	                node = node._next;
-	            }
-	            this._size = this._size || [0, 0];
-	            this._size[0] = this.options.size[0];
-	            this._size[1] = this.options.size[1];
-	            this._size[this._direction] = scrollLength;
-	        }
-	
-	        return scrollOffset;
-	    }
-	
-	    /**
-	     * Inner render function of the Group
-	     */
-	    function _innerRender() {
-	        var specs = this._specs;
-	        for (var i3 = 0, j3 = specs.length; i3 < j3; i3++) {
-	            if (specs[i3].renderNode) {
-	                specs[i3].target = specs[i3].renderNode.render();
-	            }
-	        }
-	
-	        // Add our cleanup-registration id also to the list, so that the
-	        // cleanup function is called by famo.us when the LayoutController is
-	        // removed from the render-tree.
-	        if (!specs.length || (specs[specs.length-1] !== this._cleanupRegistration)) {
-	            specs.push(this._cleanupRegistration);
-	        }
-	        return specs;
-	    }
-	
-	    /**
-	     * Apply changes from this component to the corresponding document element.
-	     * This includes changes to classes, styles, size, content, opacity, origin,
-	     * and matrix transforms.
-	     *
-	     * @private
-	     * @method commit
-	     * @param {Context} context commit context
-	     */
-	    ScrollController.prototype.commit = function commit(context) {
-	        var size = context.size;
-	
-	        // Update debug info
-	        this._debug.commitCount++;
-	
-	        // Reset the flow-state when requested
-	        if (this._resetFlowState) {
-	            this._resetFlowState = false;
-	            this._isDirty = true;
-	            this._nodes.removeAll();
-	        }
-	
-	        // Calculate scroll offset
-	        var scrollOffset = _calcScrollOffset.call(this, true, true);
-	        if (this._scrollOffsetCache === undefined) {
-	            this._scrollOffsetCache = scrollOffset;
-	        }
-	
-	        // When the size or layout function has changed, reflow the layout
-	        var emitEndScrollingEvent = false;
-	        var emitScrollEvent = false;
-	        var eventData;
-	        if (size[0] !== this._contextSizeCache[0] ||
-	            size[1] !== this._contextSizeCache[1] ||
-	            this._isDirty ||
-	            this._scroll.scrollDirty ||
-	            this._nodes._trueSizeRequested ||
-	            this.options.alwaysLayout ||
-	            this._scrollOffsetCache !== scrollOffset) {
-	
-	            // Prepare event data
-	            eventData = {
-	                target: this,
-	                oldSize: this._contextSizeCache,
-	                size: size,
-	                oldScrollOffset: -(this._scrollOffsetCache + this._scroll.groupStart),
-	                scrollOffset: -(scrollOffset + this._scroll.groupStart)
-	            };
-	
-	            // When scroll-offset has changed, emit scroll-start and scroll events
-	            if (this._scrollOffsetCache !== scrollOffset) {
-	                if (!this._scroll.isScrolling) {
-	                    this._scroll.isScrolling = true;
-	                    this._eventOutput.emit('scrollstart', eventData);
-	                }
-	                emitScrollEvent = true;
-	            }
-	            else if (this._scroll.isScrolling && !this._scroll.scrollForceCount) {
-	                emitEndScrollingEvent = true;
-	            }
-	
-	            this._eventOutput.emit('layoutstart', eventData);
-	
-	            // When the layout has changed, and we are not just scrolling,
-	            // disable the locked state of the layout-nodes so that they
-	            // can freely transition between the old and new state.
-	            if (this.options.flow && (this._isDirty ||
-	                (this.options.flowOptions.reflowOnResize &&
-	                ((size[0] !== this._contextSizeCache[0]) ||
-	                 (size[1] !== this._contextSizeCache[1]))))) {
-	                var node = this._nodes.getStartEnumNode();
-	                while (node) {
-	                    node.releaseLock(true);
-	                    node = node._next;
-	                }
-	            }
-	
-	            // Update state
-	            this._contextSizeCache[0] = size[0];
-	            this._contextSizeCache[1] = size[1];
-	            this._isDirty = false;
-	            this._scroll.scrollDirty = false;
-	
-	            // Perform layout
-	            scrollOffset = _layout.call(this, size, scrollOffset);
-	            this._scrollOffsetCache = scrollOffset;
-	
-	            // Emit end event
-	            eventData.scrollOffset = -(this._scrollOffsetCache + this._scroll.groupStart);
-	        }
-	        else if (this._scroll.isScrolling && !this._scroll.scrollForceCount) {
-	            emitEndScrollingEvent = true;
-	        }
-	
-	        // Update output and optionally emit event
-	        var groupTranslate = this._scroll.groupTranslate;
-	        groupTranslate[0] = 0;
-	        groupTranslate[1] = 0;
-	        groupTranslate[2] = 0;
-	        groupTranslate[this._direction] = -this._scroll.groupStart - scrollOffset;
-	        var sequentialScrollingOptimized = _isSequentiallyScrollingOptimized.call(this);
-	        var result = this._nodes.buildSpecAndDestroyUnrenderedNodes(sequentialScrollingOptimized ? groupTranslate : undefined);
-	        this._specs = result.specs;
-	        if (!this._specs.length) {
-	          this._scroll.groupStart = 0;
-	        }
-	        if (eventData) { // eventData is only used here to check whether there has been a re-layout
-	            this._eventOutput.emit('layoutend', eventData);
-	        }
-	        if (result.modified) {
-	            this._eventOutput.emit('reflow', {
-	                target: this
-	            });
-	        }
-	
-	        // View has been scrolled, emit event
-	        if (emitScrollEvent) {
-	            this._eventOutput.emit('scroll', eventData);
-	        }
-	
-	        // Check whether the current page has changed
-	        if (eventData) { // eventData is only used here to check whether there has been a re-layout
-	            var visibleItem = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
-	            if ((visibleItem && !this._visibleItemCache) || (!visibleItem && this._visibleItemCache) ||
-	                (visibleItem && this._visibleItemCache && (visibleItem.renderNode !== this._visibleItemCache.renderNode))) {
-	                this._eventOutput.emit('pagechange', {
-	                    target: this,
-	                    oldViewSequence: this._visibleItemCache ? this._visibleItemCache.viewSequence : undefined,
-	                    viewSequence: visibleItem ? visibleItem.viewSequence : undefined,
-	                    oldIndex: this._visibleItemCache ? this._visibleItemCache.index : undefined,
-	                    index: visibleItem ? visibleItem.index : undefined,
-	                    renderNode: visibleItem ? visibleItem.renderNode : undefined,
-	                    oldRenderNode: this._visibleItemCache ? this._visibleItemCache.renderNode : undefined
-	                });
-	                this._visibleItemCache = visibleItem;
-	            }
-	        }
-	
-	        // Emit end scrolling event
-	        if (emitEndScrollingEvent) {
-	            this._scroll.isScrolling = false;
-	            eventData = {
-	                target: this,
-	                oldSize: size,
-	                size: size,
-	                oldScrollOffset: -(this._scroll.groupStart + scrollOffset),
-	                scrollOffset: -(this._scroll.groupStart + scrollOffset)
-	            };
-	            this._eventOutput.emit('scrollend', eventData);
-	        }
-	
-	        // When renderables are layed out sequentiall (e.g. a ListLayout or
-	        // CollectionLayout), then offset the renderables onto the Group
-	        // and move the group offset instead. This creates a very big performance gain
-	        // as the renderables don't have to be repositioned for every change
-	        // to the scrollOffset. For layouts that don't layout sequence, disable
-	        // this behavior as it will be decremental to the performance.
-	        var transform = context.transform;
-	        if (sequentialScrollingOptimized) {
-	            var windowOffset = scrollOffset + this._scroll.groupStart;
-	            var translate = [0, 0, 0];
-	            translate[this._direction] = windowOffset;
-	            transform = Transform.thenMove(transform, translate);
-	        }
-	
-	        // Return the spec
-	        return {
-	            transform: transform,
-	            size: size,
-	            opacity: context.opacity,
-	            origin: context.origin,
-	            target: this.group.render()
-	        };
-	    };
-	
-	    /**
-	     * Generate a render spec from the contents of this component.
-	     *
-	     * @private
-	     * @method render
-	     * @return {number} Render spec for this component
-	     */
-	    ScrollController.prototype.render = function render() {
-	        if (this.container) {
-	            return this.container.render.apply(this.container, arguments);
-	        }
-	        else {
-	            return this.id;
-	        }
-	    };
-	
-	    module.exports = ScrollController;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 26 */
-/*!********************************************************!*\
-  !*** ../~/famous-flex/src/helpers/LayoutDockHelper.js ***!
-  \********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2014 - 2015
-	 */
-	
-	/**
-	 * LayoutDockHelper helps positioning nodes using docking principles.
-	 *
-	 * **Example:**
-	 *
-	 * ```javascript
-	 * var LayoutDockHelper = require('famous-flex/helpers/LayoutDockHelper');
-	 *
-	 * function HeaderFooterLayout(context, options) {
-	 *   var dock = new LayoutDockHelper(context);
-	 *   dock.top('header', options.headerSize);
-	 *   dock.bottom('footer', options.footerSize);
-	 *   dock.fill('content');
-	 * };
-	 * ```
-	 *
-	 * You can also use layout-literals to create layouts using docking semantics:
-	 *
-	 * ```javascript
-	 * var layoutController = new LayoutController({
-	 *   layout: {dock: [
-	 *     ['top', 'header', 40],
-	 *     ['bottom', 'footer', 40, 1], // z-index +1
-	 *     ['fill', 'content']
-	 *   ]},
-	 *   dataSource: {
-	 *     header: new Surface({content: 'header'}),
-	 *     footer: new Surface({content: 'footer'}),
-	 *     content: new Surface({content: 'content'}),
-	 *   }
-	 * });
-	 * ```
-	 *
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var LayoutUtility = __webpack_require__(/*! ../LayoutUtility */ 52);
-	
-	    /**
-	     * @class
-	     * @param {LayoutContext} context layout-context
-	     * @param {Object} [options] additional options
-	     * @param {Object} [options.margins] margins to start out with (default: 0px)
-	     * @param {Number} [options.translateZ] z-index to use when translating objects (default: 0)
-	     * @alias module:LayoutDockHelper
-	     */
-	    function LayoutDockHelper(context, options) {
-	        var size = context.size;
-	        this._size = size;
-	        this._context = context;
-	        this._options = options;
-	        this._z = (options && options.translateZ) ? options.translateZ : 0;
-	        if (options && options.margins) {
-	            var margins = LayoutUtility.normalizeMargins(options.margins);
-	            this._left = margins[3];
-	            this._top = margins[0];
-	            this._right = size[0] - margins[1];
-	            this._bottom = size[1] - margins[2];
-	        }
-	        else {
-	            this._left = 0;
-	            this._top = 0;
-	            this._right = size[0];
-	            this._bottom = size[1];
-	        }
-	    }
-	
-	    /**
-	     * Parses the layout-rules based on a JSON data object.
-	     * The object should be an array with the following syntax:
-	     * `[[rule, node, value, z], [rule, node, value, z], ...]`
-	     *
-	     * **Example:**
-	     *
-	     * ```JSON
-	     * [
-	     *   ['top', 'header', 50],
-	     *   ['bottom', 'footer', 50, 10], // z-index: 10
-	     *   ['margins', [10, 5]], // marginate remaining space: 10px top/bottom, 5px left/right
-	     *   ['fill', 'content']
-	     * ]
-	     * ```
-	     *
-	     * @param {Object} data JSON object
-	     */
-	    LayoutDockHelper.prototype.parse = function(data) {
-	        for (var i = 0; i < data.length; i++) {
-	            var rule = data[i];
-	            var value = (rule.length >= 3) ? rule[2] : undefined;
-	            if (rule[0] === 'top') {
-	                this.top(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
-	            }
-	            else if (rule[0] === 'left') {
-	                this.left(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
-	            }
-	            else if (rule[0] === 'right') {
-	                this.right(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
-	            }
-	            else if (rule[0] === 'bottom') {
-	                this.bottom(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
-	            }
-	            else if (rule[0] === 'fill') {
-	                this.fill(rule[1], (rule.length >=3) ? rule[2] : undefined);
-	            }
-	            else if (rule[0] === 'margins') {
-	                this.margins(rule[1]);
-	            }
-	        }
-	    };
-	
-	    /**
-	     * Dock the node to the top.
-	     *
-	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `height` argument argument is used for padding
-	     * @param {Number} [height] height of the layout-node, when omitted the height of the node is used
-	     * @param {Number} [z] z-index to use for the node
-	     * @return {LayoutDockHelper} this
-	     */
-	    LayoutDockHelper.prototype.top = function(node, height, z) {
-	        if (height instanceof Array) {
-	            height = height[1];
-	        }
-	        if (height === undefined) {
-	            var size = this._context.resolveSize(node, [this._right - this._left, this._bottom - this._top]);
-	            height = size[1];
-	        }
-	        this._context.set(node, {
-	            size: [this._right - this._left, height],
-	            origin: [0, 0],
-	            align: [0, 0],
-	            translate: [this._left, this._top, (z === undefined) ? this._z : z]
-	        });
-	        this._top += height;
-	        return this;
-	    };
-	
-	    /**
-	     * Dock the node to the left
-	     *
-	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `width` argument argument is used for padding
-	     * @param {Number} [width] width of the layout-node, when omitted the width of the node is used
-	     * @param {Number} [z] z-index to use for the node
-	     * @return {LayoutDockHelper} this
-	     */
-	    LayoutDockHelper.prototype.left = function(node, width, z) {
-	        if (width instanceof Array) {
-	            width = width[0];
-	        }
-	        if (width === undefined) {
-	            var size = this._context.resolveSize(node, [this._right - this._left, this._bottom - this._top]);
-	            width = size[0];
-	        }
-	        this._context.set(node, {
-	            size: [width, this._bottom - this._top],
-	            origin: [0, 0],
-	            align: [0, 0],
-	            translate: [this._left, this._top, (z === undefined) ? this._z : z]
-	        });
-	        this._left += width;
-	        return this;
-	    };
-	
-	    /**
-	     * Dock the node to the bottom
-	     *
-	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `height` argument argument is used for padding
-	     * @param {Number} [height] height of the layout-node, when omitted the height of the node is used
-	     * @param {Number} [z] z-index to use for the node
-	     * @return {LayoutDockHelper} this
-	     */
-	    LayoutDockHelper.prototype.bottom = function(node, height, z) {
-	        if (height instanceof Array) {
-	            height = height[1];
-	        }
-	        if (height === undefined) {
-	            var size = this._context.resolveSize(node, [this._right - this._left, this._bottom - this._top]);
-	            height = size[1];
-	        }
-	        this._context.set(node, {
-	            size: [this._right - this._left, height],
-	            origin: [0, 1],
-	            align: [0, 1],
-	            translate: [this._left, -(this._size[1] - this._bottom), (z === undefined) ? this._z : z]
-	        });
-	        this._bottom -= height;
-	        return this;
-	    };
-	
-	    /**
-	     * Dock the node to the right.
-	     *
-	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `width` argument argument is used for padding
-	     * @param {Number} [width] width of the layout-node, when omitted the width of the node is used
-	     * @param {Number} [z] z-index to use for the node
-	     * @return {LayoutDockHelper} this
-	     */
-	    LayoutDockHelper.prototype.right = function(node, width, z) {
-	        if (width instanceof Array) {
-	            width = width[0];
-	        }
-	        if (node) {
-	            if (width === undefined) {
-	                var size = this._context.resolveSize(node, [this._right - this._left, this._bottom - this._top]);
-	                width = size[0];
-	            }
-	            this._context.set(node, {
-	                size: [width, this._bottom - this._top],
-	                origin: [1, 0],
-	                align: [1, 0],
-	                translate: [-(this._size[0] - this._right), this._top, (z === undefined) ? this._z : z]
-	            });
-	        }
-	        if (width) {
-	            this._right -= width;
-	        }
-	        return this;
-	    };
-	
-	    /**
-	     * Fills the node to the remaining content.
-	     *
-	     * @param {LayoutNode|String} node layout-node to dock
-	     * @param {Number} [z] z-index to use for the node
-	     * @return {LayoutDockHelper} this
-	     */
-	    LayoutDockHelper.prototype.fill = function(node, z) {
-	        this._context.set(node, {
-	            size: [this._right - this._left, this._bottom - this._top],
-	            translate: [this._left, this._top, (z === undefined) ? this._z : z]
-	        });
-	        return this;
-	    };
-	
-	    /**
-	     * Applies indent margins to the remaining content.
-	     *
-	     * @param {Number|Array} margins margins shorthand (e.g. '5', [10, 10], [5, 10, 5, 10])
-	     * @return {LayoutDockHelper} this
-	     */
-	    LayoutDockHelper.prototype.margins = function(margins) {
-	        margins = LayoutUtility.normalizeMargins(margins);
-	        this._left += margins[3];
-	        this._top += margins[0];
-	        this._right -= margins[1];
-	        this._bottom -= margins[2];
-	        return this;
-	    };
-	
-	    // Register the helper
-	    LayoutUtility.registerHelper('dock', LayoutDockHelper);
-	
-	    module.exports = LayoutDockHelper;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 27 */
+/* 18 */
 /*!**************************************!*\
   !*** ../~/famous-map/MapModifier.js ***!
   \**************************************/
@@ -7876,8 +3068,8 @@
 	    'use strict';
 	
 	    // import dependencies
-	    var Transform = __webpack_require__(/*! famous/core/Transform */ 28);
-	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 35);
+	    var Transform = __webpack_require__(/*! famous/core/Transform */ 19);
+	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 34);
 	
 	    /**
 	     * @class
@@ -8163,7 +3355,7 @@
 
 
 /***/ },
-/* 28 */
+/* 19 */
 /*!*************************************!*\
   !*** ../~/famous/core/Transform.js ***!
   \*************************************/
@@ -8875,7 +4067,3453 @@
 	module.exports = Transform;
 
 /***/ },
-/* 29 */
+/* 20 */
+/*!***********************************************!*\
+  !*** ../~/famous-flex/src/widgets/styles.css ***!
+  \***********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	var dispose = __webpack_require__(/*! ../~/style-loader/addStyle.js */ 25)
+		// The css code:
+		(__webpack_require__(/*! !../~/css-loader!../~/famous-flex/src/widgets/styles.css */ 21));
+	// Hot Module Replacement
+	if(false) {
+		module.hot.accept();
+		module.hot.dispose(dispose);
+	}
+
+/***/ },
+/* 21 */
+/*!***************************************************************!*\
+  !*** ../~/css-loader!../~/famous-flex/src/widgets/styles.css ***!
+  \***************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports =
+		"/**\n * This Source Code is licensed under the MIT license. If a copy of the\n * MIT-license was not distributed with this file, You can obtain one at:\n * http://opensource.org/licenses/mit-license.html.\n *\n * @author: Hein Rutjes (IjzerenHein)\n * @license MIT\n * @copyright Gloey Apps, 2015\n */\n\n/* datepicker */\n.ff-datepicker.item {\n  text-align: center;\n}\n.ff-datepicker.item > div {\n  /* align content vertically */\n  position: relative;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  -moz-transform: translateY(-50%);\n  -o-transform: translateY(-50%);\n  transform: translateY(-50%);\n}\n.ff-datepicker.top, .ff-datepicker.middle, .ff-datepicker.bottom {\n  pointer-events: none;\n}\n\n\n/* tabbar common */\n.ff-tabbar.item {\n  text-align: center;\n  white-space: nowrap;\n  color: #333333;\n  cursor: pointer;\n}\n.ff-tabbar.item > div {\n  /* align content vertically */\n  position: relative;\n  top: 50%;\n  -webkit-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  -moz-transform: translateY(-50%);\n  -o-transform: translateY(-50%);\n  transform: translateY(-50%);\n}\n.ff-tabbar.selectedItemOverlay {\n  border-bottom: 6px solid #1185c3;\n}\n";
+
+/***/ },
+/* 22 */
+/*!********************************************************!*\
+  !*** ../~/famous-flex/src/widgets/TabBarController.js ***!
+  \********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2015
+	 */
+	
+	/**
+	 * TabBarController.
+	 *
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var AnimationController = __webpack_require__(/*! ../AnimationController */ 58);
+	    var TabBar = __webpack_require__(/*! ./TabBar */ 59);
+	    var LayoutDockHelper = __webpack_require__(/*! ../helpers/LayoutDockHelper */ 57);
+	    var LayoutController = __webpack_require__(/*! ../LayoutController */ 24);
+	    var Easing = __webpack_require__(/*! famous/transitions/Easing */ 60);
+	
+	    /**
+	     * @class
+	     * @param {Object} options Configurable options.
+	     * @param {TabBarController.Position} [options.tabBarPosition] Position (default: BOTTOM).
+	     * @param {Number} [options.tabBarSize] Size of the tabBar (default: 50).
+	     * @param {Number} [options.tabBarZIndex] Z-index the tabBar is put above the content (AnimationController) (default: 10).
+	     * @param {Object} [options.tabBar] Options that are passed to the TabBar.
+	     * @param {Object} [options.animationController] Options that are passed to the AnimationController.
+	     * @alias module:TabBarController
+	     */
+	    function TabBarController(options) {
+	        View.apply(this, arguments);
+	
+	        _createRenderables.call(this);
+	        _createLayout.call(this);
+	        _setListeners.call(this);
+	
+	        this.tabBar.setOptions({
+	            layoutController: {
+	                direction: ((this.options.tabBarPosition === TabBarController.Position.TOP) || (this.options.tabBarPosition === TabBarController.Position.BOTTOM)) ? 0 : 1
+	            }
+	        });
+	    }
+	    TabBarController.prototype = Object.create(View.prototype);
+	    TabBarController.prototype.constructor = TabBarController;
+	
+	    TabBarController.Position = {
+	        TOP: 0,
+	        BOTTOM: 1,
+	        LEFT: 2,
+	        RIGHT: 3
+	    };
+	
+	    /**
+	     * Default layout-function for the TabBarController. Supports simple
+	     * docking to any of the four edges.
+	     */
+	    TabBarController.DEFAULT_LAYOUT = function(context, options) {
+	        var dock = new LayoutDockHelper(context, options);
+	        switch (this.options.tabBarPosition) {
+	            case TabBarController.Position.TOP:
+	                dock.top('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
+	                break;
+	            case TabBarController.Position.BOTTOM:
+	                dock.bottom('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
+	                break;
+	            case TabBarController.Position.LEFT:
+	                dock.left('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
+	                break;
+	            case TabBarController.Position.RIGHT:
+	                dock.right('tabBar', this.options.tabBarSize, this.options.tabBarZIndex);
+	                break;
+	        }
+	        dock.fill('content');
+	    };
+	
+	    TabBarController.DEFAULT_OPTIONS = {
+	        tabBarPosition: TabBarController.Position.BOTTOM,
+	        tabBarSize: 50,
+	        tabBarZIndex: 10,
+	        tabBar: {
+	            createRenderables: {
+	                background: true
+	            }
+	        },
+	        animationController: {
+	            transition: {duration: 300, curve: Easing.inOutQuad},
+	            animation: AnimationController.Animation.FadedZoom
+	        }
+	    };
+	
+	    /**
+	     * Creates the renderables (tabBar, animationController).
+	     */
+	    function _createRenderables() {
+	        this.tabBar = new TabBar(this.options.tabBar);
+	        this.animationController = new AnimationController(this.options.animationController);
+	        this._renderables = {
+	            tabBar: this.tabBar,
+	            content: this.animationController
+	        };
+	    }
+	
+	    /**
+	     * Creates the outer (header-footer) layout.
+	     */
+	    function _createLayout() {
+	        this.layout = new LayoutController(this.options.layoutController);
+	        this.layout.setLayout(TabBarController.DEFAULT_LAYOUT.bind(this));
+	        this.layout.setDataSource(this._renderables);
+	        this.add(this.layout);
+	    }
+	
+	    /**
+	     * Sets the listeners.
+	     */
+	    function _setListeners() {
+	        this.tabBar.on('tabchange', function(event) {
+	            _updateView.call(this, event);
+	            this._eventOutput.emit('tabchange', {
+	                target: this,
+	                index: event.index,
+	                oldIndex: event.oldIndex,
+	                item: this._items[event.index],
+	                oldItem: ((event.oldIndex >= 0) && (event.oldIndex < this._items.length)) ? this._items[event.oldIndex] : undefined
+	            });
+	        }.bind(this));
+	    }
+	
+	    /**
+	     * Updates the view-container with the selected view.
+	     */
+	    function _updateView(event) {
+	        var index = this.tabBar.getSelectedItemIndex();
+	        this.animationController.halt();
+	        if (index >= 0) {
+	            this.animationController.show(this._items[index].view);
+	        }
+	        else {
+	            this.animationController.hide();
+	        }
+	    }
+	
+	    /**
+	     * Patches the TabBarController instance's options with the passed-in ones.
+	     *
+	     * @param {Object} options Configurable options.
+	     * @param {TabBarController.Position} [options.tabBarPosition] Position (default: BOTTOM).
+	     * @param {Number} [options.tabBarSize] Size of the tabBar (default: 50).
+	     * @param {Number} [options.tabBarZIndex] Z-index the tabBar is put above the content (AnimationController) (default: 10).
+	     * @param {Object} [options.tabBar] Options that are passed to the TabBar.
+	     * @param {Object} [options.animationController] Options that are passed to the AnimationController.
+	     * @return {TabBarController} this
+	     */
+	    TabBarController.prototype.setOptions = function(options) {
+	        View.prototype.setOptions.call(this, options);
+	        if (this.layout && options.layoutController) {
+	            this.layout.setOptions(options.layoutController);
+	        }
+	        if (this.tabBar && options.tabBar) {
+	            this.tabBar.setOptions(options.tabBar);
+	        }
+	        if (this.animationController && options.animationController) {
+	            this.animationController(options.animationController);
+	        }
+	        if (this.layout && (options.tabBarPosition !== undefined)) {
+	            this.tabBar.setOptions({
+	                layoutController: {
+	                    direction: ((options.tabBarPosition === TabBarController.Position.TOP) || (options.tabBarPosition === TabBarController.Position.BOTTOM)) ? 0 : 1
+	                }
+	            });
+	        }
+	        if (this.layout) {
+	            this.layout.reflowLayout();
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Sets the items for the tab-bar controller.
+	     *
+	     * Example 1:
+	     *
+	     * ```javascript
+	     * var tabBarController = new TabBarController();
+	     * tabBarController.setItems([
+	     *   {tabItem: 'Profile', view: new ProfileView()},
+	     *   {tabItem: 'Map', view: new MapView()},
+	     *   {tabItem: 'Login', view: new LoginView()}
+	     *   {tabItem: 'Settings', view: new SettingsView()}
+	     * ]);
+	     *```
+	     *
+	     * @param {Array} items Array of tab-bar controller items.
+	     * @return {TabBarController} this
+	     */
+	    TabBarController.prototype.setItems = function(items) {
+	        this._items = items;
+	        var tabItems = [];
+	        for (var i = 0; i < items.length; i++) {
+	            tabItems.push(items[i].tabItem);
+	        }
+	        this.tabBar.setItems(tabItems);
+	        _updateView.call(this);
+	        return this;
+	    };
+	
+	    /**
+	     * Get the tab-items (also see `setItems`).
+	     *
+	     * @return {Array} tab-items
+	     */
+	    TabBarController.prototype.getItems = function() {
+	        return this._items;
+	    };
+	
+	    /**
+	     * Sets the index of the selected tab.
+	     *
+	     * @param {Number} index selected index.
+	     * @return {TabBar} this
+	     */
+	    TabBarController.prototype.setSelectedItemIndex = function(index) {
+	        this.tabBar.setSelectedItemIndex(index);
+	        return this;
+	    };
+	
+	    /**
+	     * Get the index of the selected tab-item.
+	     *
+	     * @return {Number} selected index
+	     */
+	    TabBarController.prototype.getSelectedItemIndex = function() {
+	        return this.tabBar.getSelectedItemIndex();
+	    };
+	
+	    module.exports = TabBarController;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 23 */
+/*!************************************************!*\
+  !*** ../~/famous-flex/src/ScrollController.js ***!
+  \************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2014 - 2015
+	 */
+	
+	/*global console*/
+	/*eslint no-console: 0*/
+	
+	/**
+	 * Scrollable layout-controller.
+	 *
+	 * Key features:
+	 * -    Customizable layout
+	 * -    Insert/remove renderables into the scene using animations/spec
+	 * -    Support for `true` size renderables
+	 * -    Horizontal/vertical direction
+	 * -    Top/left or bottom/right alignment
+	 * -    Pagination
+	 * -    Option to embed in a ContainerSurface
+	 *
+	 * Events:
+	 *
+	 * |event      |description|
+	 * |-----------|-----------|
+	 * |scrollstart|Emitted when scrolling starts.|
+	 * |scroll     |Emitted as the content scrolls (once for each frame the visible offset has changed).|
+	 * |pagechange |Emitted whenever the visible page changes.|
+	 * |scrollend  |Emitted after scrolling stops (when the scroll particle settles).|
+	 *
+	 * Inherited from: [LayoutController](./LayoutController.md)
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 43);
+	    var LayoutController = __webpack_require__(/*! ./LayoutController */ 24);
+	    var LayoutNode = __webpack_require__(/*! ./LayoutNode */ 44);
+	    var FlowLayoutNode = __webpack_require__(/*! ./FlowLayoutNode */ 45);
+	    var LayoutNodeManager = __webpack_require__(/*! ./LayoutNodeManager */ 46);
+	    var ContainerSurface = __webpack_require__(/*! famous/surfaces/ContainerSurface */ 47);
+	    var Transform = __webpack_require__(/*! famous/core/Transform */ 19);
+	    var EventHandler = __webpack_require__(/*! famous/core/EventHandler */ 38);
+	    var Group = __webpack_require__(/*! famous/core/Group */ 48);
+	    var Vector = __webpack_require__(/*! famous/math/Vector */ 49);
+	    var PhysicsEngine = __webpack_require__(/*! famous/physics/PhysicsEngine */ 50);
+	    var Particle = __webpack_require__(/*! famous/physics/bodies/Particle */ 51);
+	    var Drag = __webpack_require__(/*! famous/physics/forces/Drag */ 52);
+	    var Spring = __webpack_require__(/*! famous/physics/forces/Spring */ 53);
+	    var ScrollSync = __webpack_require__(/*! famous/inputs/ScrollSync */ 54);
+	    var ViewSequence = __webpack_require__(/*! famous/core/ViewSequence */ 55);
+	
+	    /**
+	     * Boudary reached detection
+	     */
+	    var Bounds = {
+	        NONE: 0,
+	        PREV: 1, // top
+	        NEXT: 2, // bottom
+	        BOTH: 3
+	    };
+	
+	    /**
+	     * Source of the spring
+	     */
+	    var SpringSource = {
+	        NONE: 'none',
+	        NEXTBOUNDS: 'next-bounds', // top
+	        PREVBOUNDS: 'prev-bounds', // bottom
+	        MINSIZE: 'minimal-size',
+	        GOTOSEQUENCE: 'goto-sequence',
+	        ENSUREVISIBLE: 'ensure-visible',
+	        GOTOPREVDIRECTION: 'goto-prev-direction',
+	        GOTONEXTDIRECTION: 'goto-next-direction'
+	    };
+	
+	    /**
+	     * Pagination modes
+	     */
+	    var PaginationMode = {
+	        PAGE: 0,
+	        SCROLL: 1
+	    };
+	
+	    /**
+	     * @class
+	     * @extends LayoutController
+	     * @param {Object} options Configurable options (see LayoutController for all inherited options).
+	     * @param {Bool} [options.useContainer] Embeds the view in a ContainerSurface to hide any overflow and capture input events (default: `false`).
+	     * @param {String} [options.container] Options that are passed to the ContainerSurface in case `useContainer` is true.
+	     * @param {Bool} [options.paginated] Enabled pagination when set to `true` (default: `false`).
+	     * @param {Number} [options.paginationEnergyThreshold] Threshold after which pagination kicks in (default: `0.01`).
+	     * @param {PaginationMode} [options.paginationMode] Pagination-mode (either page-based or scroll-based) (default: `PaginationMode.PAGE`).
+	     * @param {Number} [options.alignment] Alignment of the renderables (0 = top/left, 1 = bottom/right) (default: `0`).
+	     * @param {Bool} [options.mouseMove] Enables scrolling by holding the mouse-button down and moving the mouse (default: `false`).
+	     * @param {Bool} [options.enabled] Enables or disabled user input (default: `true`).
+	     * @param {Bool} [options.overscroll] Enables or disables overscroll (default: `true`).
+	     * @param {Object} [options.scrollParticle] Options for the scroll particle (default: `{}`)
+	     * @param {Object} [options.scrollSpring] Spring-force options that are applied on the scroll particle when e.g. bounds is reached (default: `{dampingRatio: 1.0, period: 350}`)
+	     * @param {Object} [options.scrollDrag] Drag-force options to apply on the scroll particle
+	     * @param {Object} [options.scrollFriction] Friction-force options to apply on the scroll particle
+	     * @param {Bool} [options.layoutAll] When set to true, always lays out all renderables in the datasource (default: `false`).
+	     * @alias module:ScrollController
+	     */
+	    function ScrollController(options) {
+	        options = LayoutUtility.combineOptions(ScrollController.DEFAULT_OPTIONS, options);
+	        var layoutManager = new LayoutNodeManager(options.flow ? FlowLayoutNode : LayoutNode, _initLayoutNode.bind(this));
+	        LayoutController.call(this, options, layoutManager);
+	
+	        // Scrolling
+	        this._scroll = {
+	            activeTouches: [],
+	            // physics-engine to use for scrolling
+	            pe: new PhysicsEngine(),
+	            // particle that represents the scroll-offset
+	            particle: new Particle(this.options.scrollParticle),
+	            // drag-force that slows the particle down after a "flick"
+	            dragForce: new Drag(this.options.scrollDrag),
+	            frictionForce: new Drag(this.options.scrollFriction),
+	            // spring
+	            springValue: undefined,
+	            springForce: new Spring(this.options.scrollSpring),
+	            springEndState: new Vector([0, 0, 0]),
+	            // group
+	            groupStart: 0,
+	            groupTranslate: [0, 0, 0],
+	            // delta
+	            scrollDelta: 0,
+	            normalizedScrollDelta: 0,
+	            scrollForce: 0,
+	            scrollForceCount: 0,
+	            unnormalizedScrollOffset: 0,
+	            // state
+	            isScrolling: false
+	        };
+	
+	        // Diagnostics
+	        this._debug = {
+	            layoutCount: 0,
+	            commitCount: 0
+	        };
+	
+	        // Create groupt for faster rendering
+	        this.group = new Group();
+	        this.group.add({render: _innerRender.bind(this)});
+	
+	        // Configure physics engine with particle and drag
+	        this._scroll.pe.addBody(this._scroll.particle);
+	        if (!this.options.scrollDrag.disabled) {
+	            this._scroll.dragForceId = this._scroll.pe.attach(this._scroll.dragForce, this._scroll.particle);
+	        }
+	        if (!this.options.scrollFriction.disabled) {
+	            this._scroll.frictionForceId = this._scroll.pe.attach(this._scroll.frictionForce, this._scroll.particle);
+	        }
+	        this._scroll.springForce.setOptions({ anchor: this._scroll.springEndState });
+	
+	        // Listen to touch events
+	        this._eventInput.on('touchstart', _touchStart.bind(this));
+	        this._eventInput.on('touchmove', _touchMove.bind(this));
+	        this._eventInput.on('touchend', _touchEnd.bind(this));
+	        this._eventInput.on('touchcancel', _touchEnd.bind(this));
+	
+	        // Listen to mouse-move events
+	        this._eventInput.on('mousedown', _mouseDown.bind(this));
+	        this._eventInput.on('mouseup', _mouseUp.bind(this));
+	        this._eventInput.on('mousemove', _mouseMove.bind(this));
+	
+	        // Listen to mouse-wheel events
+	        this._scrollSync = new ScrollSync(this.options.scrollSync);
+	        this._eventInput.pipe(this._scrollSync);
+	        this._scrollSync.on('update', _scrollUpdate.bind(this));
+	
+	        // Embed in container surface if neccesary
+	        if (this.options.useContainer) {
+	            this.container = new ContainerSurface(this.options.container);
+	
+	            // Create container surface, which has one child, which just returns
+	            // the entity-id of this scrollview. This causes the Commit function
+	            // of this scrollview to be called
+	            this.container.add({
+	                render: function() {
+	                    return this.id;
+	                }.bind(this)
+	            });
+	
+	            // Pipe events received in container to this scrollview
+	            if (!this.options.autoPipeEvents) {
+	                this.subscribe(this.container);
+	                EventHandler.setInputHandler(this.container, this);
+	                EventHandler.setOutputHandler(this.container, this);
+	            }
+	        }
+	    }
+	    ScrollController.prototype = Object.create(LayoutController.prototype);
+	    ScrollController.prototype.constructor = ScrollController;
+	    ScrollController.Bounds = Bounds;
+	    ScrollController.PaginationMode = PaginationMode;
+	
+	    ScrollController.DEFAULT_OPTIONS = {
+	        useContainer: false,    // when true embeds inside a ContainerSurface for capturing input events & clipping
+	        container: {
+	            properties: {
+	                overflow: 'hidden' // overflow mode when useContainer is enabled
+	            }
+	        },
+	        scrollParticle: {
+	            // use defaults
+	        },
+	        scrollDrag: {
+	            forceFunction: Drag.FORCE_FUNCTIONS.QUADRATIC,
+	            strength: 0.001,
+	            disabled: true
+	        },
+	        scrollFriction: {
+	            forceFunction: Drag.FORCE_FUNCTIONS.LINEAR,
+	            strength: 0.0025,
+	            disabled: false
+	        },
+	        scrollSpring: {
+	            dampingRatio: 1.0,
+	            period: 350
+	        },
+	        scrollSync: {
+	            scale: 0.2
+	        },
+	        overscroll: true,
+	        paginated: false,
+	        paginationMode: PaginationMode.PAGE,
+	        paginationEnergyThreshold: 0.01,
+	        alignment: 0,         // [0: top/left, 1: bottom/right]
+	        touchMoveDirectionThreshold: undefined, // 0..1
+	        touchMoveNoVelocityDuration: 100,
+	        mouseMove: false,
+	        enabled: true,          // set to false to disable scrolling
+	        layoutAll: false,       // set to true is you want all renderables layed out/rendered
+	        alwaysLayout: false,    // set to true to always call the layout function
+	        extraBoundsSpace: [100, 100],
+	        debug: false
+	    };
+	
+	    /**
+	     * Patches the ScrollController instance's options with the passed-in ones.
+	     *
+	     * @param {Object} options Configurable options (see LayoutController for all inherited options).
+	     * @param {Bool} [options.paginated] Enabled pagination when set to `true` (default: `false`).
+	     * @param {Number} [options.paginationEnergyThreshold] Threshold after which pagination kicks in (default: `0.01`).
+	     * @param {PaginationMode} [options.paginationMode] Pagination-mode (either page-based or scroll-based) (default: `PaginationMode.PAGE`).
+	     * @param {Number} [options.alignment] Alignment of the renderables (0 = top/left, 1 = bottom/right) (default: `0`).
+	     * @param {Bool} [options.mouseMove] Enables scrolling by holding the mouse-button down and moving the mouse (default: `false`).
+	     * @param {Bool} [options.enabled] Enables or disables user input (default: `true`).
+	     * @param {Bool} [options.overscroll] Enables or disables overscroll (default: `true`).
+	     * @param {Object} [options.scrollParticle] Options for the scroll particle (default: `{}`)
+	     * @param {Object} [options.scrollSpring] Spring-force options that are applied on the scroll particle when e.g. bounds is reached (default: `{dampingRatio: 1.0, period: 500}`)
+	     * @param {Object} [options.scrollDrag] Drag-force options to apply on the scroll particle
+	     * @param {Object} [options.scrollFriction] Friction-force options to apply on the scroll particle
+	     * @param {Bool} [options.layoutAll] When set to true, always lays out all renderables in the datasource (default: `false`).
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.setOptions = function(options) {
+	        LayoutController.prototype.setOptions.call(this, options);
+	        if (options.hasOwnProperty('paginationEnergyThresshold')) {
+	            console.warn('option `paginationEnergyThresshold` has been deprecated, please rename to `paginationEnergyThreshold`.');
+	            this.setOptions({
+	                paginationEnergyThreshold: options.paginationEnergyThresshold
+	            });
+	        }
+	        if (options.hasOwnProperty('touchMoveDirectionThresshold')) {
+	            console.warn('option `touchMoveDirectionThresshold` has been deprecated, please rename to `touchMoveDirectionThreshold`.');
+	            this.setOptions({
+	                touchMoveDirectionThreshold: options.touchMoveDirectionThresshold
+	            });
+	        }
+	        if (this._scroll) {
+	            if (options.scrollSpring) {
+	                this._scroll.springForce.setOptions(options.scrollSpring);
+	            }
+	            if (options.scrollDrag) {
+	                this._scroll.dragForce.setOptions(options.scrollDrag);
+	            }
+	        }
+	        if (options.scrollSync && this._scrollSync) {
+	            this._scrollSync.setOptions(options.scrollSync);
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Called whenever a layout-node is created/re-used. Initializes
+	     * the node with the `insertSpec` if it has been defined and enabled
+	     * locking of the x/y translation so that the x/y position of the renderable
+	     * is immediately updated when the user scrolls the view.
+	     */
+	    function _initLayoutNode(node, spec) {
+	        if (!spec && this.options.flowOptions.insertSpec) {
+	            node.setSpec(this.options.flowOptions.insertSpec);
+	        }
+	    }
+	
+	    /**
+	     * Helper that detects when layout is scrolling optimized (default: true).
+	     */
+	    function _isSequentiallyScrollingOptimized() {
+	        return !this._layout.capabilities ||
+	                (this._layout.capabilities.sequentialScrollingOptimized === undefined) ||
+	                this._layout.capabilities.sequentialScrollingOptimized;
+	    }
+	
+	    /**
+	     * Helper function for logging debug statements to the console.
+	     */
+	    /*function _log(args) {
+	        if (!this.options.debug) {
+	            return;
+	        }
+	        var message = this._debug.commitCount + ': ';
+	        for (var i = 0, j = arguments.length; i < j; i++) {
+	            var arg = arguments[i];
+	            if ((arg instanceof Object) || (arg instanceof Array)) {
+	                message += JSON.stringify(arg);
+	            }
+	            else {
+	                message += arg;
+	            }
+	        }
+	        console.log(message);
+	    }*/
+	
+	    /**
+	     * Sets the value for the spring, or set to `undefined` to disable the spring
+	     */
+	    function _updateSpring() {
+	        var springValue = this._scroll.scrollForceCount ? undefined : this._scroll.springPosition;
+	        if (this._scroll.springValue !== springValue) {
+	            this._scroll.springValue = springValue;
+	            if (springValue === undefined) {
+	                if (this._scroll.springForceId !== undefined) {
+	                    this._scroll.pe.detach(this._scroll.springForceId);
+	                    this._scroll.springForceId = undefined;
+	                    //_log.call(this, 'disabled spring');
+	                }
+	            }
+	            else {
+	                if (this._scroll.springForceId === undefined) {
+	                    this._scroll.springForceId = this._scroll.pe.attach(this._scroll.springForce, this._scroll.particle);
+	                }
+	                this._scroll.springEndState.set1D(springValue);
+	                this._scroll.pe.wake();
+	                //_log.call(this, 'setting spring to: ', springValue, ' (', this._scroll.springSource, ')');
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Returns the time from the given input event.
+	     */
+	    function _getEventTimestamp(event) {
+	        return event.timeStamp || Date.now();
+	    }
+	
+	    /**
+	     * Called whenever the user presses the mouse button on the scrollview
+	     */
+	    function _mouseDown(event) {
+	
+	        // Check whether mouse-scrolling is enabled
+	        if (!this.options.mouseMove) {
+	            return;
+	        }
+	
+	        // Reset any previous mouse-move operation that has not yet been
+	        // cleared.
+	        if (this._scroll.mouseMove) {
+	            this.releaseScrollForce(this._scroll.mouseMove.delta);
+	        }
+	
+	        // Calculate start of move operation
+	        var current = [event.clientX, event.clientY];
+	        var time = _getEventTimestamp(event);
+	        this._scroll.mouseMove = {
+	            delta: 0,
+	            start: current,
+	            current: current,
+	            prev: current,
+	            time: time,
+	            prevTime: time
+	        };
+	
+	        // Apply scroll force
+	        this.applyScrollForce(this._scroll.mouseMove.delta);
+	    }
+	    function _mouseMove(event) {
+	
+	        // Check if any mouse-move is active
+	        if (!this._scroll.mouseMove || !this.options.enabled) {
+	            return;
+	        }
+	
+	        // When a thresshold is configured, check whether the move operation (x/y ratio)
+	        // lies within the thresshold. A move of 10 pixels x and 10 pixels y is considered 45 deg,
+	        // which corresponds to a thresshold of 0.5.
+	        var moveDirection = Math.atan2(
+	            Math.abs(event.clientY - this._scroll.mouseMove.prev[1]),
+	            Math.abs(event.clientX - this._scroll.mouseMove.prev[0])) / (Math.PI / 2.0);
+	        var directionDiff = Math.abs(this._direction - moveDirection);
+	        if ((this.options.touchMoveDirectionThreshold === undefined) || (directionDiff <= this.options.touchMoveDirectionThreshold)){
+	            this._scroll.mouseMove.prev = this._scroll.mouseMove.current;
+	            this._scroll.mouseMove.current = [event.clientX, event.clientY];
+	            this._scroll.mouseMove.prevTime = this._scroll.mouseMove.time;
+	            this._scroll.mouseMove.direction = moveDirection;
+	            this._scroll.mouseMove.time = _getEventTimestamp(event);
+	        }
+	
+	        // Update scroll-force
+	        var delta = this._scroll.mouseMove.current[this._direction] - this._scroll.mouseMove.start[this._direction];
+	        this.updateScrollForce(this._scroll.mouseMove.delta, delta);
+	        this._scroll.mouseMove.delta = delta;
+	    }
+	    function _mouseUp(event) {
+	
+	        // Check if any mouse-move is active
+	        if (!this._scroll.mouseMove) {
+	            return;
+	        }
+	
+	        // Calculate delta and velocity
+	        var velocity = 0;
+	        var diffTime = this._scroll.mouseMove.time - this._scroll.mouseMove.prevTime;
+	        if ((diffTime > 0) && ((_getEventTimestamp(event) - this._scroll.mouseMove.time) <= this.options.touchMoveNoVelocityDuration)) {
+	            var diffOffset = this._scroll.mouseMove.current[this._direction] - this._scroll.mouseMove.prev[this._direction];
+	            velocity = diffOffset / diffTime;
+	        }
+	
+	        // Release scroll force
+	        this.releaseScrollForce(this._scroll.mouseMove.delta, velocity);
+	        this._scroll.mouseMove = undefined;
+	    }
+	
+	    /**
+	     * Called whenever the user starts moving the scroll-view, using
+	     * touch gestures.
+	     */
+	    function _touchStart(event) {
+	
+	        // Create touch-end event listener
+	        if (!this._touchEndEventListener) {
+	            this._touchEndEventListener = function(event2) {
+	                event2.target.removeEventListener('touchend', this._touchEndEventListener);
+	                _touchEnd.call(this, event2);
+	            }.bind(this);
+	        }
+	
+	        // Remove any touches that are no longer active
+	        var oldTouchesCount = this._scroll.activeTouches.length;
+	        var i = 0;
+	        var j;
+	        var touchFound;
+	        while (i < this._scroll.activeTouches.length) {
+	            var activeTouch = this._scroll.activeTouches[i];
+	            touchFound = false;
+	            for (j = 0; j < event.touches.length; j++) {
+	                var touch = event.touches[j];
+	                if (touch.identifier === activeTouch.id) {
+	                    touchFound = true;
+	                    break;
+	                }
+	            }
+	            if (!touchFound) {
+	                //_log.cal(this, 'removing touch with id: ', activeTouch.id);
+	                this._scroll.activeTouches.splice(i, 1);
+	            }
+	            else {
+	                i++;
+	            }
+	        }
+	
+	        // Process touch
+	        for (i = 0; i < event.touches.length; i++) {
+	            var changedTouch = event.touches[i];
+	            touchFound = false;
+	            for (j = 0; j < this._scroll.activeTouches.length; j++) {
+	                if (this._scroll.activeTouches[j].id === changedTouch.identifier) {
+	                    touchFound = true;
+	                    break;
+	                }
+	            }
+	            if (!touchFound) {
+	                var current = [changedTouch.clientX, changedTouch.clientY];
+	                var time = _getEventTimestamp(event);
+	                this._scroll.activeTouches.push({
+	                    id: changedTouch.identifier,
+	                    start: current,
+	                    current: current,
+	                    prev: current,
+	                    time: time,
+	                    prevTime: time
+	                });
+	
+	                // The following listener is automatically removed after touchend is received
+	                // and ensures that the scrollview always received touchend.
+	                changedTouch.target.addEventListener('touchend', this._touchEndEventListener);
+	            }
+	        }
+	
+	        // The first time a touch new touch gesture has arrived, emit event
+	        if (!oldTouchesCount && this._scroll.activeTouches.length) {
+	            this.applyScrollForce(0);
+	            this._scroll.touchDelta = 0;
+	        }
+	    }
+	
+	    /**
+	     * Called whenever the user is moving his/her fingers to scroll the view.
+	     * Updates the moveOffset so that the scroll-offset on the view is updated.
+	     */
+	    function _touchMove(event) {
+	        if (!this.options.enabled) {
+	            return;
+	        }
+	
+	        // Process the touch event
+	        var primaryTouch;
+	        for (var i = 0; i < event.changedTouches.length; i++) {
+	            var changedTouch = event.changedTouches[i];
+	            for (var j = 0; j < this._scroll.activeTouches.length; j++) {
+	                var touch = this._scroll.activeTouches[j];
+	                if (touch.id === changedTouch.identifier) {
+	
+	                    // When a thresshold is configured, check whether the move operation (x/y ratio)
+	                    // lies within the thresshold. A move of 10 pixels x and 10 pixels y is considered 45 deg,
+	                    // which corresponds to a thresshold of 0.5.
+	                    var moveDirection = Math.atan2(
+	                        Math.abs(changedTouch.clientY - touch.prev[1]),
+	                        Math.abs(changedTouch.clientX - touch.prev[0])) / (Math.PI / 2.0);
+	                    var directionDiff = Math.abs(this._direction - moveDirection);
+	                    if ((this.options.touchMoveDirectionThreshold === undefined) || (directionDiff <= this.options.touchMoveDirectionThreshold)){
+	                        touch.prev = touch.current;
+	                        touch.current = [changedTouch.clientX, changedTouch.clientY];
+	                        touch.prevTime = touch.time;
+	                        touch.direction = moveDirection;
+	                        touch.time = _getEventTimestamp(event);
+	                        primaryTouch = (j === 0) ? touch : undefined;
+	                    }
+	                }
+	            }
+	        }
+	
+	        // Update move offset and emit event
+	        if (primaryTouch) {
+	            var delta = primaryTouch.current[this._direction] - primaryTouch.start[this._direction];
+	            this.updateScrollForce(this._scroll.touchDelta, delta);
+	            this._scroll.touchDelta = delta;
+	        }
+	    }
+	
+	    /**
+	     * Called whenever the user releases his fingers and the touch gesture
+	     * has completed. This will set the new position and if the user used a 'flick'
+	     * gesture give the scroll-offset particle a velocity and momentum into a
+	     * certain direction.
+	     */
+	    function _touchEnd(event) {
+	
+	        // Remove touch
+	        var primaryTouch = this._scroll.activeTouches.length ? this._scroll.activeTouches[0] : undefined;
+	        for (var i = 0; i < event.changedTouches.length; i++) {
+	            var changedTouch = event.changedTouches[i];
+	            for (var j = 0; j < this._scroll.activeTouches.length; j++) {
+	                var touch = this._scroll.activeTouches[j];
+	                if (touch.id === changedTouch.identifier) {
+	
+	                    // Remove touch from active-touches
+	                    this._scroll.activeTouches.splice(j, 1);
+	
+	                    // When a different touch now becomes the primary touch, update
+	                    // its start position to match the current move offset.
+	                    if ((j === 0) && this._scroll.activeTouches.length) {
+	                        var newPrimaryTouch = this._scroll.activeTouches[0];
+	                        newPrimaryTouch.start[0] = newPrimaryTouch.current[0] - (touch.current[0] - touch.start[0]);
+	                        newPrimaryTouch.start[1] = newPrimaryTouch.current[1] - (touch.current[1] - touch.start[1]);
+	                    }
+	                    break;
+	                }
+	            }
+	        }
+	
+	        // Wait for all fingers to be released from the screen before resetting the move-spring
+	        if (!primaryTouch || this._scroll.activeTouches.length) {
+	            return;
+	        }
+	
+	        // Determine velocity and add to particle
+	        var velocity = 0;
+	        var diffTime = primaryTouch.time - primaryTouch.prevTime;
+	        if ((diffTime > 0) && ((_getEventTimestamp(event) - primaryTouch.time) <= this.options.touchMoveNoVelocityDuration)) {
+	            var diffOffset = primaryTouch.current[this._direction] - primaryTouch.prev[this._direction];
+	            velocity = diffOffset / diffTime;
+	        }
+	
+	        // Release scroll force
+	        var delta = this._scroll.touchDelta;
+	        this.releaseScrollForce(delta, velocity);
+	        this._scroll.touchDelta = 0;
+	    }
+	
+	    /**
+	     * Called whenever the user is scrolling the view using either a mouse
+	     * scroll wheel or a track-pad.
+	     */
+	    function _scrollUpdate(event) {
+	        if (!this.options.enabled) {
+	            return;
+	        }
+	        var offset = Array.isArray(event.delta) ? event.delta[this._direction] : event.delta;
+	        this.scroll(offset);
+	    }
+	
+	    /**
+	     * Updates the scroll offset particle.
+	     */
+	    function _setParticle(position, velocity, phase) {
+	        if (position !== undefined) {
+	            //var oldPosition = this._scroll.particle.getPosition1D();
+	            this._scroll.particleValue = position;
+	            this._scroll.particle.setPosition1D(position);
+	            //_log.call(this, 'setParticle.position: ', position, ' (old: ', oldPosition, ', delta: ', position - oldPosition, ', phase: ', phase, ')');
+	        }
+	        if (velocity !== undefined) {
+	            var oldVelocity = this._scroll.particle.getVelocity1D();
+	            if (oldVelocity !== velocity) {
+	                this._scroll.particle.setVelocity1D(velocity);
+	                //_log.call(this, 'setParticle.velocity: ', velocity, ' (old: ', oldVelocity, ', delta: ', velocity - oldVelocity, ', phase: ', phase, ')');
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Get the in-use scroll-offset.
+	     */
+	    function _calcScrollOffset(normalize, refreshParticle) {
+	
+	        // When moving using touch-gestures, make the offset stick to the
+	        // finger. When the bounds is exceeded, decrease the scroll distance
+	        // by two.
+	        if (refreshParticle || (this._scroll.particleValue === undefined)) {
+	            this._scroll.particleValue = this._scroll.particle.getPosition1D();
+	            this._scroll.particleValue = Math.round(this._scroll.particleValue * 1000) / 1000;
+	        }
+	
+	        // do stuff
+	        var scrollOffset = this._scroll.particleValue;
+	        if (this._scroll.scrollDelta || this._scroll.normalizedScrollDelta) {
+	            scrollOffset += this._scroll.scrollDelta + this._scroll.normalizedScrollDelta;
+	            if (((this._scroll.boundsReached & Bounds.PREV) && (scrollOffset > this._scroll.springPosition)) ||
+	               ((this._scroll.boundsReached & Bounds.NEXT) && (scrollOffset < this._scroll.springPosition)) ||
+	               (this._scroll.boundsReached === Bounds.BOTH)) {
+	                scrollOffset = this._scroll.springPosition;
+	            }
+	            if (normalize) {
+	                if (!this._scroll.scrollDelta) {
+	                    this._scroll.normalizedScrollDelta = 0;
+	                    _setParticle.call(this, scrollOffset, undefined, '_calcScrollOffset');
+	                }
+	                this._scroll.normalizedScrollDelta += this._scroll.scrollDelta;
+	                this._scroll.scrollDelta = 0;
+	            }
+	        }
+	
+	        if (this._scroll.scrollForceCount && this._scroll.scrollForce) {
+	            if (this._scroll.springPosition !== undefined) {
+	                scrollOffset = (scrollOffset + this._scroll.scrollForce + this._scroll.springPosition) / 2.0;
+	            }
+	            else {
+	                scrollOffset += this._scroll.scrollForce;
+	            }
+	        }
+	
+	        // Prevent the scroll position from exceeding the bounds when overscroll is disabled
+	        if (!this.options.overscroll) {
+	            if ((this._scroll.boundsReached === Bounds.BOTH) ||
+	                ((this._scroll.boundsReached === Bounds.PREV) && (scrollOffset > this._scroll.springPosition)) ||
+	                ((this._scroll.boundsReached === Bounds.NEXT) && (scrollOffset < this._scroll.springPosition))) {
+	                scrollOffset = this._scroll.springPosition;
+	            }
+	        }
+	
+	        //_log.call(this, 'scrollOffset: ', scrollOffset, ', particle:', this._scroll.particle.getPosition1D(), ', moveToPosition: ', this._scroll.moveToPosition, ', springPosition: ', this._scroll.springPosition);
+	        return scrollOffset;
+	    }
+	
+	    /**
+	     * Helper function that calculates the next/prev layed out height.
+	     * @private
+	     */
+	    ScrollController.prototype._calcScrollHeight = function(next, lastNodeOnly) {
+	        var calcedHeight = 0;
+	        var node = this._nodes.getStartEnumNode(next);
+	        while (node) {
+	            if (node._invalidated) {
+	                if (node.trueSizeRequested) {
+	                    calcedHeight = undefined;
+	                    break;
+	                }
+	                if (node.scrollLength !== undefined) {
+	                    calcedHeight = lastNodeOnly ? node.scrollLength : (calcedHeight + node.scrollLength);
+	                    if (!next && lastNodeOnly) {
+	                        break;
+	                    }
+	                }
+	            }
+	            node = next ? node._next : node._prev;
+	        }
+	        return calcedHeight;
+	    };
+	
+	    /**
+	     * Calculates the scroll boundaries and sets the spring accordingly.
+	     */
+	    function _calcBounds(size, scrollOffset) {
+	
+	        // Local data
+	        var prevHeight = this._calcScrollHeight(false);
+	        var nextHeight = this._calcScrollHeight(true);
+	        var enforeMinSize = _isSequentiallyScrollingOptimized.call(this);
+	
+	        // 1. When the rendered height is smaller than the total height,
+	        //    then lock to the primary bounds
+	        var totalHeight;
+	        if (enforeMinSize) {
+	            if ((nextHeight !== undefined) && (prevHeight !== undefined)) {
+	                totalHeight = prevHeight + nextHeight;
+	            }
+	            if ((totalHeight !== undefined) && (totalHeight <= size[this._direction])) {
+	                this._scroll.boundsReached = Bounds.BOTH;
+	                this._scroll.springPosition = this.options.alignment ? -nextHeight : prevHeight;
+	                this._scroll.springSource = SpringSource.MINSIZE;
+	                return;
+	            }
+	        }
+	
+	        // 2. Check whether primary boundary has been reached
+	        if (this.options.alignment) {
+	            if (enforeMinSize) {
+	                if ((nextHeight !== undefined) && ((scrollOffset + nextHeight) <= 0)) {
+	                    this._scroll.boundsReached = Bounds.NEXT;
+	                    this._scroll.springPosition = -nextHeight;
+	                    this._scroll.springSource = SpringSource.NEXTBOUNDS;
+	                    return;
+	                }
+	            }
+	            else {
+	                var firstPrevItemHeight = this._calcScrollHeight(false, true);
+	                if ((nextHeight !== undefined) && firstPrevItemHeight && ((scrollOffset + nextHeight + size[this._direction]) <= firstPrevItemHeight)) {
+	                    this._scroll.boundsReached = Bounds.NEXT;
+	                    this._scroll.springPosition = nextHeight - (size[this._direction] - firstPrevItemHeight);
+	                    this._scroll.springSource = SpringSource.NEXTBOUNDS;
+	                    return;
+	                }
+	            }
+	        }
+	        else {
+	            if ((prevHeight !== undefined) && ((scrollOffset - prevHeight) >= 0)) {
+	                this._scroll.boundsReached = Bounds.PREV;
+	                this._scroll.springPosition = prevHeight;
+	                this._scroll.springSource = SpringSource.PREVBOUNDS;
+	                return;
+	            }
+	        }
+	
+	        // 3. Check if secondary bounds has been reached
+	        if (this.options.alignment) {
+	            if ((prevHeight !== undefined) && ((scrollOffset - prevHeight) >= -size[this._direction])) {
+	                this._scroll.boundsReached = Bounds.PREV;
+	                this._scroll.springPosition = -size[this._direction] + prevHeight;
+	                this._scroll.springSource = SpringSource.PREVBOUNDS;
+	                return;
+	            }
+	        }
+	        else {
+	            var nextBounds = enforeMinSize ? size[this._direction] : this._calcScrollHeight(true, true);
+	            if ((nextHeight !== undefined) && ((scrollOffset + nextHeight) <= nextBounds)){
+	                this._scroll.boundsReached = Bounds.NEXT;
+	                this._scroll.springPosition = nextBounds - nextHeight;
+	                this._scroll.springSource = SpringSource.NEXTBOUNDS;
+	                return;
+	            }
+	        }
+	
+	        // No bounds reached
+	        this._scroll.boundsReached = Bounds.NONE;
+	        this._scroll.springPosition = undefined;
+	        this._scroll.springSource = SpringSource.NONE;
+	    }
+	
+	    /**
+	     * Calculates the scrollto-offset to which the spring is set.
+	     */
+	    function _calcScrollToOffset(size, scrollOffset) {
+	        var scrollToRenderNode = this._scroll.scrollToRenderNode || this._scroll.ensureVisibleRenderNode;
+	        if (!scrollToRenderNode) {
+	            return;
+	        }
+	
+	        // 1. When boundary is reached, stop scrolling in that direction
+	        if ((this._scroll.boundsReached === Bounds.BOTH) ||
+	            (!this._scroll.scrollToDirection && (this._scroll.boundsReached === Bounds.PREV)) ||
+	            (this._scroll.scrollToDirection && (this._scroll.boundsReached === Bounds.NEXT))) {
+	            return;
+	        }
+	
+	        // 2. Find the node to scroll to
+	        var foundNode;
+	        var scrollToOffset = 0;
+	        var node = this._nodes.getStartEnumNode(true);
+	        var count = 0;
+	        while (node) {
+	            count++;
+	            if (!node._invalidated || (node.scrollLength === undefined)) {
+	                break;
+	            }
+	            if (this.options.alignment) {
+	                scrollToOffset -= node.scrollLength;
+	            }
+	            if (node.renderNode === scrollToRenderNode) {
+	                foundNode = node;
+	                break;
+	            }
+	            if (!this.options.alignment) {
+	                scrollToOffset -= node.scrollLength;
+	            }
+	            node = node._next;
+	        }
+	        if (!foundNode) {
+	            scrollToOffset = 0;
+	            node = this._nodes.getStartEnumNode(false);
+	            while (node) {
+	                if (!node._invalidated || (node.scrollLength === undefined)) {
+	                   break;
+	                }
+	                if (!this.options.alignment) {
+	                    scrollToOffset += node.scrollLength;
+	                }
+	                if (node.renderNode === scrollToRenderNode) {
+	                    foundNode = node;
+	                    break;
+	                }
+	                if (this.options.alignment) {
+	                    scrollToOffset += node.scrollLength;
+	                }
+	                node = node._prev;
+	            }
+	        }
+	
+	        // 3. Update springs
+	        if (foundNode) {
+	            if (this._scroll.ensureVisibleRenderNode) {
+	                if (this.options.alignment) {
+	                    if ((scrollToOffset - foundNode.scrollLength) < 0) {
+	                        this._scroll.springPosition = scrollToOffset;
+	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
+	                    }
+	                    else if (scrollToOffset > size[this._direction]) {
+	                        this._scroll.springPosition = size[this._direction] - scrollToOffset;
+	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
+	                    }
+	                    else {
+	                        if (!foundNode.trueSizeRequested) {
+	                            this._scroll.ensureVisibleRenderNode = undefined;
+	                        }
+	                    }
+	                }
+	                else {
+	                    scrollToOffset = -scrollToOffset;
+	                    if (scrollToOffset < 0) {
+	                        this._scroll.springPosition = scrollToOffset;
+	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
+	                    }
+	                    else if ((scrollToOffset + foundNode.scrollLength) > size[this._direction]) {
+	                        this._scroll.springPosition = size[this._direction] - (scrollToOffset + foundNode.scrollLength);
+	                        this._scroll.springSource = SpringSource.ENSUREVISIBLE;
+	                    }
+	                    else {
+	                        if (!foundNode.trueSizeRequested) {
+	                          this._scroll.ensureVisibleRenderNode = undefined;
+	                        }
+	                    }
+	                }
+	            }
+	            else { // scrollToSequence
+	                this._scroll.springPosition = scrollToOffset;
+	                this._scroll.springSource = SpringSource.GOTOSEQUENCE;
+	            }
+	            return;
+	        }
+	
+	        // 4. When node not found, keep searching
+	        if (this._scroll.scrollToDirection) {
+	            this._scroll.springPosition = scrollOffset - size[this._direction];
+	            this._scroll.springSource = SpringSource.GOTONEXTDIRECTION;
+	
+	        }
+	        else {
+	            this._scroll.springPosition = scrollOffset + size[this._direction];
+	            this._scroll.springSource = SpringSource.GOTOPREVDIRECTION;
+	        }
+	
+	        // 5. In case of a VirtualViewSequnce, make sure all the view-sequence nodes are touched, so
+	        //    that they are not cleaned up.
+	        if (this._viewSequence.cleanup) {
+	            var viewSequence = this._viewSequence;
+	            while (viewSequence.get() !== scrollToRenderNode) {
+	                viewSequence = this._scroll.scrollToDirection ? viewSequence.getNext(true) : viewSequence.getPrevious(true);
+	                if (!viewSequence) {
+	                    break;
+	                }
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Snaps to a page when pagination is enabled.
+	     */
+	    function _snapToPage() {
+	
+	        // Check whether pagination is active
+	        if (!this.options.paginated ||
+	            this._scroll.scrollForceCount || //don't paginate while moving
+	            (this._scroll.springPosition !== undefined)) {
+	            return;
+	        }
+	
+	        // When the energy is below the thresshold, paginate to the current page
+	        var item;
+	        switch (this.options.paginationMode) {
+	            case PaginationMode.SCROLL:
+	                if (!this.options.paginationEnergyThreshold || (Math.abs(this._scroll.particle.getEnergy()) <= this.options.paginationEnergyThreshold)) {
+	                    item = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
+	                    if (item && item.renderNode) {
+	                        this.goToRenderNode(item.renderNode);
+	                    }
+	                }
+	                break;
+	            case PaginationMode.PAGE:
+	                item = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
+	                if (item && item.renderNode) {
+	                    this.goToRenderNode(item.renderNode);
+	                }
+	                break;
+	        }
+	    }
+	
+	    /**
+	     * Normalizes the view-sequence node so that the view-sequence is near to 0.
+	     */
+	    function _normalizePrevViewSequence(scrollOffset) {
+	        var count = 0;
+	        var normalizedScrollOffset = scrollOffset;
+	        var normalizeNextPrev = false;
+	        var node = this._nodes.getStartEnumNode(false);
+	        while (node) {
+	            if (!node._invalidated || !node._viewSequence) {
+	                break;
+	            }
+	            if (normalizeNextPrev) {
+	                this._viewSequence = node._viewSequence;
+	                normalizedScrollOffset = scrollOffset;
+	                normalizeNextPrev = false;
+	            }
+	            if ((node.scrollLength === undefined) || node.trueSizeRequested || (scrollOffset < 0)) {
+	                break;
+	            }
+	            scrollOffset -= node.scrollLength;
+	            count++;
+	            if (node.scrollLength) {
+	                if (this.options.alignment) {
+	                    normalizeNextPrev = (scrollOffset >= 0);
+	                }
+	                else {
+	                    this._viewSequence = node._viewSequence;
+	                    normalizedScrollOffset = scrollOffset;
+	                }
+	            }
+	            node = node._prev;
+	        }
+	        return normalizedScrollOffset;
+	    }
+	    function _normalizeNextViewSequence(scrollOffset) {
+	        var count = 0;
+	        var normalizedScrollOffset = scrollOffset;
+	        var node = this._nodes.getStartEnumNode(true);
+	        while (node) {
+	            if (!node._invalidated || (node.scrollLength === undefined) || node.trueSizeRequested || !node._viewSequence ||
+	                ((scrollOffset > 0) && (!this.options.alignment || (node.scrollLength !== 0)))) {
+	                break;
+	            }
+	            if (this.options.alignment) {
+	                scrollOffset += node.scrollLength;
+	                count++;
+	            }
+	            if (node.scrollLength || this.options.alignment) {
+	                this._viewSequence = node._viewSequence;
+	                normalizedScrollOffset = scrollOffset;
+	            }
+	            if (!this.options.alignment) {
+	                scrollOffset += node.scrollLength;
+	                count++;
+	            }
+	            node = node._next;
+	        }
+	        return normalizedScrollOffset;
+	    }
+	    function _normalizeViewSequence(size, scrollOffset) {
+	
+	        // Check whether normalisation is disabled
+	        var caps = this._layout.capabilities;
+	        if (caps && caps.debug &&
+	            (caps.debug.normalize !== undefined) &&
+	            !caps.debug.normalize) {
+	            return scrollOffset;
+	        }
+	
+	        // Don't normalize when forces are at work
+	        if (this._scroll.scrollForceCount) {
+	            return scrollOffset;
+	        }
+	
+	        // 1. Normalize in primary direction
+	        var normalizedScrollOffset = scrollOffset;
+	        if (this.options.alignment && (scrollOffset < 0)) {
+	            normalizedScrollOffset = _normalizeNextViewSequence.call(this, scrollOffset);
+	        }
+	        else if (!this.options.alignment && (scrollOffset > 0)){
+	            normalizedScrollOffset = _normalizePrevViewSequence.call(this, scrollOffset);
+	        }
+	
+	        // 2. Normalize in secondary direction
+	        if (normalizedScrollOffset === scrollOffset) {
+	            if (this.options.alignment && (scrollOffset > 0)) {
+	                normalizedScrollOffset = _normalizePrevViewSequence.call(this, scrollOffset);
+	            }
+	            else if (!this.options.alignment && (scrollOffset < 0)) {
+	                normalizedScrollOffset = _normalizeNextViewSequence.call(this, scrollOffset);
+	            }
+	        }
+	
+	        // Adjust particle and springs
+	        if (normalizedScrollOffset !== scrollOffset) {
+	            var delta = normalizedScrollOffset - scrollOffset;
+	
+	            // Adjust particle
+	            var particleValue = this._scroll.particle.getPosition1D();
+	            //var particleValue = this._scroll.particleValue;
+	            _setParticle.call(this, particleValue + delta, undefined, 'normalize');
+	            //_log.call(this, 'normalized scrollOffset: ', normalizedScrollOffset, ', old: ', scrollOffset, ', particle: ', particleValue + delta);
+	
+	            // Adjust scroll spring
+	            if (this._scroll.springPosition !== undefined) {
+	                this._scroll.springPosition += delta;
+	            }
+	
+	            // Adjust group offset
+	            if (_isSequentiallyScrollingOptimized.call(this)) {
+	                this._scroll.groupStart -= delta;
+	            }
+	        }
+	        return normalizedScrollOffset;
+	    }
+	
+	    /**
+	     * Get all items that are partly or completely visible.
+	     *
+	     * The returned result is an array of objects containing the
+	     * following properties. Example:
+	     * ```javascript
+	     * {
+	     *   viewSequence: {ViewSequence},
+	     *   index: {Number},
+	     *   renderNode: {renderable},
+	     *   visiblePerc: {Number} 0..1
+	     * }
+	     * ```
+	     * @return {Array} array of items
+	     */
+	    ScrollController.prototype.getVisibleItems = function() {
+	        var size = this._contextSizeCache;
+	        var scrollOffset = this.options.alignment ? (this._scroll.unnormalizedScrollOffset + size[this._direction]) : this._scroll.unnormalizedScrollOffset;
+	        var result = [];
+	        var node = this._nodes.getStartEnumNode(true);
+	        while (node) {
+	            if (!node._invalidated || (node.scrollLength === undefined) || (scrollOffset > size[this._direction])) {
+	                break;
+	            }
+	            scrollOffset += node.scrollLength;
+	            if ((scrollOffset >= 0) && node._viewSequence){
+	                result.push({
+	                    index: node._viewSequence.getIndex(),
+	                    viewSequence: node._viewSequence,
+	                    renderNode: node.renderNode,
+	                    visiblePerc: node.scrollLength ? ((Math.min(scrollOffset, size[this._direction]) - Math.max(scrollOffset - node.scrollLength, 0)) / node.scrollLength) : 1,
+	                    scrollOffset: scrollOffset - node.scrollLength,
+	                    scrollLength: node.scrollLength,
+	                    _node: node
+	                });
+	            }
+	            node = node._next;
+	        }
+	        scrollOffset = this.options.alignment ? (this._scroll.unnormalizedScrollOffset + size[this._direction]) : this._scroll.unnormalizedScrollOffset;
+	        node = this._nodes.getStartEnumNode(false);
+	        while (node) {
+	            if (!node._invalidated || (node.scrollLength === undefined) || (scrollOffset < 0)) {
+	                break;
+	            }
+	            scrollOffset -= node.scrollLength;
+	            if ((scrollOffset < size[this._direction]) && node._viewSequence) {
+	                result.unshift({
+	                    index: node._viewSequence.getIndex(),
+	                    viewSequence: node._viewSequence,
+	                    renderNode: node.renderNode,
+	                    visiblePerc: node.scrollLength ? ((Math.min(scrollOffset + node.scrollLength, size[this._direction]) - Math.max(scrollOffset, 0)) / node.scrollLength) : 1,
+	                    scrollOffset: scrollOffset,
+	                    scrollLength: node.scrollLength,
+	                    _node: node
+	                });
+	            }
+	            node = node._prev;
+	        }
+	        return result;
+	    };
+	
+	    /**
+	     * Get the first or last visible item in the view.
+	     */
+	    function _getVisibleItem(first) {
+	        var result = {};
+	        var diff;
+	        var prevDiff = 10000000;
+	        var diffDelta = (first && this.options.alignment) ? -this._contextSizeCache[this._direction] : ((!first && !this.options.alignment) ? this._contextSizeCache[this._direction] : 0);
+	        var scrollOffset = this._scroll.unnormalizedScrollOffset;
+	        var node = this._nodes.getStartEnumNode(true);
+	        while (node) {
+	            if (!node._invalidated || (node.scrollLength === undefined)) {
+	                break;
+	            }
+	            if (node._viewSequence) {
+	                diff = Math.abs(diffDelta - (scrollOffset + (!first ? node.scrollLength : 0)));
+	                if (diff >= prevDiff) {
+	                    break;
+	                }
+	                prevDiff = diff;
+	                result.scrollOffset = scrollOffset;
+	                result._node = node;
+	                scrollOffset += node.scrollLength;
+	            }
+	            node = node._next;
+	        }
+	        scrollOffset = this._scroll.unnormalizedScrollOffset;
+	        node = this._nodes.getStartEnumNode(false);
+	        while (node) {
+	            if (!node._invalidated || (node.scrollLength === undefined)) {
+	                break;
+	            }
+	            if (node._viewSequence) {
+	                scrollOffset -= node.scrollLength;
+	                diff = Math.abs(diffDelta - (scrollOffset + (!first ? node.scrollLength : 0)));
+	                if (diff >= prevDiff) {
+	                    break;
+	                }
+	                prevDiff = diff;
+	                result.scrollOffset = scrollOffset;
+	                result._node = node;
+	            }
+	            node = node._prev;
+	        }
+	        if (!result._node) {
+	            return undefined;
+	        }
+	        result.scrollLength = result._node.scrollLength;
+	        if (this.options.alignment) {
+	            result.visiblePerc = (Math.min(result.scrollOffset + result.scrollLength, 0) - Math.max(result.scrollOffset, -this._contextSizeCache[this._direction])) / result.scrollLength;
+	        }
+	        else {
+	            result.visiblePerc = (Math.min(result.scrollOffset + result.scrollLength, this._contextSizeCache[this._direction]) - Math.max(result.scrollOffset, 0)) / result.scrollLength;
+	        }
+	        result.index = result._node._viewSequence.getIndex();
+	        result.viewSequence = result._node._viewSequence;
+	        result.renderNode = result._node.renderNode;
+	        return result;
+	    }
+	
+	    /**
+	     * Get the first visible item in the view.
+	     *
+	     * @return {Object} item or `undefined`
+	     */
+	    ScrollController.prototype.getFirstVisibleItem = function() {
+	        return _getVisibleItem.call(this, true);
+	    };
+	
+	    /**
+	     * Get the last visible item in the view.
+	     *
+	     * @return {Object} item or `undefined`
+	     */
+	    ScrollController.prototype.getLastVisibleItem = function() {
+	        return _getVisibleItem.call(this, false);
+	    };
+	
+	    /**
+	     * Helper function that goes to a view-sequence either by scrolling
+	     * or immediately without any scrolling animation.
+	     */
+	    function _goToSequence(viewSequence, next, noAnimation) {
+	        if (noAnimation) {
+	            this._viewSequence = viewSequence;
+	            this._scroll.springPosition = undefined;
+	            _updateSpring.call(this);
+	            this.halt();
+	            this._scroll.scrollDelta = 0;
+	            _setParticle.call(this, 0, 0, '_goToSequence');
+	            this._scroll.scrollDirty = true;
+	        }
+	        else {
+	            this._scroll.scrollToSequence = viewSequence;
+	            this._scroll.scrollToRenderNode = viewSequence.get();
+	            this._scroll.ensureVisibleRenderNode = undefined;
+	            this._scroll.scrollToDirection = next;
+	            this._scroll.scrollDirty = true;
+	        }
+	    }
+	
+	    /**
+	     * Helper function that scrolls the view towards a view-sequence node.
+	     */
+	    function _ensureVisibleSequence(viewSequence, next) {
+	        this._scroll.scrollToSequence = undefined;
+	        this._scroll.scrollToRenderNode = undefined;
+	        this._scroll.ensureVisibleRenderNode = viewSequence.get();
+	        this._scroll.scrollToDirection = next;
+	        this._scroll.scrollDirty = true;
+	    }
+	
+	    /**
+	     * Moves to the next node in the viewSequence.
+	     *
+	     * @param {Number} [amount] Amount of nodes to move
+	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
+	     */
+	    function _goToPage(amount, noAnimation) {
+	
+	        // Get current scroll-position. When a previous call was made to
+	        // `scroll' or `scrollTo` and that node has not yet been reached, then
+	        // the amount is accumalated onto that scroll target.
+	        var viewSequence = (!noAnimation ? this._scroll.scrollToSequence : undefined) || this._viewSequence;
+	        if (!this._scroll.scrollToSequence && !noAnimation) {
+	            var firstVisibleItem = this.getFirstVisibleItem();
+	            if (firstVisibleItem) {
+	                viewSequence = firstVisibleItem.viewSequence;
+	                if (((amount < 0) && (firstVisibleItem.scrollOffset < 0)) ||
+	                    ((amount > 0) && (firstVisibleItem.scrollOffset > 0))) {
+	                    amount = 0;
+	                }
+	            }
+	        }
+	        if (!viewSequence) {
+	            return;
+	        }
+	
+	        // Find scroll target
+	        for (var i = 0; i < Math.abs(amount); i++) {
+	            var nextViewSequence = (amount > 0) ? viewSequence.getNext() : viewSequence.getPrevious();
+	            if (nextViewSequence) {
+	                viewSequence = nextViewSequence;
+	            }
+	            else {
+	                break;
+	            }
+	        }
+	        _goToSequence.call(this, viewSequence, amount >= 0, noAnimation);
+	    }
+	
+	    /**
+	     * Goes to the first page, making it visible.
+	     *
+	     * NOTE: This function does not work on ViewSequences that have the `loop` property enabled.
+	     *
+	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.goToFirstPage = function(noAnimation) {
+	        if (!this._viewSequence) {
+	            return this;
+	        }
+	        if (this._viewSequence._ && this._viewSequence._.loop) {
+	            LayoutUtility.error('Unable to go to first item of looped ViewSequence');
+	            return this;
+	        }
+	        var viewSequence = this._viewSequence;
+	        while (viewSequence) {
+	            var prev = viewSequence.getPrevious();
+	            if (prev && prev.get()) {
+	                viewSequence = prev;
+	            }
+	            else {
+	                break;
+	            }
+	        }
+	        _goToSequence.call(this, viewSequence, false, noAnimation);
+	        return this;
+	    };
+	
+	    /**
+	     * Goes to the previous page, making it visible.
+	     *
+	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.goToPreviousPage = function(noAnimation) {
+	        _goToPage.call(this, -1, noAnimation);
+	        return this;
+	    };
+	
+	    /**
+	     * Goes to the next page, making it visible.
+	     *
+	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.goToNextPage = function(noAnimation) {
+	        _goToPage.call(this, 1, noAnimation);
+	        return this;
+	    };
+	
+	    /**
+	     * Goes to the last page, making it visible.
+	     *
+	     * NOTE: This function does not work on ViewSequences that have the `loop` property enabled.
+	     *
+	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without any scrolling animation.
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.goToLastPage = function(noAnimation) {
+	        if (!this._viewSequence) {
+	            return this;
+	        }
+	        if (this._viewSequence._ && this._viewSequence._.loop) {
+	            LayoutUtility.error('Unable to go to last item of looped ViewSequence');
+	            return this;
+	        }
+	        var viewSequence = this._viewSequence;
+	        while (viewSequence) {
+	            var next = viewSequence.getNext();
+	            if (next && next.get()) {
+	                viewSequence = next;
+	            }
+	            else {
+	                break;
+	            }
+	        }
+	        _goToSequence.call(this, viewSequence, true, noAnimation);
+	        return this;
+	    };
+	
+	    /**
+	     * Goes to the given renderable in the datasource.
+	     *
+	     * @param {RenderNode} node renderable to scroll to.
+	     * @param {Bool} [noAnimation] When set to true, immediately shows the node without scrolling animation.
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.goToRenderNode = function(node, noAnimation) {
+	
+	        // Verify arguments and state
+	        if (!this._viewSequence || !node) {
+	            return this;
+	        }
+	
+	        // Check current node
+	        if (this._viewSequence.get() === node) {
+	            var next = _calcScrollOffset.call(this) >= 0;
+	            _goToSequence.call(this, this._viewSequence, next, noAnimation);
+	            return this;
+	        }
+	
+	        // Find the sequence-node that we want to scroll to.
+	        // We look at both directions at the same time.
+	        // The first match that is encountered, that direction is chosen.
+	        var nextSequence = this._viewSequence.getNext();
+	        var prevSequence = this._viewSequence.getPrevious();
+	        while ((nextSequence || prevSequence) && (nextSequence !== this._viewSequence)){
+	            var nextNode = nextSequence ? nextSequence.get() : undefined;
+	            if (nextNode === node) {
+	                _goToSequence.call(this, nextSequence, true, noAnimation);
+	                break;
+	            }
+	            var prevNode = prevSequence ? prevSequence.get() : undefined;
+	            if (prevNode === node) {
+	                _goToSequence.call(this, prevSequence, false, noAnimation);
+	                break;
+	            }
+	            nextSequence = nextNode ? nextSequence.getNext() : undefined;
+	            prevSequence = prevNode ? prevSequence.getPrevious() : undefined;
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Ensures that a render-node is entirely visible.
+	     *
+	     * When the node is already visible, nothing happens. If the node is not entirely visible
+	     * the view is scrolled as much as needed to make it entirely visibl.
+	     *
+	     * @param {Number|ViewSequence|Renderable} node index, renderNode or ViewSequence
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.ensureVisible = function(node) {
+	
+	        // Convert argument into renderNode
+	        if (node instanceof ViewSequence) {
+	            node = node.get();
+	        }
+	        else if ((node instanceof Number) || (typeof node === 'number')) {
+	            var viewSequence = this._viewSequence;
+	            while (viewSequence.getIndex() < node) {
+	                viewSequence = viewSequence.getNext();
+	                if (!viewSequence) {
+	                    return this;
+	                }
+	            }
+	            while (viewSequence.getIndex() > node) {
+	                viewSequence = viewSequence.getPrevious();
+	                if (!viewSequence) {
+	                    return this;
+	                }
+	            }
+	        }
+	
+	        // Check current node
+	        if (this._viewSequence.get() === node) {
+	            var next = _calcScrollOffset.call(this) >= 0;
+	            _ensureVisibleSequence.call(this, this._viewSequence, next);
+	            return this;
+	        }
+	
+	        // Find the sequence-node that we want to scroll to.
+	        // We look at both directions at the same time.
+	        // The first match that is encountered, that direction is chosen.
+	        var nextSequence = this._viewSequence.getNext();
+	        var prevSequence = this._viewSequence.getPrevious();
+	        while ((nextSequence || prevSequence) && (nextSequence !== this._viewSequence)){
+	            var nextNode = nextSequence ? nextSequence.get() : undefined;
+	            if (nextNode === node) {
+	                _ensureVisibleSequence.call(this, nextSequence, true);
+	                break;
+	            }
+	            var prevNode = prevSequence ? prevSequence.get() : undefined;
+	            if (prevNode === node) {
+	                _ensureVisibleSequence.call(this, prevSequence, false);
+	                break;
+	            }
+	            nextSequence = nextNode ? nextSequence.getNext() : undefined;
+	            prevSequence = prevNode ? prevSequence.getPrevious() : undefined;
+	        }
+	
+	        return this;
+	    };
+	
+	    /**
+	     * Scrolls the view by the specified number of pixels.
+	     *
+	     * @param {Number} delta Delta in pixels (< 0 = down/right, > 0 = top/left).
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.scroll = function(delta) {
+	        this.halt();
+	        this._scroll.scrollDelta += delta;
+	        return this;
+	    };
+	
+	    /**
+	     * Checks whether the scrollview can scroll the given delta.
+	     * When the scrollView can scroll the whole delta, then
+	     * the return value is the same as the delta. If it cannot
+	     * scroll the entire delta, the return value is the number of
+	     * pixels that can be scrolled.
+	     *
+	     * @param {Number} delta Delta to test
+	     * @return {Number} Number of pixels the view is allowed to scroll
+	     */
+	    ScrollController.prototype.canScroll = function(delta) {
+	
+	        // Calculate height in both directions
+	        var scrollOffset = _calcScrollOffset.call(this);
+	        var prevHeight = this._calcScrollHeight(false);
+	        var nextHeight = this._calcScrollHeight(true);
+	
+	        // When the rendered height is smaller than the total height,
+	        // then no scrolling whatsover is allowed.
+	        var totalHeight;
+	        if ((nextHeight !== undefined) && (prevHeight !== undefined)) {
+	            totalHeight = prevHeight + nextHeight;
+	        }
+	        if ((totalHeight !== undefined) && (totalHeight <= this._contextSizeCache[this._direction])) {
+	            return 0; // no scrolling at all allowed
+	        }
+	
+	        // Determine the offset that we can scroll
+	        if ((delta < 0) && (nextHeight !== undefined)) {
+	            var nextOffset = this._contextSizeCache[this._direction] - (scrollOffset + nextHeight);
+	            return Math.max(nextOffset, delta);
+	        }
+	        else if ((delta > 0) && (prevHeight !== undefined)) {
+	            var prevOffset = -(scrollOffset - prevHeight);
+	            return Math.min(prevOffset, delta);
+	        }
+	        return delta;
+	    };
+	
+	    /**
+	     * Halts all scrolling going on. In essence this function sets
+	     * the velocity to 0 and cancels any `goToXxx` operation that
+	     * was applied.
+	     *
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.halt = function() {
+	        this._scroll.scrollToSequence = undefined;
+	        this._scroll.scrollToRenderNode = undefined;
+	        this._scroll.ensureVisibleRenderNode = undefined;
+	        _setParticle.call(this, undefined, 0, 'halt');
+	        return this;
+	    };
+	
+	    /**
+	     * Checks whether scrolling is in progress or not.
+	     *
+	     * @return {Bool} true when scrolling is active
+	     */
+	    ScrollController.prototype.isScrolling = function() {
+	        return this._scroll.isScrolling;
+	    };
+	
+	    /**
+	     * Checks whether any boundaries have been reached.
+	     *
+	     * @return {ScrollController.Bounds} Either, Bounds.PREV, Bounds.NEXT, Bounds.BOTH or Bounds.NONE
+	     */
+	    ScrollController.prototype.getBoundsReached = function() {
+	        return this._scroll.boundsReached;
+	    };
+	
+	    /**
+	     * Get the current scrolling velocity.
+	     *
+	     * @return {Number} Scroll velocity
+	     */
+	    ScrollController.prototype.getVelocity = function() {
+	        return this._scroll.particle.getVelocity1D();
+	    };
+	
+	    /**
+	     * Get the current energy of the scrolling particle.
+	     *
+	     * @return {Number} Energy
+	     */
+	    ScrollController.prototype.getEnergy = function() {
+	        return this._scroll.particle.getEnergy();
+	    };
+	
+	    /**
+	     * Set the scrolling velocity.
+	     *
+	     * @param {Number} velocity New scroll velocity
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.setVelocity = function(velocity) {
+	        return this._scroll.particle.setVelocity1D(velocity);
+	    };
+	
+	    /**
+	     * Applies a permanent scroll-force (delta) until it is released.
+	     * When the cumulative scroll-offset lies outside the allowed bounds
+	     * a strech effect is used, and the offset beyond the bounds is
+	     * substracted by halve. This function should always be accompanied
+	     * by a call to `releaseScrollForce`.
+	     *
+	     * This method is used for instance when using touch gestures to move
+	     * the scroll offset and corresponds to the `touchstart` event.
+	     *
+	     * @param {Number} delta Starting scroll-delta force to apply
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.applyScrollForce = function(delta) {
+	        this.halt();
+	        if (this._scroll.scrollForceCount === 0) {
+	            this._scroll.scrollForceStartItem = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
+	        }
+	        this._scroll.scrollForceCount++;
+	        this._scroll.scrollForce += delta;
+	        this._eventOutput.emit((this._scroll.scrollForceCount === 1) ? 'swipestart' : 'swipeupdate', {
+	            target: this,
+	            total: this._scroll.scrollForce,
+	            delta: delta
+	        });
+	        return this;
+	    };
+	
+	    /**
+	     * Updates a existing scroll-force previously applied by calling
+	     * `applyScrollForce`.
+	     *
+	     * This method is used for instance when using touch gestures to move
+	     * the scroll offset and corresponds to the `touchmove` event.
+	     *
+	     * @param {Number} prevDelta Previous delta
+	     * @param {Number} newDelta New delta
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.updateScrollForce = function(prevDelta, newDelta) {
+	        this.halt();
+	        newDelta -= prevDelta;
+	        this._scroll.scrollForce += newDelta;
+	        this._eventOutput.emit('swipeupdate', {
+	            target: this,
+	            total: this._scroll.scrollForce,
+	            delta: newDelta
+	        });
+	        return this;
+	    };
+	
+	    /**
+	     * Releases a scroll-force and sets the velocity.
+	     *
+	     * This method is used for instance when using touch gestures to move
+	     * the scroll offset and corresponds to the `touchend` event.
+	     *
+	     * @param {Number} delta Scroll delta to release
+	     * @param {Number} [velocity] Velocity to apply after which the view keeps scrolling
+	     * @return {ScrollController} this
+	     */
+	    ScrollController.prototype.releaseScrollForce = function(delta, velocity) {
+	        this.halt();
+	        if (this._scroll.scrollForceCount === 1) {
+	            var scrollOffset = _calcScrollOffset.call(this);
+	            _setParticle.call(this, scrollOffset, velocity, 'releaseScrollForce');
+	            this._scroll.pe.wake();
+	            this._scroll.scrollForce = 0;
+	            this._scroll.scrollDirty = true;
+	            if (this._scroll.scrollForceStartItem && this.options.paginated && (this.options.paginationMode === PaginationMode.PAGE)) {
+	                var item = this.options.alignment ? this.getLastVisibleItem(true) : this.getFirstVisibleItem(true);
+	                if (item) {
+	                    if (item.renderNode !== this._scroll.scrollForceStartItem.renderNode) {
+	                        this.goToRenderNode(item.renderNode);
+	                    }
+	                    else if (this.options.paginationEnergyThreshold && (Math.abs(this._scroll.particle.getEnergy()) >= this.options.paginationEnergyThreshold)) {
+	                        velocity = velocity || 0;
+	                        if ((velocity < 0) && item._node._next && item._node._next.renderNode) {
+	                            this.goToRenderNode(item._node._next.renderNode);
+	                        }
+	                        else if ((velocity >= 0) && item._node._prev && item._node._prev.renderNode) {
+	                            this.goToRenderNode(item._node._prev.renderNode);
+	                        }
+	                    }
+	                    else {
+	                        this.goToRenderNode(item.renderNode);
+	                    }
+	                }
+	            }
+	            this._scroll.scrollForceStartItem = undefined;
+	            this._scroll.scrollForceCount--;
+	            this._eventOutput.emit('swipeend', {
+	                target: this,
+	                total: delta,
+	                delta: 0,
+	                velocity: velocity
+	            });
+	        }
+	        else {
+	            this._scroll.scrollForce -= delta;
+	            this._scroll.scrollForceCount--;
+	            this._eventOutput.emit('swipeupdate', {
+	                target: this,
+	                total: this._scroll.scrollForce,
+	                delta: delta
+	            });
+	        }
+	        return this;
+	    };
+	
+	     /**
+	     * Get the spec (size, transform, etc..) for the given renderable or
+	     * Id.
+	     *
+	     * @param {Renderable|String} node Renderabe or Id to look for.
+	     * @param {Bool} normalize When set to `true` normalizes the origin/align into the transform translation (default: `false`).
+	     * @return {Spec} spec or undefined
+	     */
+	    ScrollController.prototype.getSpec = function(node, normalize) {
+	        var spec = LayoutController.prototype.getSpec.apply(this, arguments);
+	        if (spec && _isSequentiallyScrollingOptimized.call(this)) {
+	            spec = {
+	                origin: spec.origin,
+	                align: spec.align,
+	                opacity: spec.opacity,
+	                size: spec.size,
+	                renderNode: spec.renderNode,
+	                transform: spec.transform
+	            };
+	            var translate = [0, 0, 0];
+	            translate[this._direction] = this._scrollOffsetCache + this._scroll.groupStart;
+	            spec.transform = Transform.thenMove(spec.transform, translate);
+	        }
+	        return spec;
+	    };
+	
+	    /**
+	     * Executes the layout and updates the state of the scrollview.
+	     */
+	    function _layout(size, scrollOffset, nested) {
+	
+	        // Track the number of times the layout-function was executed
+	        this._debug.layoutCount++;
+	        //_log.call(this, 'Layout, scrollOffset: ', scrollOffset, ', particle: ', this._scroll.particle.getPosition1D());
+	
+	        // Determine start & end
+	        var scrollStart = 0 - Math.max(this.options.extraBoundsSpace[0], 1);
+	        var scrollEnd = size[this._direction] + Math.max(this.options.extraBoundsSpace[1], 1);
+	        if (this.options.layoutAll) {
+	            scrollStart = -1000000;
+	            scrollEnd = 1000000;
+	        }
+	
+	        // Prepare for layout
+	        var layoutContext = this._nodes.prepareForLayout(
+	            this._viewSequence,     // first node to layout
+	            this._nodesById, {      // so we can do fast id lookups
+	                size: size,
+	                direction: this._direction,
+	                reverse: this.options.alignment ? true : false,
+	                scrollOffset: this.options.alignment ? (scrollOffset + size[this._direction]) : scrollOffset,
+	                scrollStart: scrollStart,
+	                scrollEnd: scrollEnd
+	            }
+	        );
+	
+	        // Layout objects
+	        if (this._layout._function) {
+	            this._layout._function(
+	                layoutContext,          // context which the layout-function can use
+	                this._layout.options    // additional layout-options
+	            );
+	        }
+	        this._scroll.unnormalizedScrollOffset = scrollOffset;
+	
+	        // Call post-layout function
+	        if (this._postLayout) {
+	            this._postLayout(size, scrollOffset);
+	        }
+	
+	        // Mark non-invalidated nodes for removal
+	        this._nodes.removeNonInvalidatedNodes(this.options.flowOptions.removeSpec);
+	
+	        // Check whether the bounds have been reached
+	        //var oldBoundsReached = this._scroll.boundsReached;
+	        _calcBounds.call(this, size, scrollOffset);
+	        //if (oldBoundsReached !== this._scroll.boundsReached) {
+	        //    _log.call(this, 'bounds reached changed (', oldBoundsReached, ' != ', this._scroll.boundsReached, ')');
+	        //}
+	
+	        // Update scroll-to spring
+	        _calcScrollToOffset.call(this, size, scrollOffset);
+	
+	        // When pagination is enabled, snap to page
+	        _snapToPage.call(this);
+	
+	        // If the bounds have changed, and the scroll-offset would be different
+	        // than before, then re-layout entirely using the new offset.
+	        var newScrollOffset = _calcScrollOffset.call(this, true);
+	        if (!nested && (newScrollOffset !== scrollOffset)) {
+	            //_log.call(this, 'offset changed, re-layouting... (', scrollOffset, ' != ', newScrollOffset, ')');
+	            return _layout.call(this, size, newScrollOffset, true);
+	        }
+	
+	        // Normalize scroll offset so that the current viewsequence node is as close to the
+	        // top as possible and the layout function will need to process the least amount
+	        // of renderables.
+	        scrollOffset = _normalizeViewSequence.call(this, size, scrollOffset);
+	
+	        // Update spring
+	        _updateSpring.call(this);
+	
+	        // Cleanup any nodes in case of a VirtualViewSequence
+	        this._nodes.removeVirtualViewSequenceNodes();
+	
+	        // Calculate scroll-length and use that as the true-size (height)
+	        if (this.options.size && (this.options.size[this._direction] === true)) {
+	            var scrollLength = 0;
+	            var node = this._nodes.getStartEnumNode();
+	            while (node) {
+	                if (node._invalidated && node.scrollLength) {
+	                    scrollLength += node.scrollLength;
+	                }
+	                node = node._next;
+	            }
+	            this._size = this._size || [0, 0];
+	            this._size[0] = this.options.size[0];
+	            this._size[1] = this.options.size[1];
+	            this._size[this._direction] = scrollLength;
+	        }
+	
+	        return scrollOffset;
+	    }
+	
+	    /**
+	     * Inner render function of the Group
+	     */
+	    function _innerRender() {
+	        var specs = this._specs;
+	        for (var i3 = 0, j3 = specs.length; i3 < j3; i3++) {
+	            if (specs[i3].renderNode) {
+	                specs[i3].target = specs[i3].renderNode.render();
+	            }
+	        }
+	
+	        // Add our cleanup-registration id also to the list, so that the
+	        // cleanup function is called by famo.us when the LayoutController is
+	        // removed from the render-tree.
+	        if (!specs.length || (specs[specs.length-1] !== this._cleanupRegistration)) {
+	            specs.push(this._cleanupRegistration);
+	        }
+	        return specs;
+	    }
+	
+	    /**
+	     * Apply changes from this component to the corresponding document element.
+	     * This includes changes to classes, styles, size, content, opacity, origin,
+	     * and matrix transforms.
+	     *
+	     * @private
+	     * @method commit
+	     * @param {Context} context commit context
+	     */
+	    ScrollController.prototype.commit = function commit(context) {
+	        var size = context.size;
+	
+	        // Update debug info
+	        this._debug.commitCount++;
+	
+	        // Reset the flow-state when requested
+	        if (this._resetFlowState) {
+	            this._resetFlowState = false;
+	            this._isDirty = true;
+	            this._nodes.removeAll();
+	        }
+	
+	        // Calculate scroll offset
+	        var scrollOffset = _calcScrollOffset.call(this, true, true);
+	        if (this._scrollOffsetCache === undefined) {
+	            this._scrollOffsetCache = scrollOffset;
+	        }
+	
+	        // When the size or layout function has changed, reflow the layout
+	        var emitEndScrollingEvent = false;
+	        var emitScrollEvent = false;
+	        var eventData;
+	        if (size[0] !== this._contextSizeCache[0] ||
+	            size[1] !== this._contextSizeCache[1] ||
+	            this._isDirty ||
+	            this._scroll.scrollDirty ||
+	            this._nodes._trueSizeRequested ||
+	            this.options.alwaysLayout ||
+	            this._scrollOffsetCache !== scrollOffset) {
+	
+	            // Prepare event data
+	            eventData = {
+	                target: this,
+	                oldSize: this._contextSizeCache,
+	                size: size,
+	                oldScrollOffset: -(this._scrollOffsetCache + this._scroll.groupStart),
+	                scrollOffset: -(scrollOffset + this._scroll.groupStart)
+	            };
+	
+	            // When scroll-offset has changed, emit scroll-start and scroll events
+	            if (this._scrollOffsetCache !== scrollOffset) {
+	                if (!this._scroll.isScrolling) {
+	                    this._scroll.isScrolling = true;
+	                    this._eventOutput.emit('scrollstart', eventData);
+	                }
+	                emitScrollEvent = true;
+	            }
+	            else if (this._scroll.isScrolling && !this._scroll.scrollForceCount) {
+	                emitEndScrollingEvent = true;
+	            }
+	
+	            this._eventOutput.emit('layoutstart', eventData);
+	
+	            // When the layout has changed, and we are not just scrolling,
+	            // disable the locked state of the layout-nodes so that they
+	            // can freely transition between the old and new state.
+	            if (this.options.flow && (this._isDirty ||
+	                (this.options.flowOptions.reflowOnResize &&
+	                ((size[0] !== this._contextSizeCache[0]) ||
+	                 (size[1] !== this._contextSizeCache[1]))))) {
+	                var node = this._nodes.getStartEnumNode();
+	                while (node) {
+	                    node.releaseLock(true);
+	                    node = node._next;
+	                }
+	            }
+	
+	            // Update state
+	            this._contextSizeCache[0] = size[0];
+	            this._contextSizeCache[1] = size[1];
+	            this._isDirty = false;
+	            this._scroll.scrollDirty = false;
+	
+	            // Perform layout
+	            scrollOffset = _layout.call(this, size, scrollOffset);
+	            this._scrollOffsetCache = scrollOffset;
+	
+	            // Emit end event
+	            eventData.scrollOffset = -(this._scrollOffsetCache + this._scroll.groupStart);
+	        }
+	        else if (this._scroll.isScrolling && !this._scroll.scrollForceCount) {
+	            emitEndScrollingEvent = true;
+	        }
+	
+	        // Update output and optionally emit event
+	        var groupTranslate = this._scroll.groupTranslate;
+	        groupTranslate[0] = 0;
+	        groupTranslate[1] = 0;
+	        groupTranslate[2] = 0;
+	        groupTranslate[this._direction] = -this._scroll.groupStart - scrollOffset;
+	        var sequentialScrollingOptimized = _isSequentiallyScrollingOptimized.call(this);
+	        var result = this._nodes.buildSpecAndDestroyUnrenderedNodes(sequentialScrollingOptimized ? groupTranslate : undefined);
+	        this._specs = result.specs;
+	        if (!this._specs.length) {
+	          this._scroll.groupStart = 0;
+	        }
+	        if (eventData) { // eventData is only used here to check whether there has been a re-layout
+	            this._eventOutput.emit('layoutend', eventData);
+	        }
+	        if (result.modified) {
+	            this._eventOutput.emit('reflow', {
+	                target: this
+	            });
+	        }
+	
+	        // View has been scrolled, emit event
+	        if (emitScrollEvent) {
+	            this._eventOutput.emit('scroll', eventData);
+	        }
+	
+	        // Check whether the current page has changed
+	        if (eventData) { // eventData is only used here to check whether there has been a re-layout
+	            var visibleItem = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
+	            if ((visibleItem && !this._visibleItemCache) || (!visibleItem && this._visibleItemCache) ||
+	                (visibleItem && this._visibleItemCache && (visibleItem.renderNode !== this._visibleItemCache.renderNode))) {
+	                this._eventOutput.emit('pagechange', {
+	                    target: this,
+	                    oldViewSequence: this._visibleItemCache ? this._visibleItemCache.viewSequence : undefined,
+	                    viewSequence: visibleItem ? visibleItem.viewSequence : undefined,
+	                    oldIndex: this._visibleItemCache ? this._visibleItemCache.index : undefined,
+	                    index: visibleItem ? visibleItem.index : undefined,
+	                    renderNode: visibleItem ? visibleItem.renderNode : undefined,
+	                    oldRenderNode: this._visibleItemCache ? this._visibleItemCache.renderNode : undefined
+	                });
+	                this._visibleItemCache = visibleItem;
+	            }
+	        }
+	
+	        // Emit end scrolling event
+	        if (emitEndScrollingEvent) {
+	            this._scroll.isScrolling = false;
+	            eventData = {
+	                target: this,
+	                oldSize: size,
+	                size: size,
+	                oldScrollOffset: -(this._scroll.groupStart + scrollOffset),
+	                scrollOffset: -(this._scroll.groupStart + scrollOffset)
+	            };
+	            this._eventOutput.emit('scrollend', eventData);
+	        }
+	
+	        // When renderables are layed out sequentiall (e.g. a ListLayout or
+	        // CollectionLayout), then offset the renderables onto the Group
+	        // and move the group offset instead. This creates a very big performance gain
+	        // as the renderables don't have to be repositioned for every change
+	        // to the scrollOffset. For layouts that don't layout sequence, disable
+	        // this behavior as it will be decremental to the performance.
+	        var transform = context.transform;
+	        if (sequentialScrollingOptimized) {
+	            var windowOffset = scrollOffset + this._scroll.groupStart;
+	            var translate = [0, 0, 0];
+	            translate[this._direction] = windowOffset;
+	            transform = Transform.thenMove(transform, translate);
+	        }
+	
+	        // Return the spec
+	        return {
+	            transform: transform,
+	            size: size,
+	            opacity: context.opacity,
+	            origin: context.origin,
+	            target: this.group.render()
+	        };
+	    };
+	
+	    /**
+	     * Generate a render spec from the contents of this component.
+	     *
+	     * @private
+	     * @method render
+	     * @return {number} Render spec for this component
+	     */
+	    ScrollController.prototype.render = function render() {
+	        if (this.container) {
+	            return this.container.render.apply(this.container, arguments);
+	        }
+	        else {
+	            return this.id;
+	        }
+	    };
+	
+	    module.exports = ScrollController;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 24 */
+/*!************************************************!*\
+  !*** ../~/famous-flex/src/LayoutController.js ***!
+  \************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2014 - 2015
+	 */
+	
+	/*global console*/
+	/*eslint no-console: 0*/
+	
+	/**
+	 * LayoutController lays out renderables according to a layout-
+	 * function and a data-source.
+	 *
+	 * Events:
+	 *
+	 * |event      |description|
+	 * |-----------|-----------|
+	 * |layoutstart|Emitted before the layout function is executed.|
+	 * |layoutend  |Emitted after the layout function has been executed.|
+	 * |reflow     |Emitted after one or more renderables have been changed.|
+	 *
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var Utility = __webpack_require__(/*! famous/utilities/Utility */ 42);
+	    var Entity = __webpack_require__(/*! famous/core/Entity */ 56);
+	    var ViewSequence = __webpack_require__(/*! famous/core/ViewSequence */ 55);
+	    var OptionsManager = __webpack_require__(/*! famous/core/OptionsManager */ 39);
+	    var EventHandler = __webpack_require__(/*! famous/core/EventHandler */ 38);
+	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 43);
+	    var LayoutNodeManager = __webpack_require__(/*! ./LayoutNodeManager */ 46);
+	    var LayoutNode = __webpack_require__(/*! ./LayoutNode */ 44);
+	    var FlowLayoutNode = __webpack_require__(/*! ./FlowLayoutNode */ 45);
+	    var Transform = __webpack_require__(/*! famous/core/Transform */ 19);
+	    __webpack_require__(/*! ./helpers/LayoutDockHelper */ 57);
+	
+	    /**
+	     * @class
+	     * @param {Object} options Options.
+	     * @param {Function|Object} [options.layout] Layout function or layout-literal.
+	     * @param {Object} [options.layoutOptions] Options to pass in to the layout-function.
+	     * @param {Array|ViewSequence|Object} [options.dataSource] Array, ViewSequence or Object with key/value pairs.
+	     * @param {Utility.Direction} [options.direction] Direction to layout into (e.g. Utility.Direction.Y) (when omitted the default direction of the layout is used)
+	     * @param {Bool} [options.flow] Enables flow animations when the layout changes (default: `false`).
+	     * @param {Object} [options.flowOptions] Options used by nodes when reflowing.
+	     * @param {Bool} [options.flowOptions.reflowOnResize] Smoothly reflows renderables on resize (only used when flow = true) (default: `true`).
+	     * @param {Object} [options.flowOptions.spring] Spring options used by nodes when reflowing (default: `{dampingRatio: 0.8, period: 300}`).
+	     * @param {Object} [options.flowOptions.properties] Properties which should be enabled or disabled for flowing.
+	     * @param {Spec} [options.flowOptions.insertSpec] Size, transform, opacity... to use when inserting new renderables into the scene (default: `{}`).
+	     * @param {Spec} [options.flowOptions.removeSpec] Size, transform, opacity... to use when removing renderables from the scene (default: `{}`).
+	     * @param {Bool} [options.alwaysLayout] When set to true, always calls the layout function on every render-cycle (default: `false`).
+	     * @param {Bool} [options.autoPipeEvents] When set to true, automatically calls .pipe on all renderables when inserted (default: `false`).
+	     * @param {Object} [options.preallocateNodes] Optimisation option to improve initial scrolling/animation performance by pre-allocating nodes, e.g.: `{count: 50, spec: {size:[0, 0], transform: Transform.identity}}`.
+	     * @alias module:LayoutController
+	     */
+	    function LayoutController(options, nodeManager) {
+	
+	        // Commit
+	        this.id = Entity.register(this);
+	        this._isDirty = true;
+	        this._contextSizeCache = [0, 0];
+	        this._commitOutput = {};
+	
+	        // Create an object to we can capture the famo.us cleanup call on
+	        // LayoutController.
+	        this._cleanupRegistration = {
+	          commit: function() {
+	              return undefined;
+	          },
+	          cleanup: function(context) {
+	              this.cleanup(context);
+	          }.bind(this)
+	        };
+	        this._cleanupRegistration.target = Entity.register(this._cleanupRegistration);
+	        this._cleanupRegistration.render = function() {
+	          return this.target;
+	        }.bind(this._cleanupRegistration);
+	
+	        // Setup input event handler
+	        this._eventInput = new EventHandler();
+	        EventHandler.setInputHandler(this, this._eventInput);
+	
+	        // Setup event handlers
+	        this._eventOutput = new EventHandler();
+	        EventHandler.setOutputHandler(this, this._eventOutput);
+	
+	        // Data-source
+	        //this._dataSource = undefined;
+	        //this._nodesById = undefined;
+	        //this._viewSequence = undefined;
+	
+	        // Layout
+	        this._layout = {
+	            //function: undefined,
+	            //literal: undefined,
+	            //capabilities: undefined,
+	            options: Object.create({})
+	        };
+	        //this._direction = undefined;
+	        this._layout.optionsManager = new OptionsManager(this._layout.options);
+	        this._layout.optionsManager.on('change', function() {
+	            this._isDirty = true;
+	        }.bind(this));
+	
+	        // Create options
+	        this.options = Object.create(LayoutController.DEFAULT_OPTIONS);
+	        this._optionsManager = new OptionsManager(this.options);
+	
+	        // Create node manager that manages (Flow)LayoutNode instances
+	        if (nodeManager) {
+	            this._nodes = nodeManager;
+	        }
+	        else if (options && options.flow) {
+	            this._nodes = new LayoutNodeManager(FlowLayoutNode, _initFlowLayoutNode.bind(this));
+	        }
+	        else {
+	            this._nodes = new LayoutNodeManager(LayoutNode);
+	        }
+	
+	        // Set options
+	        this.setDirection(undefined);
+	        if (options) {
+	            this.setOptions(options);
+	        }
+	    }
+	
+	    LayoutController.DEFAULT_OPTIONS = {
+	        flow: false,
+	        flowOptions: {
+	            reflowOnResize: true,
+	            properties: {
+	                opacity: true,
+	                align: true,
+	                origin: true,
+	                size: true,
+	                translate: true,
+	                skew: true,
+	                rotate: true,
+	                scale: true
+	            },
+	            spring: {
+	                dampingRatio: 0.8,
+	                period: 300
+	            }
+	            /*insertSpec: {
+	                opacity: undefined,
+	                size: undefined,
+	                transform: undefined,
+	                origin: undefined,
+	                align: undefined
+	            },
+	            removeSpec: {
+	                opacity: undefined,
+	                size: undefined,
+	                transform: undefined,
+	                origin: undefined,
+	                align: undefined
+	            }*/
+	        }
+	    };
+	
+	    /**
+	     * Called whenever a layout-node is created/re-used. Initializes
+	     * the node with the `insertSpec` if it has been defined.
+	     */
+	    function _initFlowLayoutNode(node, spec) {
+	        if (!spec && this.options.flowOptions.insertSpec) {
+	            node.setSpec(this.options.flowOptions.insertSpec);
+	        }
+	    }
+	
+	    /**
+	     * Patches the LayoutController instance's options with the passed-in ones.
+	     *
+	     * @param {Options} options An object of configurable options for the LayoutController instance.
+	     * @param {Function|Object} [options.layout] Layout function or layout-literal.
+	     * @param {Object} [options.layoutOptions] Options to pass in to the layout-function.
+	     * @param {Array|ViewSequence|Object} [options.dataSource] Array, ViewSequence or Object with key/value pairs.
+	     * @param {Utility.Direction} [options.direction] Direction to layout into (e.g. Utility.Direction.Y) (when omitted the default direction of the layout is used)
+	     * @param {Object} [options.flowOptions] Options used by nodes when reflowing.
+	     * @param {Bool} [options.flowOptions.reflowOnResize] Smoothly reflows renderables on resize (only used when flow = true) (default: `true`).
+	     * @param {Object} [options.flowOptions.spring] Spring options used by nodes when reflowing (default: `{dampingRatio: 0.8, period: 300}`).
+	     * @param {Object} [options.flowOptions.properties] Properties which should be enabled or disabled for flowing.
+	     * @param {Spec} [options.flowOptions.insertSpec] Size, transform, opacity... to use when inserting new renderables into the scene (default: `{}`).
+	     * @param {Spec} [options.flowOptions.removeSpec] Size, transform, opacity... to use when removing renderables from the scene (default: `{}`).
+	     * @param {Bool} [options.alwaysLayout] When set to true, always calls the layout function on every render-cycle (default: `false`).
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.setOptions = function(options) {
+	        if ((options.alignment !== undefined) && (options.alignment !== this.options.alignment)) {
+	            this._isDirty = true;
+	        }
+	        this._optionsManager.setOptions(options);
+	        if (options.nodeSpring) {
+	            console.warn('nodeSpring options have been moved inside `flowOptions`. Use `flowOptions.spring` instead.');
+	            this._optionsManager.setOptions({
+	                flowOptions: {
+	                    spring: options.nodeSpring
+	                }
+	            });
+	            this._nodes.setNodeOptions(this.options.flowOptions);
+	        }
+	        if (options.reflowOnResize !== undefined) {
+	            console.warn('reflowOnResize options have been moved inside `flowOptions`. Use `flowOptions.reflowOnResize` instead.');
+	            this._optionsManager.setOptions({
+	                flowOptions: {
+	                    reflowOnResize: options.reflowOnResize
+	                }
+	            });
+	            this._nodes.setNodeOptions(this.options.flowOptions);
+	        }
+	        if (options.insertSpec) {
+	            console.warn('insertSpec options have been moved inside `flowOptions`. Use `flowOptions.insertSpec` instead.');
+	            this._optionsManager.setOptions({
+	                flowOptions: {
+	                    insertSpec: options.insertSpec
+	                }
+	            });
+	            this._nodes.setNodeOptions(this.options.flowOptions);
+	        }
+	        if (options.removeSpec) {
+	            console.warn('removeSpec options have been moved inside `flowOptions`. Use `flowOptions.removeSpec` instead.');
+	            this._optionsManager.setOptions({
+	                flowOptions: {
+	                    removeSpec: options.removeSpec
+	                }
+	            });
+	            this._nodes.setNodeOptions(this.options.flowOptions);
+	        }
+	        if (options.dataSource) {
+	            this.setDataSource(options.dataSource);
+	        }
+	        if (options.layout) {
+	            this.setLayout(options.layout, options.layoutOptions);
+	        }
+	        else if (options.layoutOptions) {
+	            this.setLayoutOptions(options.layoutOptions);
+	        }
+	        if (options.direction !== undefined) {
+	            this.setDirection(options.direction);
+	        }
+	        if (options.flowOptions && this.options.flow) {
+	            this._nodes.setNodeOptions(this.options.flowOptions);
+	        }
+	        if (options.preallocateNodes) {
+	            this._nodes.preallocateNodes(options.preallocateNodes.count || 0, options.preallocateNodes.spec);
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Helper function to enumerate all the renderables in the datasource
+	     */
+	    function _forEachRenderable(callback) {
+	        var dataSource = this._dataSource;
+	        if (dataSource instanceof Array) {
+	            for (var i = 0, j = dataSource.length; i < j; i++) {
+	                callback(dataSource[i]);
+	            }
+	        }
+	        else if (dataSource instanceof ViewSequence) {
+	            var renderable;
+	            while (dataSource) {
+	                renderable = dataSource.get();
+	                if (!renderable) {
+	                    break;
+	                }
+	                callback(renderable);
+	                dataSource = dataSource.getNext();
+	            }
+	        }
+	        else {
+	            for (var key in dataSource) {
+	                callback(dataSource[key]);
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Sets the collection of renderables which are layed out according to
+	     * the layout-function.
+	     *
+	     * The data-source can be either an Array, ViewSequence or Object
+	     * with key/value pairs.
+	     *
+	     * @param {Array|Object|ViewSequence} dataSource Array, ViewSequence or Object.
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.setDataSource = function(dataSource) {
+	        this._dataSource = dataSource;
+	        this._initialViewSequence = undefined;
+	        this._nodesById = undefined;
+	        if (dataSource instanceof Array) {
+	            this._viewSequence = new ViewSequence(dataSource);
+	            this._initialViewSequence = this._viewSequence;
+	        }
+	        else if ((dataSource instanceof ViewSequence) || dataSource.getNext) {
+	            this._viewSequence = dataSource;
+	            this._initialViewSequence = dataSource;
+	        }
+	        else if (dataSource instanceof Object){
+	            this._nodesById = dataSource;
+	        }
+	        if (this.options.autoPipeEvents) {
+	            if (this._dataSource.pipe) {
+	                this._dataSource.pipe(this);
+	                this._dataSource.pipe(this._eventOutput);
+	            }
+	            else {
+	                _forEachRenderable.call(this, function(renderable) {
+	                    if (renderable && renderable.pipe) {
+	                        renderable.pipe(this);
+	                        renderable.pipe(this._eventOutput);
+	                    }
+	                }.bind(this));
+	            }
+	        }
+	        this._isDirty = true;
+	        return this;
+	    };
+	
+	    /**
+	     * Get the data-source.
+	     *
+	     * @return {Array|ViewSequence|Object} data-source
+	     */
+	    LayoutController.prototype.getDataSource = function() {
+	        return this._dataSource;
+	    };
+	
+	    /**
+	     * Set the new layout.
+	     *
+	     * @param {Function|Object} layout Layout function or layout-literal
+	     * @param {Object} [options] Options to pass in to the layout-function
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.setLayout = function(layout, options) {
+	
+	        // Set new layout funtion
+	        if (layout instanceof Function) {
+	            this._layout._function = layout;
+	            this._layout.capabilities = layout.Capabilities;
+	            this._layout.literal = undefined;
+	
+	        // If the layout is an object, treat it as a layout-literal
+	        }
+	        else if (layout instanceof Object) {
+	            this._layout.literal = layout;
+	            this._layout.capabilities = undefined; // todo - derive from literal somehow?
+	            var helperName = Object.keys(layout)[0];
+	            var Helper = LayoutUtility.getRegisteredHelper(helperName);
+	            this._layout._function = Helper ? function(context, options2) {
+	                var helper = new Helper(context, options2);
+	                helper.parse(layout[helperName]);
+	            } : undefined;
+	        }
+	        else {
+	            this._layout._function = undefined;
+	            this._layout.capabilities = undefined;
+	            this._layout.literal = undefined;
+	        }
+	
+	        // Update options
+	        if (options) {
+	            this.setLayoutOptions(options);
+	        }
+	
+	        // Update direction
+	        this.setDirection(this._configuredDirection);
+	        this._isDirty = true;
+	        return this;
+	    };
+	
+	    /**
+	     * Get the current layout.
+	     *
+	     * @return {Function|Object} Layout function or layout literal
+	     */
+	    LayoutController.prototype.getLayout = function() {
+	        return this._layout.literal || this._layout._function;
+	    };
+	
+	    /**
+	     * Set the options for the current layout. Use this function after
+	     * `setLayout` to update one or more options for the layout-function.
+	     *
+	     * @param {Object} [options] Options to pass in to the layout-function
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.setLayoutOptions = function(options) {
+	        this._layout.optionsManager.setOptions(options);
+	        return this;
+	    };
+	
+	    /**
+	     * Get the current layout options.
+	     *
+	     * @return {Object} Layout options
+	     */
+	    LayoutController.prototype.getLayoutOptions = function() {
+	        return this._layout.options;
+	    };
+	
+	    /**
+	     * Calculates the actual in-use direction based on the given direction
+	     * and supported capabilities of the layout-function.
+	     */
+	    function _getActualDirection(direction) {
+	
+	        // When the direction is configured in the capabilities, look it up there
+	        if (this._layout.capabilities && this._layout.capabilities.direction) {
+	
+	            // Multiple directions are supported
+	            if (Array.isArray(this._layout.capabilities.direction)) {
+	                for (var i = 0; i < this._layout.capabilities.direction.length; i++) {
+	                    if (this._layout.capabilities.direction[i] === direction) {
+	                        return direction;
+	                    }
+	                }
+	                return this._layout.capabilities.direction[0];
+	            }
+	
+	            // Only one direction is supported, we must use that
+	            else {
+	                return this._layout.capabilities.direction;
+	            }
+	        }
+	
+	        // Use Y-direction as a fallback
+	        return (direction === undefined) ? Utility.Direction.Y : direction;
+	    }
+	
+	    /**
+	     * Set the direction of the layout. When no direction is set, the default
+	     * direction of the layout function is used.
+	     *
+	     * @param {Utility.Direction} direction Direction (e.g. Utility.Direction.X)
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.setDirection = function(direction) {
+	        this._configuredDirection = direction;
+	        var newDirection = _getActualDirection.call(this, direction);
+	        if (newDirection !== this._direction) {
+	            this._direction = newDirection;
+	            this._isDirty = true;
+	        }
+	    };
+	
+	    /**
+	     * Get the direction (e.g. Utility.Direction.Y). By default, this function
+	     * returns the direction that was configured by setting `setDirection`. When
+	     * the direction has not been set, `undefined` is returned.
+	     *
+	     * When no direction has been set, the first direction is used that is specified
+	     * in the capabilities of the layout-function. To obtain the actual in-use direction,
+	     * use `getDirection(true)`. This method returns the actual in-use direction and
+	     * never returns undefined.
+	     *
+	     * @param {Boolean} [actual] Set to true to obtain the actual in-use direction
+	     * @return {Utility.Direction} Direction or undefined
+	     */
+	    LayoutController.prototype.getDirection = function(actual) {
+	        return actual ? this._direction : this._configuredDirection;
+	    };
+	
+	    /**
+	     * Get the spec (size, transform, etc..) for the given renderable or
+	     * Id.
+	     *
+	     * @param {Renderable|String} node Renderabe or Id to look for
+	     * @param {Bool} [normalize] When set to `true` normalizes the origin/align into the transform translation (default: `false`).
+	     * @param {Bool} [endState] When set to `true` returns the flowing end-state spec rather than the current spec.
+	     * @return {Spec} spec or undefined
+	     */
+	    LayoutController.prototype.getSpec = function(node, normalize, endState) {
+	        if (!node) {
+	            return undefined;
+	        }
+	        if ((node instanceof String) || (typeof node === 'string')) {
+	            if (!this._nodesById) {
+	               return undefined;
+	            }
+	            node = this._nodesById[node];
+	            if (!node) {
+	                return undefined;
+	            }
+	
+	            // If the result was an array, return that instead
+	            if (node instanceof Array) {
+	                return node;
+	            }
+	        }
+	        if (this._specs) {
+	            for (var i = 0; i < this._specs.length; i++) {
+	                var spec = this._specs[i];
+	                if (spec.renderNode === node) {
+	                    if (endState && spec.endState) {
+	                        spec = spec.endState;
+	                    }
+	                    // normalize align & origin into transform
+	                    if (normalize && spec.transform && spec.size && (spec.align || spec.origin)) {
+	                        var transform = spec.transform;
+	                        if (spec.align && (spec.align[0] || spec.align[1])) {
+	                            transform = Transform.thenMove(transform, [spec.align[0] * this._contextSizeCache[0], spec.align[1] * this._contextSizeCache[1], 0]);
+	                        }
+	                        if (spec.origin && (spec.origin[0] || spec.origin[1])) {
+	                            transform = Transform.moveThen([-spec.origin[0] * spec.size[0], -spec.origin[1] * spec.size[1], 0], transform);
+	                        }
+	                        return {
+	                            opacity: spec.opacity,
+	                            size: spec.size,
+	                            transform: transform
+	                        };
+	                    }
+	                    return spec;
+	                }
+	            }
+	        }
+	        return undefined;
+	    };
+	
+	    /**
+	     * Forces a reflow of the layout the next render cycle.
+	     *
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.reflowLayout = function() {
+	        this._isDirty = true;
+	        return this;
+	    };
+	
+	    /**
+	     * Resets the current flow state, so that all renderables
+	     * are immediately displayed in their end-state.
+	     *
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.resetFlowState = function() {
+	        if (this.options.flow) {
+	            this._resetFlowState = true;
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Inserts a renderable into the data-source.
+	     *
+	     * The optional argument `insertSpec` is only used `flow` mode is enabled.
+	     * When specified, the renderable is inserted using an animation starting with
+	     * size, origin, opacity, transform, etc... as specified in `insertSpec'.
+	     *
+	     * @param {Number|String} indexOrId Index (0 = before first, -1 at end), within dataSource array or id (String)
+	     * @param {Object} renderable Renderable to add to the data-source
+	     * @param {Spec} [insertSpec] Size, transform, etc.. to start with when inserting
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.insert = function(indexOrId, renderable, insertSpec) {
+	
+	        // Add the renderable in case of an id (String)
+	        if ((indexOrId instanceof String) || (typeof indexOrId === 'string')) {
+	
+	            // Create data-source if neccesary
+	            if (this._dataSource === undefined) {
+	                this._dataSource = {};
+	                this._nodesById = this._dataSource;
+	            }
+	
+	            // Insert renderable
+	            if (this._nodesById[indexOrId] === renderable) {
+	                return this;
+	            }
+	            this._nodesById[indexOrId] = renderable;
+	        }
+	
+	        // Add the renderable using an index
+	        else {
+	
+	            // Create data-source if neccesary
+	            if (this._dataSource === undefined) {
+	                this._dataSource = [];
+	                this._viewSequence = new ViewSequence(this._dataSource);
+	                this._initialViewSequence = this._viewSequence;
+	            }
+	
+	            // Insert into array
+	            var dataSource = this._viewSequence || this._dataSource;
+	            var array = _getDataSourceArray.call(this);
+	            if (array && (indexOrId === array.length)) {
+	                indexOrId = -1;
+	            }
+	            if (indexOrId === -1) {
+	                dataSource.push(renderable);
+	            }
+	            else if (indexOrId === 0) {
+	                if (dataSource === this._viewSequence) {
+	                    dataSource.splice(0, 0, renderable);
+	                    if (this._viewSequence.getIndex() === 0) {
+	                        var nextViewSequence = this._viewSequence.getNext();
+	                        if (nextViewSequence && nextViewSequence.get()) {
+	                            this._viewSequence = nextViewSequence;
+	                        }
+	                    }
+	                }
+	                else {
+	                    dataSource.splice(0, 0, renderable);
+	                }
+	            }
+	            else {
+	                dataSource.splice(indexOrId, 0, renderable);
+	            }
+	        }
+	
+	        // When a custom insert-spec was specified, store that in the layout-node
+	        if (insertSpec) {
+	            this._nodes.insertNode(this._nodes.createNode(renderable, insertSpec));
+	        }
+	
+	        // Auto pipe events
+	        if (this.options.autoPipeEvents && renderable && renderable.pipe) {
+	            renderable.pipe(this);
+	            renderable.pipe(this._eventOutput);
+	        }
+	
+	        // Force a reflow
+	        this._isDirty = true;
+	
+	        return this;
+	    };
+	
+	    /**
+	     * Adds a renderable to the end of a sequential data-source.
+	     *
+	     * The optional argument `insertSpec` is only used `flow` mode is enabled.
+	     * When specified, the renderable is inserted using an animation starting with
+	     * size, origin, opacity, transform, etc... as specified in `insertSpec'.
+	     *
+	     * @param {Object} renderable Renderable to add to the data-source
+	     * @param {Spec} [insertSpec] Size, transform, etc.. to start with when inserting
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.push = function(renderable, insertSpec) {
+	        return this.insert(-1, renderable, insertSpec);
+	    };
+	
+	    /**
+	     * Helper function for finding the view-sequence node at the given position.
+	     */
+	    function _getViewSequenceAtIndex(index, startViewSequence) {
+	        var viewSequence = startViewSequence || this._viewSequence;
+	        var i = viewSequence ? viewSequence.getIndex() : index;
+	        if (index > i) {
+	            while (viewSequence) {
+	                viewSequence = viewSequence.getNext();
+	                if (!viewSequence) {
+	                    return undefined;
+	                }
+	                i = viewSequence.getIndex();
+	                if (i === index) {
+	                    return viewSequence;
+	                }
+	                else if (index < i) {
+	                    return undefined;
+	                }
+	            }
+	        }
+	        else if (index < i) {
+	            while (viewSequence) {
+	                viewSequence = viewSequence.getPrevious();
+	                if (!viewSequence) {
+	                    return undefined;
+	                }
+	                i = viewSequence.getIndex();
+	                if (i === index) {
+	                    return viewSequence;
+	                }
+	                else if (index > i) {
+	                    return undefined;
+	                }
+	            }
+	        }
+	        return viewSequence;
+	    }
+	
+	    /**
+	     * Helper that return the underlying array datasource if available.
+	     */
+	    function _getDataSourceArray() {
+	      if (Array.isArray(this._dataSource)) {
+	        return this._dataSource;
+	      }
+	      else if (this._viewSequence || this._viewSequence._) {
+	        return this._viewSequence._.array;
+	      }
+	      return undefined;
+	    }
+	
+	    /**
+	     * Get the renderable at the given index or Id.
+	     *
+	     * @param {Number|String} indexOrId Index within dataSource array or id (String)
+	     * @return {Renderable} renderable or `undefined`
+	     */
+	    LayoutController.prototype.get = function(indexOrId) {
+	      if (this._nodesById || (indexOrId instanceof String) || (typeof indexOrId === 'string')) {
+	        return this._nodesById ? this._nodesById[indexOrId] : undefined;
+	      }
+	      var viewSequence = _getViewSequenceAtIndex.call(this, indexOrId);
+	      return viewSequence ? viewSequence.get() : undefined;
+	    };
+	
+	    /**
+	     * Swaps two renderables at the given positions.
+	     *
+	     * This method is only supported for dataSources of type Array or ViewSequence.
+	     *
+	     * @param {Number} index Index of the renderable to swap
+	     * @param {Number} index2 Index of the renderable to swap with
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.swap = function(index, index2) {
+	        var array = _getDataSourceArray.call(this);
+	        if (!array) {
+	            throw '.swap is only supported for dataSources of type Array or ViewSequence';
+	        }
+	        if (index === index2) {
+	          return this;
+	        }
+	        if ((index < 0) || (index >= array.length)) {
+	          throw 'Invalid index (' + index + ') specified to .swap';
+	        }
+	        if ((index2 < 0) || (index2 >= array.length)) {
+	          throw 'Invalid second index (' + index2 + ') specified to .swap';
+	        }
+	        var renderNode = array[index];
+	        array[index] = array[index2];
+	        array[index2] = renderNode;
+	        this._isDirty = true;
+	        return this;
+	    };
+	
+	    /**
+	     * Replaces a renderable at the given index or id.
+	     *
+	     * @param {Number|String} indexOrId Index within dataSource array or id (String)
+	     * @param {Renderable} renderable renderable to replace with
+	     * @param {Bool} [noAnimation] When set to `true`, replaces the renderable without any flowing animation.
+	     * @return {Renderable} old renderable that has been replaced
+	     */
+	    LayoutController.prototype.replace = function(indexOrId, renderable, noAnimation) {
+	        var oldRenderable;
+	        if (this._nodesById || (indexOrId instanceof String) || (typeof indexOrId === 'string')) {
+	            oldRenderable = this._nodesById[indexOrId];
+	            if (oldRenderable !== renderable) {
+	                if (noAnimation && oldRenderable) {
+	                    var node = this._nodes.getNodeByRenderNode(oldRenderable);
+	                    if (node) {
+	                        node.setRenderNode(renderable);
+	                    }
+	                }
+	                this._nodesById[indexOrId] = renderable;
+	                this._isDirty = true;
+	            }
+	            return oldRenderable;
+	        }
+	        var array = _getDataSourceArray.call(this);
+	        if (!array) {
+	          return undefined;
+	        }
+	        if ((indexOrId < 0) || (indexOrId >= array.length)) {
+	          throw 'Invalid index (' + indexOrId + ') specified to .replace';
+	        }
+	        oldRenderable = array[indexOrId];
+	        if (oldRenderable !== renderable) {
+	          array[indexOrId] = renderable;
+	          this._isDirty = true;
+	        }
+	        return oldRenderable;
+	    };
+	
+	    /**
+	     * Moves a renderable to a new index.
+	     *
+	     * This method is only supported for dataSources of type Array or ViewSequence.
+	     *
+	     * @param {Number} index Index of the renderable to move.
+	     * @param {Number} newIndex New index of the renderable.
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.move = function(index, newIndex) {
+	        var array = _getDataSourceArray.call(this);
+	        if (!array) {
+	            throw '.move is only supported for dataSources of type Array or ViewSequence';
+	        }
+	        if ((index < 0) || (index >= array.length)) {
+	          throw 'Invalid index (' + index + ') specified to .move';
+	        }
+	        if ((newIndex < 0) || (newIndex >= array.length)) {
+	          throw 'Invalid newIndex (' + newIndex + ') specified to .move';
+	        }
+	        var item = array.splice(index, 1)[0];
+	        array.splice(newIndex, 0, item);
+	        this._isDirty = true;
+	        return this;
+	    };
+	
+	    /**
+	     * Removes a renderable from the data-source.
+	     *
+	     * The optional argument `removeSpec` is only used `flow` mode is enabled.
+	     * When specified, the renderable is removed using an animation ending at
+	     * the size, origin, opacity, transform, etc... as specified in `removeSpec'.
+	     *
+	     * @param {Number|String|Renderable} indexOrId Index, id (String) or renderable to remove.
+	     * @param {Spec} [removeSpec] Size, transform, etc.. to end with when removing
+	     * @return {Renderable} renderable that has been removed
+	     */
+	    LayoutController.prototype.remove = function(indexOrId, removeSpec) {
+	        var renderNode;
+	
+	        // Remove the renderable in case of an id (String)
+	        if (this._nodesById || (indexOrId instanceof String) || (typeof indexOrId === 'string')) {
+	
+	            // Find and remove renderable from data-source
+	            if ((indexOrId instanceof String) || (typeof indexOrId === 'string')) {
+	                renderNode = this._nodesById[indexOrId];
+	                if (renderNode) {
+	                    delete this._nodesById[indexOrId];
+	                }
+	            }
+	            else {
+	                for (var key in this._nodesById) {
+	                    if (this._nodesById[key] === indexOrId) {
+	                        delete this._nodesById[key];
+	                        renderNode = indexOrId;
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+	
+	        // Remove the renderable using an index
+	        else if ((indexOrId instanceof Number) || (typeof indexOrId === 'number')) {
+	            var array = _getDataSourceArray.call(this);
+	            if (!array || (indexOrId < 0) || (indexOrId >= array.length)) {
+	                throw 'Invalid index (' + indexOrId + ') specified to .remove (or dataSource doesn\'t support remove)';
+	            }
+	            renderNode = array[indexOrId];
+	            this._dataSource.splice(indexOrId, 1);
+	        }
+	
+	        // Remove by renderable
+	        else {
+	            indexOrId = this._dataSource.indexOf(indexOrId);
+	            if (indexOrId >= 0) {
+	                this._dataSource.splice(indexOrId, 1);
+	                renderNode = indexOrId;
+	            }
+	        }
+	
+	        // When a node is removed from the view-sequence, the current this._viewSequence
+	        // node may not be part of the valid view-sequence anymore. This seems to be a bug
+	        // in the famo.us ViewSequence implementation/concept. The following check was added
+	        // to ensure that always a valid viewSequence node is selected into the ScrollView.
+	        if (this._viewSequence && renderNode) {
+	            var viewSequence = _getViewSequenceAtIndex.call(this, this._viewSequence.getIndex(), this._initialViewSequence);
+	            viewSequence = viewSequence || _getViewSequenceAtIndex.call(this, this._viewSequence.getIndex() - 1, this._initialViewSequence);
+	            viewSequence = viewSequence || this._dataSource;
+	            this._viewSequence = viewSequence;
+	        }
+	
+	        // When a custom remove-spec was specified, store that in the layout-node
+	        if (renderNode && removeSpec) {
+	            var node = this._nodes.getNodeByRenderNode(renderNode);
+	            if (node) {
+	                node.remove(removeSpec || this.options.flowOptions.removeSpec);
+	            }
+	        }
+	
+	        // Force a reflow
+	        if (renderNode) {
+	            this._isDirty = true;
+	        }
+	
+	        return renderNode;
+	    };
+	
+	    /**
+	     * Removes all renderables from the data-source.
+	     *
+	     * The optional argument `removeSpec` is only used when `flow` mode is enabled.
+	     * When specified, the renderables are removed using an animation ending at
+	     * the size, origin, opacity, transform, etc... as specified in `removeSpec'.
+	     *
+	     * @param {Spec} [removeSpec] Size, transform, etc.. to end with when removing
+	     * @return {LayoutController} this
+	     */
+	    LayoutController.prototype.removeAll = function(removeSpec) {
+	        if (this._nodesById) {
+	            var dirty = false;
+	            for (var key in this._nodesById) {
+	                delete this._nodesById[key];
+	                dirty = true;
+	            }
+	            if (dirty) {
+	                this._isDirty = true;
+	            }
+	        }
+	        else if (this._dataSource){
+	            this.setDataSource([]);
+	        }
+	        if (removeSpec) {
+	            var node = this._nodes.getStartEnumNode();
+	            while (node) {
+	                node.remove(removeSpec || this.options.flowOptions.removeSpec);
+	                node = node._next;
+	            }
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Return size of contained element or `undefined` when size is not defined.
+	     *
+	     * @return {Array.Number} [width, height]
+	     */
+	    LayoutController.prototype.getSize = function() {
+	        return this._size || this.options.size;
+	    };
+	
+	    /**
+	     * Generate a render spec from the contents of this component.
+	     *
+	     * @private
+	     * @method render
+	     * @return {Object} Render spec for this component
+	     */
+	    LayoutController.prototype.render = function render() {
+	        return this.id;
+	    };
+	
+	    /**
+	     * Apply changes from this component to the corresponding document element.
+	     * This includes changes to classes, styles, size, content, opacity, origin,
+	     * and matrix transforms.
+	     *
+	     * @private
+	     * @method commit
+	     * @param {Context} context commit context
+	     */
+	    LayoutController.prototype.commit = function commit(context) {
+	        var transform = context.transform;
+	        var origin = context.origin;
+	        var size = context.size;
+	        var opacity = context.opacity;
+	
+	        // Reset the flow-state when requested
+	        if (this._resetFlowState) {
+	            this._resetFlowState = false;
+	            this._isDirty = true;
+	            this._nodes.removeAll();
+	        }
+	
+	        // When the size or layout function has changed, reflow the layout
+	        if (size[0] !== this._contextSizeCache[0] ||
+	            size[1] !== this._contextSizeCache[1] ||
+	            this._isDirty ||
+	            this._nodes._trueSizeRequested ||
+	            this.options.alwaysLayout){
+	
+	            // Emit start event
+	            var eventData = {
+	                target: this,
+	                oldSize: this._contextSizeCache,
+	                size: size,
+	                dirty: this._isDirty,
+	                trueSizeRequested: this._nodes._trueSizeRequested
+	            };
+	            this._eventOutput.emit('layoutstart', eventData);
+	
+	            // When the layout has changed, and we are not just scrolling,
+	            // disable the locked state of the layout-nodes so that they
+	            // can freely transition between the old and new state.
+	            if (this.options.flow) {
+	                var lock = false;
+	                if (!this.options.flowOptions.reflowOnResize) {
+	                    if (!this._isDirty &&
+	                        ((size[0] !== this._contextSizeCache[0]) ||
+	                         (size[1] !== this._contextSizeCache[1]))) {
+	                        lock = undefined;
+	                    }
+	                    else {
+	                      lock = true;
+	                    }
+	                }
+	                if (lock !== undefined) {
+	                    var node = this._nodes.getStartEnumNode();
+	                    while (node) {
+	                        node.releaseLock(lock);
+	                        node = node._next;
+	                    }
+	                }
+	            }
+	
+	            // Update state
+	            this._contextSizeCache[0] = size[0];
+	            this._contextSizeCache[1] = size[1];
+	            this._isDirty = false;
+	
+	            // Prepare for layout
+	            var scrollEnd;
+	            if (this.options.size && (this.options.size[this._direction] === true)) {
+	                scrollEnd = 1000000; // calculate scroll-length
+	            }
+	            var layoutContext = this._nodes.prepareForLayout(
+	                this._viewSequence,     // first node to layout
+	                this._nodesById, {      // so we can do fast id lookups
+	                    size: size,
+	                    direction: this._direction,
+	                    scrollEnd: scrollEnd
+	                }
+	            );
+	
+	            // Layout objects
+	            if (this._layout._function) {
+	                this._layout._function(
+	                    layoutContext,          // context which the layout-function can use
+	                    this._layout.options    // additional layout-options
+	                );
+	            }
+	
+	            // Mark non-invalidated nodes for removal
+	            this._nodes.removeNonInvalidatedNodes(this.options.flowOptions.removeSpec);
+	
+	            // Cleanup any nodes in case of a VirtualViewSequence
+	            this._nodes.removeVirtualViewSequenceNodes();
+	
+	            // Calculate scroll-length and use that as the true-size (height)
+	            if (scrollEnd) {
+	                scrollEnd = 0;
+	                node = this._nodes.getStartEnumNode();
+	                while (node) {
+	                    if (node._invalidated && node.scrollLength) {
+	                        scrollEnd += node.scrollLength;
+	                    }
+	                    node = node._next;
+	                }
+	                this._size = this._size || [0, 0];
+	                this._size[0] = this.options.size[0];
+	                this._size[1] = this.options.size[1];
+	                this._size[this._direction] = scrollEnd;
+	            }
+	
+	            // Update output and optionally emit event
+	            var result = this._nodes.buildSpecAndDestroyUnrenderedNodes();
+	            this._specs = result.specs;
+	            this._commitOutput.target = result.specs;
+	            this._eventOutput.emit('layoutend', eventData);
+	            this._eventOutput.emit('reflow', {
+	                target: this
+	            });
+	        }
+	        else if (this.options.flow) {
+	
+	            // Update output and optionally emit event
+	            result = this._nodes.buildSpecAndDestroyUnrenderedNodes();
+	            this._specs = result.specs;
+	            this._commitOutput.target = result.specs;
+	            if (result.modified) {
+	                this._eventOutput.emit('reflow', {
+	                    target: this
+	                });
+	            }
+	        }
+	
+	        // Render child-nodes every commit
+	        var target = this._commitOutput.target;
+	        for (var i = 0, j = target.length; i < j; i++) {
+	            if (target[i].renderNode) {
+	                target[i].target = target[i].renderNode.render();
+	            }
+	        }
+	
+	        // Add our cleanup-registration id also to the list, so that the
+	        // cleanup function is called by famo.us when the LayoutController is
+	        // removed from the render-tree.
+	        if (!target.length || (target[target.length-1] !== this._cleanupRegistration)) {
+	            target.push(this._cleanupRegistration);
+	        }
+	
+	        // Translate dependent on origin
+	        if (origin && ((origin[0] !== 0) || (origin[1] !== 0))) {
+	            transform = Transform.moveThen([-size[0]*origin[0], -size[1]*origin[1], 0], transform);
+	        }
+	        this._commitOutput.size = size;
+	        this._commitOutput.opacity = opacity;
+	        this._commitOutput.transform = transform;
+	        return this._commitOutput;
+	    };
+	
+	    /**
+	     * Called whenever the layout-controller is removed from the render-tree.
+	     *
+	     * @private
+	     * @param {Context} context cleanup context
+	     */
+	    LayoutController.prototype.cleanup = function(context) {
+	        if (this.options.flow) {
+	            this._resetFlowState = true;
+	        }
+	    };
+	
+	    module.exports = LayoutController;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 25 */
 /*!*************************************!*\
   !*** ../~/style-loader/addStyle.js ***!
   \*************************************/
@@ -8905,7 +7543,7 @@
 
 
 /***/ },
-/* 30 */
+/* 26 */
 /*!******************************************!*\
   !*** ../~/famous-polyfills/classList.js ***!
   \******************************************/
@@ -9052,7 +7690,7 @@
 
 
 /***/ },
-/* 31 */
+/* 27 */
 /*!******************************************************!*\
   !*** ../~/famous-polyfills/functionPrototypeBind.js ***!
   \******************************************************/
@@ -9084,7 +7722,7 @@
 
 
 /***/ },
-/* 32 */
+/* 28 */
 /*!******************************************************!*\
   !*** ../~/famous-polyfills/requestAnimationFrame.js ***!
   \******************************************************/
@@ -9106,7 +7744,7 @@
 
 
 /***/ },
-/* 33 */
+/* 29 */
 /*!****************************************************!*\
   !*** ../~/famous-bkimagesurface/BkImageSurface.js ***!
   \****************************************************/
@@ -9135,7 +7773,7 @@
 	    'use strict';
 	
 	    // import dependencies
-	    var Surface = __webpack_require__(/*! famous/core/Surface */ 19);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
 	
 	    /**
 	     * @enum
@@ -9321,7 +7959,82 @@
 
 
 /***/ },
-/* 34 */
+/* 30 */
+/*!*****************************!*\
+  !*** ./images/scarlett.jpg ***!
+  \*****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "images/scarlett.jpg"
+
+/***/ },
+/* 31 */
+/*!***************************!*\
+  !*** ./images/iphone.png ***!
+  \***************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "images/iphone.png"
+
+/***/ },
+/* 32 */
+/*!******************************************!*\
+  !*** ../~/famous/views/SizeAwareView.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var View = __webpack_require__(/*! ../core/View */ 16);
+	var Entity = __webpack_require__(/*! ../core/Entity */ 56);
+	var Transform = __webpack_require__(/*! ../core/Transform */ 19);
+	function SizeAwareView() {
+	    View.apply(this, arguments);
+	    this._id = Entity.register(this);
+	    this._parentSize = [];
+	}
+	SizeAwareView.prototype = Object.create(View.prototype);
+	SizeAwareView.prototype.constructor = SizeAwareView;
+	SizeAwareView.prototype.commit = function commit(context) {
+	    var transform = context.transform;
+	    var opacity = context.opacity;
+	    var origin = context.origin;
+	    if (!this._parentSize || this._parentSize[0] !== context.size[0] || this._parentSize[1] !== context.size[1]) {
+	        this._parentSize[0] = context.size[0];
+	        this._parentSize[1] = context.size[1];
+	        this._eventInput.emit('parentResize', this._parentSize);
+	        if (this.onResize)
+	            this.onResize(this._parentSize);
+	    }
+	    if (this._parentSize) {
+	        transform = Transform.moveThen([
+	            -this._parentSize[0] * origin[0],
+	            -this._parentSize[1] * origin[1],
+	            0
+	        ], transform);
+	    }
+	    return {
+	        transform: transform,
+	        opacity: opacity,
+	        size: this._parentSize,
+	        target: this._node.render()
+	    };
+	};
+	SizeAwareView.prototype.getParentSize = function getParentSize() {
+	    return this._parentSize;
+	};
+	SizeAwareView.prototype.render = function render() {
+	    return this._id;
+	};
+	module.exports = SizeAwareView;
+
+/***/ },
+/* 33 */
 /*!*************************************************!*\
   !*** ../~/famous/transitions/Transitionable.js ***!
   \*************************************************/
@@ -9334,8 +8047,8 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var MultipleTransition = __webpack_require__(/*! ./MultipleTransition */ 64);
-	var TweenTransition = __webpack_require__(/*! ./TweenTransition */ 65);
+	var MultipleTransition = __webpack_require__(/*! ./MultipleTransition */ 61);
+	var TweenTransition = __webpack_require__(/*! ./TweenTransition */ 62);
 	function Transitionable(start) {
 	    this.currentAction = null;
 	    this.actionQueue = [];
@@ -9464,7 +8177,7 @@
 	module.exports = Transitionable;
 
 /***/ },
-/* 35 */
+/* 34 */
 /*!*************************************!*\
   !*** ../~/famous-map/MapUtility.js ***!
   \*************************************/
@@ -9593,7 +8306,7 @@
 
 
 /***/ },
-/* 36 */
+/* 35 */
 /*!****************************************************!*\
   !*** ../~/famous-map/MapPositionTransitionable.js ***!
   \****************************************************/
@@ -9622,8 +8335,8 @@
 	    'use strict';
 	
 	    // import dependencies
-	    var Transitionable = __webpack_require__(/*! famous/transitions/Transitionable */ 34);
-	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 35);
+	    var Transitionable = __webpack_require__(/*! famous/transitions/Transitionable */ 33);
+	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 34);
 	
 	    /**
 	     * @class
@@ -9720,7 +8433,7 @@
 
 
 /***/ },
-/* 37 */
+/* 36 */
 /*!****************************************!*\
   !*** ../~/famous-map/MapTransition.js ***!
   \****************************************/
@@ -9745,7 +8458,7 @@
 	    'use strict';
 	
 	    // import dependencies
-	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 35);
+	    var MapUtility = __webpack_require__(/*! ./MapUtility */ 34);
 	
 	    /**
 	     * @class
@@ -9905,25 +8618,7 @@
 
 
 /***/ },
-/* 38 */
-/*!*****************************!*\
-  !*** ./images/scarlett.jpg ***!
-  \*****************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "images/scarlett.jpg"
-
-/***/ },
-/* 39 */
-/*!***************************!*\
-  !*** ./images/iphone.png ***!
-  \***************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "images/iphone.png"
-
-/***/ },
-/* 40 */
+/* 37 */
 /*!***********************************!*\
   !*** ../~/famous/core/Context.js ***!
   \***********************************/
@@ -9936,11 +8631,11 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var RenderNode = __webpack_require__(/*! ./RenderNode */ 43);
-	var EventHandler = __webpack_require__(/*! ./EventHandler */ 41);
-	var ElementAllocator = __webpack_require__(/*! ./ElementAllocator */ 66);
-	var Transform = __webpack_require__(/*! ./Transform */ 28);
-	var Transitionable = __webpack_require__(/*! ../transitions/Transitionable */ 34);
+	var RenderNode = __webpack_require__(/*! ./RenderNode */ 41);
+	var EventHandler = __webpack_require__(/*! ./EventHandler */ 38);
+	var ElementAllocator = __webpack_require__(/*! ./ElementAllocator */ 64);
+	var Transform = __webpack_require__(/*! ./Transform */ 19);
+	var Transitionable = __webpack_require__(/*! ../transitions/Transitionable */ 33);
 	var _zeroZero = [
 	    0,
 	    0
@@ -10043,7 +8738,7 @@
 	module.exports = Context;
 
 /***/ },
-/* 41 */
+/* 38 */
 /*!****************************************!*\
   !*** ../~/famous/core/EventHandler.js ***!
   \****************************************/
@@ -10056,7 +8751,7 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var EventEmitter = __webpack_require__(/*! ./EventEmitter */ 67);
+	var EventEmitter = __webpack_require__(/*! ./EventEmitter */ 63);
 	function EventHandler() {
 	    EventEmitter.apply(this, arguments);
 	    this.downstream = [];
@@ -10158,7 +8853,7 @@
 	module.exports = EventHandler;
 
 /***/ },
-/* 42 */
+/* 39 */
 /*!******************************************!*\
   !*** ../~/famous/core/OptionsManager.js ***!
   \******************************************/
@@ -10171,7 +8866,7 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var EventHandler = __webpack_require__(/*! ./EventHandler */ 41);
+	var EventHandler = __webpack_require__(/*! ./EventHandler */ 38);
 	function OptionsManager(value) {
 	    this._value = value;
 	    this.eventOutput = null;
@@ -10247,191 +8942,7 @@
 	module.exports = OptionsManager;
 
 /***/ },
-/* 43 */
-/*!**************************************!*\
-  !*** ../~/famous/core/RenderNode.js ***!
-  \**************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var Entity = __webpack_require__(/*! ./Entity */ 50);
-	var SpecParser = __webpack_require__(/*! ./SpecParser */ 68);
-	function RenderNode(object) {
-	    this._object = null;
-	    this._child = null;
-	    this._hasMultipleChildren = false;
-	    this._isRenderable = false;
-	    this._isModifier = false;
-	    this._resultCache = {};
-	    this._prevResults = {};
-	    this._childResult = null;
-	    if (object)
-	        this.set(object);
-	}
-	RenderNode.prototype.add = function add(child) {
-	    var childNode = child instanceof RenderNode ? child : new RenderNode(child);
-	    if (this._child instanceof Array)
-	        this._child.push(childNode);
-	    else if (this._child) {
-	        this._child = [
-	            this._child,
-	            childNode
-	        ];
-	        this._hasMultipleChildren = true;
-	        this._childResult = [];
-	    } else
-	        this._child = childNode;
-	    return childNode;
-	};
-	RenderNode.prototype.get = function get() {
-	    return this._object || (this._hasMultipleChildren ? null : this._child ? this._child.get() : null);
-	};
-	RenderNode.prototype.set = function set(child) {
-	    this._childResult = null;
-	    this._hasMultipleChildren = false;
-	    this._isRenderable = child.render ? true : false;
-	    this._isModifier = child.modify ? true : false;
-	    this._object = child;
-	    this._child = null;
-	    if (child instanceof RenderNode)
-	        return child;
-	    else
-	        return this;
-	};
-	RenderNode.prototype.getSize = function getSize() {
-	    var result = null;
-	    var target = this.get();
-	    if (target && target.getSize)
-	        result = target.getSize();
-	    if (!result && this._child && this._child.getSize)
-	        result = this._child.getSize();
-	    return result;
-	};
-	function _applyCommit(spec, context, cacheStorage) {
-	    var result = SpecParser.parse(spec, context);
-	    var keys = Object.keys(result);
-	    for (var i = 0; i < keys.length; i++) {
-	        var id = keys[i];
-	        var childNode = Entity.get(id);
-	        var commitParams = result[id];
-	        commitParams.allocator = context.allocator;
-	        var commitResult = childNode.commit(commitParams);
-	        if (commitResult)
-	            _applyCommit(commitResult, context, cacheStorage);
-	        else
-	            cacheStorage[id] = commitParams;
-	    }
-	}
-	RenderNode.prototype.commit = function commit(context) {
-	    var prevKeys = Object.keys(this._prevResults);
-	    for (var i = 0; i < prevKeys.length; i++) {
-	        var id = prevKeys[i];
-	        if (this._resultCache[id] === undefined) {
-	            var object = Entity.get(id);
-	            if (object.cleanup)
-	                object.cleanup(context.allocator);
-	        }
-	    }
-	    this._prevResults = this._resultCache;
-	    this._resultCache = {};
-	    _applyCommit(this.render(), context, this._resultCache);
-	};
-	RenderNode.prototype.render = function render() {
-	    if (this._isRenderable)
-	        return this._object.render();
-	    var result = null;
-	    if (this._hasMultipleChildren) {
-	        result = this._childResult;
-	        var children = this._child;
-	        for (var i = 0; i < children.length; i++) {
-	            result[i] = children[i].render();
-	        }
-	    } else if (this._child)
-	        result = this._child.render();
-	    return this._isModifier ? this._object.modify(result) : result;
-	};
-	module.exports = RenderNode;
-
-/***/ },
-/* 44 */
-/*!****************************************!*\
-  !*** ../~/famous/utilities/Utility.js ***!
-  \****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var Utility = {};
-	Utility.Direction = {
-	    X: 0,
-	    Y: 1,
-	    Z: 2
-	};
-	Utility.after = function after(count, callback) {
-	    var counter = count;
-	    return function () {
-	        counter--;
-	        if (counter === 0)
-	            callback.apply(this, arguments);
-	    };
-	};
-	Utility.loadURL = function loadURL(url, callback) {
-	    var xhr = new XMLHttpRequest();
-	    xhr.onreadystatechange = function onreadystatechange() {
-	        if (this.readyState === 4) {
-	            if (callback)
-	                callback(this.responseText);
-	        }
-	    };
-	    xhr.open('GET', url);
-	    xhr.send();
-	};
-	Utility.createDocumentFragmentFromHTML = function createDocumentFragmentFromHTML(html) {
-	    var element = document.createElement('div');
-	    element.innerHTML = html;
-	    var result = document.createDocumentFragment();
-	    while (element.hasChildNodes())
-	        result.appendChild(element.firstChild);
-	    return result;
-	};
-	Utility.clone = function clone(b) {
-	    var a;
-	    if (typeof b === 'object') {
-	        a = b instanceof Array ? [] : {};
-	        for (var key in b) {
-	            if (typeof b[key] === 'object' && b[key] !== null) {
-	                if (b[key] instanceof Array) {
-	                    a[key] = new Array(b[key].length);
-	                    for (var i = 0; i < b[key].length; i++) {
-	                        a[key][i] = Utility.clone(b[key][i]);
-	                    }
-	                } else {
-	                    a[key] = Utility.clone(b[key]);
-	                }
-	            } else {
-	                a[key] = b[key];
-	            }
-	        }
-	    } else {
-	        a = b;
-	    }
-	    return a;
-	};
-	module.exports = Utility;
-
-/***/ },
-/* 45 */
+/* 40 */
 /*!*****************************************!*\
   !*** ../~/famous/core/ElementOutput.js ***!
   \*****************************************/
@@ -10444,9 +8955,9 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Entity = __webpack_require__(/*! ./Entity */ 50);
-	var EventHandler = __webpack_require__(/*! ./EventHandler */ 41);
-	var Transform = __webpack_require__(/*! ./Transform */ 28);
+	var Entity = __webpack_require__(/*! ./Entity */ 56);
+	var EventHandler = __webpack_require__(/*! ./EventHandler */ 38);
+	var Transform = __webpack_require__(/*! ./Transform */ 19);
 	var usePrefix = !('transform' in document.documentElement.style);
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	function ElementOutput(element) {
@@ -10621,431 +9132,9 @@
 	module.exports = ElementOutput;
 
 /***/ },
-/* 46 */
-/*!************************************!*\
-  !*** ../~/famous/core/Modifier.js ***!
-  \************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var Transform = __webpack_require__(/*! ./Transform */ 28);
-	var Transitionable = __webpack_require__(/*! ../transitions/Transitionable */ 34);
-	var TransitionableTransform = __webpack_require__(/*! ../transitions/TransitionableTransform */ 69);
-	function Modifier(options) {
-	    this._transformGetter = null;
-	    this._opacityGetter = null;
-	    this._originGetter = null;
-	    this._alignGetter = null;
-	    this._sizeGetter = null;
-	    this._proportionGetter = null;
-	    this._legacyStates = {};
-	    this._output = {
-	        transform: Transform.identity,
-	        opacity: 1,
-	        origin: null,
-	        align: null,
-	        size: null,
-	        proportions: null,
-	        target: null
-	    };
-	    if (options) {
-	        if (options.transform)
-	            this.transformFrom(options.transform);
-	        if (options.opacity !== undefined)
-	            this.opacityFrom(options.opacity);
-	        if (options.origin)
-	            this.originFrom(options.origin);
-	        if (options.align)
-	            this.alignFrom(options.align);
-	        if (options.size)
-	            this.sizeFrom(options.size);
-	        if (options.proportions)
-	            this.proportionsFrom(options.proportions);
-	    }
-	}
-	Modifier.prototype.transformFrom = function transformFrom(transform) {
-	    if (transform instanceof Function)
-	        this._transformGetter = transform;
-	    else if (transform instanceof Object && transform.get)
-	        this._transformGetter = transform.get.bind(transform);
-	    else {
-	        this._transformGetter = null;
-	        this._output.transform = transform;
-	    }
-	    return this;
-	};
-	Modifier.prototype.opacityFrom = function opacityFrom(opacity) {
-	    if (opacity instanceof Function)
-	        this._opacityGetter = opacity;
-	    else if (opacity instanceof Object && opacity.get)
-	        this._opacityGetter = opacity.get.bind(opacity);
-	    else {
-	        this._opacityGetter = null;
-	        this._output.opacity = opacity;
-	    }
-	    return this;
-	};
-	Modifier.prototype.originFrom = function originFrom(origin) {
-	    if (origin instanceof Function)
-	        this._originGetter = origin;
-	    else if (origin instanceof Object && origin.get)
-	        this._originGetter = origin.get.bind(origin);
-	    else {
-	        this._originGetter = null;
-	        this._output.origin = origin;
-	    }
-	    return this;
-	};
-	Modifier.prototype.alignFrom = function alignFrom(align) {
-	    if (align instanceof Function)
-	        this._alignGetter = align;
-	    else if (align instanceof Object && align.get)
-	        this._alignGetter = align.get.bind(align);
-	    else {
-	        this._alignGetter = null;
-	        this._output.align = align;
-	    }
-	    return this;
-	};
-	Modifier.prototype.sizeFrom = function sizeFrom(size) {
-	    if (size instanceof Function)
-	        this._sizeGetter = size;
-	    else if (size instanceof Object && size.get)
-	        this._sizeGetter = size.get.bind(size);
-	    else {
-	        this._sizeGetter = null;
-	        this._output.size = size;
-	    }
-	    return this;
-	};
-	Modifier.prototype.proportionsFrom = function proportionsFrom(proportions) {
-	    if (proportions instanceof Function)
-	        this._proportionGetter = proportions;
-	    else if (proportions instanceof Object && proportions.get)
-	        this._proportionGetter = proportions.get.bind(proportions);
-	    else {
-	        this._proportionGetter = null;
-	        this._output.proportions = proportions;
-	    }
-	    return this;
-	};
-	Modifier.prototype.setTransform = function setTransform(transform, transition, callback) {
-	    if (transition || this._legacyStates.transform) {
-	        if (!this._legacyStates.transform) {
-	            this._legacyStates.transform = new TransitionableTransform(this._output.transform);
-	        }
-	        if (!this._transformGetter)
-	            this.transformFrom(this._legacyStates.transform);
-	        this._legacyStates.transform.set(transform, transition, callback);
-	        return this;
-	    } else
-	        return this.transformFrom(transform);
-	};
-	Modifier.prototype.setOpacity = function setOpacity(opacity, transition, callback) {
-	    if (transition || this._legacyStates.opacity) {
-	        if (!this._legacyStates.opacity) {
-	            this._legacyStates.opacity = new Transitionable(this._output.opacity);
-	        }
-	        if (!this._opacityGetter)
-	            this.opacityFrom(this._legacyStates.opacity);
-	        return this._legacyStates.opacity.set(opacity, transition, callback);
-	    } else
-	        return this.opacityFrom(opacity);
-	};
-	Modifier.prototype.setOrigin = function setOrigin(origin, transition, callback) {
-	    if (transition || this._legacyStates.origin) {
-	        if (!this._legacyStates.origin) {
-	            this._legacyStates.origin = new Transitionable(this._output.origin || [
-	                0,
-	                0
-	            ]);
-	        }
-	        if (!this._originGetter)
-	            this.originFrom(this._legacyStates.origin);
-	        this._legacyStates.origin.set(origin, transition, callback);
-	        return this;
-	    } else
-	        return this.originFrom(origin);
-	};
-	Modifier.prototype.setAlign = function setAlign(align, transition, callback) {
-	    if (transition || this._legacyStates.align) {
-	        if (!this._legacyStates.align) {
-	            this._legacyStates.align = new Transitionable(this._output.align || [
-	                0,
-	                0
-	            ]);
-	        }
-	        if (!this._alignGetter)
-	            this.alignFrom(this._legacyStates.align);
-	        this._legacyStates.align.set(align, transition, callback);
-	        return this;
-	    } else
-	        return this.alignFrom(align);
-	};
-	Modifier.prototype.setSize = function setSize(size, transition, callback) {
-	    if (size && (transition || this._legacyStates.size)) {
-	        if (!this._legacyStates.size) {
-	            this._legacyStates.size = new Transitionable(this._output.size || [
-	                0,
-	                0
-	            ]);
-	        }
-	        if (!this._sizeGetter)
-	            this.sizeFrom(this._legacyStates.size);
-	        this._legacyStates.size.set(size, transition, callback);
-	        return this;
-	    } else
-	        return this.sizeFrom(size);
-	};
-	Modifier.prototype.setProportions = function setProportions(proportions, transition, callback) {
-	    if (proportions && (transition || this._legacyStates.proportions)) {
-	        if (!this._legacyStates.proportions) {
-	            this._legacyStates.proportions = new Transitionable(this._output.proportions || [
-	                0,
-	                0
-	            ]);
-	        }
-	        if (!this._proportionGetter)
-	            this.proportionsFrom(this._legacyStates.proportions);
-	        this._legacyStates.proportions.set(proportions, transition, callback);
-	        return this;
-	    } else
-	        return this.proportionsFrom(proportions);
-	};
-	Modifier.prototype.halt = function halt() {
-	    if (this._legacyStates.transform)
-	        this._legacyStates.transform.halt();
-	    if (this._legacyStates.opacity)
-	        this._legacyStates.opacity.halt();
-	    if (this._legacyStates.origin)
-	        this._legacyStates.origin.halt();
-	    if (this._legacyStates.align)
-	        this._legacyStates.align.halt();
-	    if (this._legacyStates.size)
-	        this._legacyStates.size.halt();
-	    if (this._legacyStates.proportions)
-	        this._legacyStates.proportions.halt();
-	    this._transformGetter = null;
-	    this._opacityGetter = null;
-	    this._originGetter = null;
-	    this._alignGetter = null;
-	    this._sizeGetter = null;
-	    this._proportionGetter = null;
-	};
-	Modifier.prototype.getTransform = function getTransform() {
-	    return this._transformGetter();
-	};
-	Modifier.prototype.getFinalTransform = function getFinalTransform() {
-	    return this._legacyStates.transform ? this._legacyStates.transform.getFinal() : this._output.transform;
-	};
-	Modifier.prototype.getOpacity = function getOpacity() {
-	    return this._opacityGetter();
-	};
-	Modifier.prototype.getOrigin = function getOrigin() {
-	    return this._originGetter();
-	};
-	Modifier.prototype.getAlign = function getAlign() {
-	    return this._alignGetter();
-	};
-	Modifier.prototype.getSize = function getSize() {
-	    return this._sizeGetter ? this._sizeGetter() : this._output.size;
-	};
-	Modifier.prototype.getProportions = function getProportions() {
-	    return this._proportionGetter ? this._proportionGetter() : this._output.proportions;
-	};
-	function _update() {
-	    if (this._transformGetter)
-	        this._output.transform = this._transformGetter();
-	    if (this._opacityGetter)
-	        this._output.opacity = this._opacityGetter();
-	    if (this._originGetter)
-	        this._output.origin = this._originGetter();
-	    if (this._alignGetter)
-	        this._output.align = this._alignGetter();
-	    if (this._sizeGetter)
-	        this._output.size = this._sizeGetter();
-	    if (this._proportionGetter)
-	        this._output.proportions = this._proportionGetter();
-	}
-	Modifier.prototype.modify = function modify(target) {
-	    _update.call(this);
-	    this._output.target = target;
-	    return this._output;
-	};
-	module.exports = Modifier;
-
-/***/ },
-/* 47 */
-/*!**********************************************!*\
-  !*** ../~/famous/modifiers/StateModifier.js ***!
-  \**********************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var Modifier = __webpack_require__(/*! ../core/Modifier */ 46);
-	var Transform = __webpack_require__(/*! ../core/Transform */ 28);
-	var Transitionable = __webpack_require__(/*! ../transitions/Transitionable */ 34);
-	var TransitionableTransform = __webpack_require__(/*! ../transitions/TransitionableTransform */ 69);
-	function StateModifier(options) {
-	    this._transformState = new TransitionableTransform(Transform.identity);
-	    this._opacityState = new Transitionable(1);
-	    this._originState = new Transitionable([
-	        0,
-	        0
-	    ]);
-	    this._alignState = new Transitionable([
-	        0,
-	        0
-	    ]);
-	    this._sizeState = new Transitionable([
-	        0,
-	        0
-	    ]);
-	    this._proportionsState = new Transitionable([
-	        0,
-	        0
-	    ]);
-	    this._modifier = new Modifier({
-	        transform: this._transformState,
-	        opacity: this._opacityState,
-	        origin: null,
-	        align: null,
-	        size: null,
-	        proportions: null
-	    });
-	    this._hasOrigin = false;
-	    this._hasAlign = false;
-	    this._hasSize = false;
-	    this._hasProportions = false;
-	    if (options) {
-	        if (options.transform)
-	            this.setTransform(options.transform);
-	        if (options.opacity !== undefined)
-	            this.setOpacity(options.opacity);
-	        if (options.origin)
-	            this.setOrigin(options.origin);
-	        if (options.align)
-	            this.setAlign(options.align);
-	        if (options.size)
-	            this.setSize(options.size);
-	        if (options.proportions)
-	            this.setProportions(options.proportions);
-	    }
-	}
-	StateModifier.prototype.setTransform = function setTransform(transform, transition, callback) {
-	    this._transformState.set(transform, transition, callback);
-	    return this;
-	};
-	StateModifier.prototype.setOpacity = function setOpacity(opacity, transition, callback) {
-	    this._opacityState.set(opacity, transition, callback);
-	    return this;
-	};
-	StateModifier.prototype.setOrigin = function setOrigin(origin, transition, callback) {
-	    if (origin === null) {
-	        if (this._hasOrigin) {
-	            this._modifier.originFrom(null);
-	            this._hasOrigin = false;
-	        }
-	        return this;
-	    } else if (!this._hasOrigin) {
-	        this._hasOrigin = true;
-	        this._modifier.originFrom(this._originState);
-	    }
-	    this._originState.set(origin, transition, callback);
-	    return this;
-	};
-	StateModifier.prototype.setAlign = function setOrigin(align, transition, callback) {
-	    if (align === null) {
-	        if (this._hasAlign) {
-	            this._modifier.alignFrom(null);
-	            this._hasAlign = false;
-	        }
-	        return this;
-	    } else if (!this._hasAlign) {
-	        this._hasAlign = true;
-	        this._modifier.alignFrom(this._alignState);
-	    }
-	    this._alignState.set(align, transition, callback);
-	    return this;
-	};
-	StateModifier.prototype.setSize = function setSize(size, transition, callback) {
-	    if (size === null) {
-	        if (this._hasSize) {
-	            this._modifier.sizeFrom(null);
-	            this._hasSize = false;
-	        }
-	        return this;
-	    } else if (!this._hasSize) {
-	        this._hasSize = true;
-	        this._modifier.sizeFrom(this._sizeState);
-	    }
-	    this._sizeState.set(size, transition, callback);
-	    return this;
-	};
-	StateModifier.prototype.setProportions = function setSize(proportions, transition, callback) {
-	    if (proportions === null) {
-	        if (this._hasProportions) {
-	            this._modifier.proportionsFrom(null);
-	            this._hasProportions = false;
-	        }
-	        return this;
-	    } else if (!this._hasProportions) {
-	        this._hasProportions = true;
-	        this._modifier.proportionsFrom(this._proportionsState);
-	    }
-	    this._proportionsState.set(proportions, transition, callback);
-	    return this;
-	};
-	StateModifier.prototype.halt = function halt() {
-	    this._transformState.halt();
-	    this._opacityState.halt();
-	    this._originState.halt();
-	    this._alignState.halt();
-	    this._sizeState.halt();
-	    this._proportionsState.halt();
-	};
-	StateModifier.prototype.getTransform = function getTransform() {
-	    return this._transformState.get();
-	};
-	StateModifier.prototype.getFinalTransform = function getFinalTransform() {
-	    return this._transformState.getFinal();
-	};
-	StateModifier.prototype.getOpacity = function getOpacity() {
-	    return this._opacityState.get();
-	};
-	StateModifier.prototype.getOrigin = function getOrigin() {
-	    return this._hasOrigin ? this._originState.get() : null;
-	};
-	StateModifier.prototype.getAlign = function getAlign() {
-	    return this._hasAlign ? this._alignState.get() : null;
-	};
-	StateModifier.prototype.getSize = function getSize() {
-	    return this._hasSize ? this._sizeState.get() : null;
-	};
-	StateModifier.prototype.getProportions = function getProportions() {
-	    return this._hasProportions ? this._proportionsState.get() : null;
-	};
-	StateModifier.prototype.modify = function modify(target) {
-	    return this._modifier.modify(target);
-	};
-	module.exports = StateModifier;
-
-/***/ },
-/* 48 */
+/* 41 */
 /*!**************************************!*\
-  !*** ../~/famous/utilities/Timer.js ***!
+  !*** ../~/famous/core/RenderNode.js ***!
   \**************************************/
 /***/ function(module, exports, __webpack_require__) {
 
@@ -11056,340 +9145,108 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var FamousEngine = __webpack_require__(/*! ../core/Engine */ 14);
-	var _event = 'prerender';
-	var getTime = window.performance && window.performance.now ? function () {
-	    return window.performance.now();
-	} : function () {
-	    return Date.now();
+	var Entity = __webpack_require__(/*! ./Entity */ 56);
+	var SpecParser = __webpack_require__(/*! ./SpecParser */ 65);
+	function RenderNode(object) {
+	    this._object = null;
+	    this._child = null;
+	    this._hasMultipleChildren = false;
+	    this._isRenderable = false;
+	    this._isModifier = false;
+	    this._resultCache = {};
+	    this._prevResults = {};
+	    this._childResult = null;
+	    if (object)
+	        this.set(object);
+	}
+	RenderNode.prototype.add = function add(child) {
+	    var childNode = child instanceof RenderNode ? child : new RenderNode(child);
+	    if (this._child instanceof Array)
+	        this._child.push(childNode);
+	    else if (this._child) {
+	        this._child = [
+	            this._child,
+	            childNode
+	        ];
+	        this._hasMultipleChildren = true;
+	        this._childResult = [];
+	    } else
+	        this._child = childNode;
+	    return childNode;
 	};
-	function addTimerFunction(fn) {
-	    FamousEngine.on(_event, fn);
-	    return fn;
-	}
-	function setTimeout(fn, duration) {
-	    var t = getTime();
-	    var callback = function () {
-	        var t2 = getTime();
-	        if (t2 - t >= duration) {
-	            fn.apply(this, arguments);
-	            FamousEngine.removeListener(_event, callback);
-	        }
-	    };
-	    return addTimerFunction(callback);
-	}
-	function setInterval(fn, duration) {
-	    var t = getTime();
-	    var callback = function () {
-	        var t2 = getTime();
-	        if (t2 - t >= duration) {
-	            fn.apply(this, arguments);
-	            t = getTime();
-	        }
-	    };
-	    return addTimerFunction(callback);
-	}
-	function after(fn, numTicks) {
-	    if (numTicks === undefined)
-	        return undefined;
-	    var callback = function () {
-	        numTicks--;
-	        if (numTicks <= 0) {
-	            fn.apply(this, arguments);
-	            clear(callback);
-	        }
-	    };
-	    return addTimerFunction(callback);
-	}
-	function every(fn, numTicks) {
-	    numTicks = numTicks || 1;
-	    var initial = numTicks;
-	    var callback = function () {
-	        numTicks--;
-	        if (numTicks <= 0) {
-	            fn.apply(this, arguments);
-	            numTicks = initial;
-	        }
-	    };
-	    return addTimerFunction(callback);
-	}
-	function clear(fn) {
-	    FamousEngine.removeListener(_event, fn);
-	}
-	function debounce(func, wait) {
-	    var timeout;
-	    var ctx;
-	    var timestamp;
-	    var result;
-	    var args;
-	    return function () {
-	        ctx = this;
-	        args = arguments;
-	        timestamp = getTime();
-	        var fn = function () {
-	            var last = getTime - timestamp;
-	            if (last < wait) {
-	                timeout = setTimeout(fn, wait - last);
-	            } else {
-	                timeout = null;
-	                result = func.apply(ctx, args);
-	            }
-	        };
-	        clear(timeout);
-	        timeout = setTimeout(fn, wait);
-	        return result;
-	    };
-	}
-	module.exports = {
-	    setTimeout: setTimeout,
-	    setInterval: setInterval,
-	    debounce: debounce,
-	    after: after,
-	    every: every,
-	    clear: clear
+	RenderNode.prototype.get = function get() {
+	    return this._object || (this._hasMultipleChildren ? null : this._child ? this._child.get() : null);
 	};
-
-/***/ },
-/* 49 */
-/*!****************************************************!*\
-  !*** ../~/famous-flex/src/layouts/TabBarLayout.js ***!
-  \****************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2015
-	 */
-	
-	/**
-	 * Tab-bar layout supporting both horizontal (default) and vertical orientation.
-	 *
-	 * |options|type|description|
-	 * |---|---|---|
-	 * |`[margins]`|Number/Array|Margins shorthand (e.g. 5, [10, 20], [2, 5, 2, 10])|
-	 * |`[spacing]`|Number|Space in between items|
-	 * |`[zIncrement]`|Number|Z-translation increment used to stack the elements correctly (default: 0.001)|
-	 * |`[itemSize]`|Number/Bool|Width or height of the item (see below)|
-	 *
-	 * `itemSize` can have of the following values:
-	 *
-	 * |itemSize|description|
-	 * |---|---|---|
-	 * |`undefined`|When itemSize is undefined or omitted, all items are spread out equally over the full size.|
-	 * |`Number`|Size of the item.|
-	 * |`true`|Use the size of the renderable (calls `getSize` on the item).|
-	 *
-	 * Example:
-	 *
-	 * ```javascript
-	 * var TabBarLayout = require('famous-flex/layouts/TabBarLayout');
-	 *
-	 * var layout = new LayoutController({
-	 *   layout: TabBarLayout,
-	 *   layoutOptions: {
-	 *     itemSize: undefined,   // undefined = fill equally to full width
-	 *     margins: [5, 1, 5, 1], // margins to utilize
-	 *     spacing: 10            // space in between items
-	 *   },
-	 *   dataSource: {
-	 *     background: new Surface({properties: {backgroundColor: 'black'}}),
-	 *     items: [
-	 *       new Surface({ content: 'one' }),
-	 *       new Surface({ content: 'two' }),
-	 *       new Surface({ content: 'three' })
-	 *     ],
-	 *     spacers: [ // spacers in between the items
-	 *       new Surface({properties: {backgroundColor: 'gray'}}),
-	 *       new Surface({properties: {backgroundColor: 'gray'}})
-	 *     ],
-	 *     selectedItemOverlay: {
-	 *       new Surface({ properties: {borderBottom: '4px solid blue'}})
-	 *     }
-	 *   }
-	 * });
-	 * ```
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var Utility = __webpack_require__(/*! famous/utilities/Utility */ 44);
-	    var LayoutUtility = __webpack_require__(/*! ../LayoutUtility */ 52);
-	
-	    // Define capabilities of this layout function
-	    var capabilities = {
-	        sequence: true,
-	        direction: [Utility.Direction.X, Utility.Direction.Y],
-	        trueSize: true
-	    };
-	
-	    // global data
-	    var size;
-	    var direction;
-	    var revDirection;
-	    var items;
-	    var spacers;
-	    var margins;
-	    var spacing;
-	    var sizeLeft;
-	    var set = {
-	        size: [0, 0],
-	        translate: [0, 0, 0],
-	        align: [0, 0],
-	        origin: [0, 0]
-	    };
-	    var nodeSize;
-	    var offset;
-	    var zIncrement;
-	
-	    // Layout function
-	    function TabBarLayout(context, options) {
-	
-	        // Prepare data
-	        size = context.size;
-	        direction = context.direction;
-	        revDirection = direction ? 0 : 1;
-	        spacing = options.spacing || 0;
-	        items = context.get('items');
-	        spacers = context.get('spacers');
-	        margins = LayoutUtility.normalizeMargins(options.margins);
-	        zIncrement = options.zIncrement || 0.001;
-	        set.size[0] = context.size[0];
-	        set.size[1] = context.size[1];
-	        set.size[revDirection] -= (margins[1 - revDirection] + margins[3 - revDirection]);
-	        set.translate[0] = 0;
-	        set.translate[1] = 0;
-	        set.translate[2] = zIncrement;
-	        set.translate[revDirection] = margins[direction ? 3 : 0];
-	        set.align[0] = 0;
-	        set.align[1] = 0;
-	        set.origin[0] = 0;
-	        set.origin[1] = 0;
-	
-	        // When no item-size specified, spread all items
-	        // out equally over the full width/height, taking into
-	        // account margins & spacing
-	        offset = direction ? margins[0] : margins[3];
-	        sizeLeft = size[direction] - (offset + (direction ? margins[2] : margins[1]));
-	        sizeLeft -= ((items.length - 1) * spacing);
-	        for (var i = 0; i < items.length; i++) {
-	
-	            // Calculate item size
-	            if (options.itemSize === undefined) {
-	                nodeSize = Math.round(sizeLeft / (items.length - i));
-	            }
-	            else {
-	                nodeSize = (options.itemSize === true) ? context.resolveSize(items[i], size)[direction] : options.itemSize;
-	            }
-	
-	            // Calculate length used
-	            set.scrollLength = nodeSize;
-	            if (i === 0) {
-	                set.scrollLength += direction ? margins[0] : margins[3];
-	            }
-	            if (i === (items.length - 1)) {
-	                set.scrollLength += direction ? margins[2] : margins[1];
-	            }
-	            else {
-	                set.scrollLength += spacing;
-	            }
-	
-	            // Position item
-	            set.size[direction] = nodeSize;
-	            set.translate[direction] = offset;
-	            context.set(items[i], set);
-	            offset += nodeSize;
-	            sizeLeft -= nodeSize;
-	
-	            // Place selected item overlay
-	            if (i === options.selectedItemIndex) {
-	                set.scrollLength = 0;
-	                set.translate[direction] += (nodeSize / 2);
-	                set.translate[2] = zIncrement * 2;
-	                set.origin[direction] = 0.5;
-	                context.set('selectedItemOverlay', set);
-	                set.origin[direction] = 0;
-	                set.translate[2] = zIncrement;
-	            }
-	
-	            // Position spacer (optional)
-	            if (i < (items.length - 1)) {
-	                if (spacers && (i < spacers.length)) {
-	                    set.size[direction] = spacing;
-	                    set.translate[direction] = offset;
-	                    context.set(spacers[i], set);
-	                }
-	                offset += spacing;
-	            }
-	            else {
-	                offset += direction ? margins[2] : margins[1];
-	            }
-	        }
-	
-	        // Set background
-	        set.scrollLength = 0;
-	        set.size[0] = size[0];
-	        set.size[1] = size[1];
-	        set.size[direction] = size[direction];
-	        set.translate[0] = 0;
-	        set.translate[1] = 0;
-	        set.translate[2] = 0;
-	        set.translate[direction] = 0;
-	        context.set('background', set);
+	RenderNode.prototype.set = function set(child) {
+	    this._childResult = null;
+	    this._hasMultipleChildren = false;
+	    this._isRenderable = child.render ? true : false;
+	    this._isModifier = child.modify ? true : false;
+	    this._object = child;
+	    this._child = null;
+	    if (child instanceof RenderNode)
+	        return child;
+	    else
+	        return this;
+	};
+	RenderNode.prototype.getSize = function getSize() {
+	    var result = null;
+	    var target = this.get();
+	    if (target && target.getSize)
+	        result = target.getSize();
+	    if (!result && this._child && this._child.getSize)
+	        result = this._child.getSize();
+	    return result;
+	};
+	function _applyCommit(spec, context, cacheStorage) {
+	    var result = SpecParser.parse(spec, context);
+	    var keys = Object.keys(result);
+	    for (var i = 0; i < keys.length; i++) {
+	        var id = keys[i];
+	        var childNode = Entity.get(id);
+	        var commitParams = result[id];
+	        commitParams.allocator = context.allocator;
+	        var commitResult = childNode.commit(commitParams);
+	        if (commitResult)
+	            _applyCommit(commitResult, context, cacheStorage);
+	        else
+	            cacheStorage[id] = commitParams;
 	    }
-	
-	    TabBarLayout.Capabilities = capabilities;
-	    TabBarLayout.Name = 'TabBarLayout';
-	    TabBarLayout.Description = 'TabBar widget layout';
-	    module.exports = TabBarLayout;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 50 */
-/*!**********************************!*\
-  !*** ../~/famous/core/Entity.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var entities = [];
-	function get(id) {
-	    return entities[id];
 	}
-	function set(id, entity) {
-	    entities[id] = entity;
-	}
-	function register(entity) {
-	    var id = entities.length;
-	    set(id, entity);
-	    return id;
-	}
-	function unregister(id) {
-	    set(id, null);
-	}
-	module.exports = {
-	    register: register,
-	    unregister: unregister,
-	    get: get,
-	    set: set
+	RenderNode.prototype.commit = function commit(context) {
+	    var prevKeys = Object.keys(this._prevResults);
+	    for (var i = 0; i < prevKeys.length; i++) {
+	        var id = prevKeys[i];
+	        if (this._resultCache[id] === undefined) {
+	            var object = Entity.get(id);
+	            if (object.cleanup)
+	                object.cleanup(context.allocator);
+	        }
+	    }
+	    this._prevResults = this._resultCache;
+	    this._resultCache = {};
+	    _applyCommit(this.render(), context, this._resultCache);
 	};
+	RenderNode.prototype.render = function render() {
+	    if (this._isRenderable)
+	        return this._object.render();
+	    var result = null;
+	    if (this._hasMultipleChildren) {
+	        result = this._childResult;
+	        var children = this._child;
+	        for (var i = 0; i < children.length; i++) {
+	            result[i] = children[i].render();
+	        }
+	    } else if (this._child)
+	        result = this._child.render();
+	    return this._isModifier ? this._object.modify(result) : result;
+	};
+	module.exports = RenderNode;
 
 /***/ },
-/* 51 */
+/* 42 */
 /*!****************************************!*\
-  !*** ../~/famous/core/ViewSequence.js ***!
+  !*** ../~/famous/utilities/Utility.js ***!
   \****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
@@ -11400,250 +9257,66 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	function ViewSequence(options) {
-	    if (!options)
-	        options = [];
-	    if (options instanceof Array)
-	        options = { array: options };
-	    this._ = null;
-	    this.index = options.index || 0;
-	    if (options.array)
-	        this._ = new this.constructor.Backing(options.array);
-	    else if (options._)
-	        this._ = options._;
-	    if (this.index === this._.firstIndex)
-	        this._.firstNode = this;
-	    if (this.index === this._.firstIndex + this._.array.length - 1)
-	        this._.lastNode = this;
-	    if (options.loop !== undefined)
-	        this._.loop = options.loop;
-	    if (options.trackSize !== undefined)
-	        this._.trackSize = options.trackSize;
-	    this._previousNode = null;
-	    this._nextNode = null;
-	}
-	ViewSequence.Backing = function Backing(array) {
-	    this.array = array;
-	    this.firstIndex = 0;
-	    this.loop = false;
-	    this.firstNode = null;
-	    this.lastNode = null;
-	    this.cumulativeSizes = [[
-	            0,
-	            0
-	        ]];
-	    this.sizeDirty = true;
-	    this.trackSize = false;
+	var Utility = {};
+	Utility.Direction = {
+	    X: 0,
+	    Y: 1,
+	    Z: 2
 	};
-	ViewSequence.Backing.prototype.getValue = function getValue(i) {
-	    var _i = i - this.firstIndex;
-	    if (_i < 0 || _i >= this.array.length)
-	        return null;
-	    return this.array[_i];
+	Utility.after = function after(count, callback) {
+	    var counter = count;
+	    return function () {
+	        counter--;
+	        if (counter === 0)
+	            callback.apply(this, arguments);
+	    };
 	};
-	ViewSequence.Backing.prototype.setValue = function setValue(i, value) {
-	    this.array[i - this.firstIndex] = value;
-	};
-	ViewSequence.Backing.prototype.getSize = function getSize(index) {
-	    return this.cumulativeSizes[index];
-	};
-	ViewSequence.Backing.prototype.calculateSize = function calculateSize(index) {
-	    index = index || this.array.length;
-	    var size = [
-	        0,
-	        0
-	    ];
-	    for (var i = 0; i < index; i++) {
-	        var nodeSize = this.array[i].getSize();
-	        if (!nodeSize)
-	            return undefined;
-	        if (size[0] !== undefined) {
-	            if (nodeSize[0] === undefined)
-	                size[0] = undefined;
-	            else
-	                size[0] += nodeSize[0];
+	Utility.loadURL = function loadURL(url, callback) {
+	    var xhr = new XMLHttpRequest();
+	    xhr.onreadystatechange = function onreadystatechange() {
+	        if (this.readyState === 4) {
+	            if (callback)
+	                callback(this.responseText);
 	        }
-	        if (size[1] !== undefined) {
-	            if (nodeSize[1] === undefined)
-	                size[1] = undefined;
-	            else
-	                size[1] += nodeSize[1];
+	    };
+	    xhr.open('GET', url);
+	    xhr.send();
+	};
+	Utility.createDocumentFragmentFromHTML = function createDocumentFragmentFromHTML(html) {
+	    var element = document.createElement('div');
+	    element.innerHTML = html;
+	    var result = document.createDocumentFragment();
+	    while (element.hasChildNodes())
+	        result.appendChild(element.firstChild);
+	    return result;
+	};
+	Utility.clone = function clone(b) {
+	    var a;
+	    if (typeof b === 'object') {
+	        a = b instanceof Array ? [] : {};
+	        for (var key in b) {
+	            if (typeof b[key] === 'object' && b[key] !== null) {
+	                if (b[key] instanceof Array) {
+	                    a[key] = new Array(b[key].length);
+	                    for (var i = 0; i < b[key].length; i++) {
+	                        a[key][i] = Utility.clone(b[key][i]);
+	                    }
+	                } else {
+	                    a[key] = Utility.clone(b[key]);
+	                }
+	            } else {
+	                a[key] = b[key];
+	            }
 	        }
-	        this.cumulativeSizes[i + 1] = size.slice();
+	    } else {
+	        a = b;
 	    }
-	    this.sizeDirty = false;
-	    return size;
+	    return a;
 	};
-	ViewSequence.Backing.prototype.reindex = function reindex(start, removeCount, insertCount) {
-	    if (!this.array[0])
-	        return;
-	    var i = 0;
-	    var index = this.firstIndex;
-	    var indexShiftAmount = insertCount - removeCount;
-	    var node = this.firstNode;
-	    while (index < start - 1) {
-	        node = node.getNext();
-	        index++;
-	    }
-	    var spliceStartNode = node;
-	    for (i = 0; i < removeCount; i++) {
-	        node = node.getNext();
-	        if (node)
-	            node._previousNode = spliceStartNode;
-	    }
-	    var spliceResumeNode = node ? node.getNext() : null;
-	    spliceStartNode._nextNode = null;
-	    node = spliceStartNode;
-	    for (i = 0; i < insertCount; i++)
-	        node = node.getNext();
-	    index += insertCount;
-	    if (node !== spliceResumeNode) {
-	        node._nextNode = spliceResumeNode;
-	        if (spliceResumeNode)
-	            spliceResumeNode._previousNode = node;
-	    }
-	    if (spliceResumeNode) {
-	        node = spliceResumeNode;
-	        index++;
-	        while (node && index < this.array.length + this.firstIndex) {
-	            if (node._nextNode)
-	                node.index += indexShiftAmount;
-	            else
-	                node.index = index;
-	            node = node.getNext();
-	            index++;
-	        }
-	    }
-	    if (this.trackSize)
-	        this.sizeDirty = true;
-	};
-	ViewSequence.prototype.getPrevious = function getPrevious() {
-	    var len = this._.array.length;
-	    if (!len) {
-	        this._previousNode = null;
-	    } else if (this.index === this._.firstIndex) {
-	        if (this._.loop) {
-	            this._previousNode = this._.lastNode || new this.constructor({
-	                _: this._,
-	                index: this._.firstIndex + len - 1
-	            });
-	            this._previousNode._nextNode = this;
-	        } else {
-	            this._previousNode = null;
-	        }
-	    } else if (!this._previousNode) {
-	        this._previousNode = new this.constructor({
-	            _: this._,
-	            index: this.index - 1
-	        });
-	        this._previousNode._nextNode = this;
-	    }
-	    return this._previousNode;
-	};
-	ViewSequence.prototype.getNext = function getNext() {
-	    var len = this._.array.length;
-	    if (!len) {
-	        this._nextNode = null;
-	    } else if (this.index === this._.firstIndex + len - 1) {
-	        if (this._.loop) {
-	            this._nextNode = this._.firstNode || new this.constructor({
-	                _: this._,
-	                index: this._.firstIndex
-	            });
-	            this._nextNode._previousNode = this;
-	        } else {
-	            this._nextNode = null;
-	        }
-	    } else if (!this._nextNode) {
-	        this._nextNode = new this.constructor({
-	            _: this._,
-	            index: this.index + 1
-	        });
-	        this._nextNode._previousNode = this;
-	    }
-	    return this._nextNode;
-	};
-	ViewSequence.prototype.indexOf = function indexOf(item) {
-	    return this._.array.indexOf(item);
-	};
-	ViewSequence.prototype.getIndex = function getIndex() {
-	    return this.index;
-	};
-	ViewSequence.prototype.toString = function toString() {
-	    return '' + this.index;
-	};
-	ViewSequence.prototype.unshift = function unshift(value) {
-	    this._.array.unshift.apply(this._.array, arguments);
-	    this._.firstIndex -= arguments.length;
-	    if (this._.trackSize)
-	        this._.sizeDirty = true;
-	};
-	ViewSequence.prototype.push = function push(value) {
-	    this._.array.push.apply(this._.array, arguments);
-	    if (this._.trackSize)
-	        this._.sizeDirty = true;
-	};
-	ViewSequence.prototype.splice = function splice(index, howMany) {
-	    var values = Array.prototype.slice.call(arguments, 2);
-	    this._.array.splice.apply(this._.array, [
-	        index - this._.firstIndex,
-	        howMany
-	    ].concat(values));
-	    this._.reindex(index, howMany, values.length);
-	};
-	ViewSequence.prototype.swap = function swap(other) {
-	    var otherValue = other.get();
-	    var myValue = this.get();
-	    this._.setValue(this.index, otherValue);
-	    this._.setValue(other.index, myValue);
-	    var myPrevious = this._previousNode;
-	    var myNext = this._nextNode;
-	    var myIndex = this.index;
-	    var otherPrevious = other._previousNode;
-	    var otherNext = other._nextNode;
-	    var otherIndex = other.index;
-	    this.index = otherIndex;
-	    this._previousNode = otherPrevious === this ? other : otherPrevious;
-	    if (this._previousNode)
-	        this._previousNode._nextNode = this;
-	    this._nextNode = otherNext === this ? other : otherNext;
-	    if (this._nextNode)
-	        this._nextNode._previousNode = this;
-	    other.index = myIndex;
-	    other._previousNode = myPrevious === other ? this : myPrevious;
-	    if (other._previousNode)
-	        other._previousNode._nextNode = other;
-	    other._nextNode = myNext === other ? this : myNext;
-	    if (other._nextNode)
-	        other._nextNode._previousNode = other;
-	    if (this.index === this._.firstIndex)
-	        this._.firstNode = this;
-	    else if (this.index === this._.firstIndex + this._.array.length - 1)
-	        this._.lastNode = this;
-	    if (other.index === this._.firstIndex)
-	        this._.firstNode = other;
-	    else if (other.index === this._.firstIndex + this._.array.length - 1)
-	        this._.lastNode = other;
-	    if (this._.trackSize)
-	        this._.sizeDirty = true;
-	};
-	ViewSequence.prototype.get = function get() {
-	    return this._.getValue(this.index);
-	};
-	ViewSequence.prototype.getSize = function getSize() {
-	    var target = this.get();
-	    return target ? target.getSize() : null;
-	};
-	ViewSequence.prototype.render = function render() {
-	    if (this._.trackSize && this._.sizeDirty)
-	        this._.calculateSize();
-	    var target = this.get();
-	    return target ? target.render.apply(target, arguments) : null;
-	};
-	module.exports = ViewSequence;
+	module.exports = Utility;
 
 /***/ },
-/* 52 */
+/* 43 */
 /*!*********************************************!*\
   !*** ../~/famous-flex/src/LayoutUtility.js ***!
   \*********************************************/
@@ -11670,7 +9343,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var Utility = __webpack_require__(/*! famous/utilities/Utility */ 44);
+	    var Utility = __webpack_require__(/*! famous/utilities/Utility */ 42);
 	
 	    /**
 	     * @class
@@ -11941,774 +9614,7 @@
 
 
 /***/ },
-/* 53 */
-/*!*************************************************!*\
-  !*** ../~/famous-flex/src/LayoutNodeManager.js ***!
-  \*************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * This Source Code is licensed under the MIT license. If a copy of the
-	 * MIT-license was not distributed with this file, You can obtain one at:
-	 * http://opensource.org/licenses/mit-license.html.
-	 *
-	 * @author: Hein Rutjes (IjzerenHein)
-	 * @license MIT
-	 * @copyright Gloey Apps, 2014 - 2015
-	 */
-	
-	/**
-	 * LayoutNodeManager is a private class used internally by LayoutController, ScrollController
-	 * and ScrollView. It manages the layout-nodes that are rendered and exposes the layout-context
-	 * which is passed along to the layout-function.
-	 *
-	 * LayoutNodeManager keeps track of every rendered node through an ordered double-linked
-	 * list. The first time the layout-function is called, the linked list is created.
-	 * After that, the linked list is updated to reflect the output of the layout-function.
-	 * When the layout is unchanged, then the linked-list exactly matches the order of the
-	 * accessed nodes in the layout-function, and no layout-nodes need to be created or
-	 * re-ordered.
-	 *
-	 * @module
-	 */
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	
-	    // import dependencies
-	    var LayoutContext = __webpack_require__(/*! ./LayoutContext */ 70);
-	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 52);
-	
-	    var MAX_POOL_SIZE = 100;
-	
-	    /**
-	     * @class
-	     * @param {LayoutNode} LayoutNode Layout-nodes to create
-	     * @param {Function} initLayoutNodeFn function to use when initializing new nodes
-	     * @alias module:LayoutNodeManager
-	     */
-	    function LayoutNodeManager(LayoutNode, initLayoutNodeFn) {
-	        this.LayoutNode = LayoutNode;
-	        this._initLayoutNodeFn = initLayoutNodeFn;
-	        this._layoutCount = 0;
-	        this._context = new LayoutContext({
-	            next: _contextNext.bind(this),
-	            prev: _contextPrev.bind(this),
-	            get: _contextGet.bind(this),
-	            set: _contextSet.bind(this),
-	            resolveSize: _contextResolveSize.bind(this),
-	            size: [0, 0]
-	            //,cycle: 0
-	        });
-	        this._contextState = {
-	            // enumation state for the context
-	            //nextSequence: undefined,
-	            //prevSequence: undefined,
-	            //next: undefined
-	            //prev: undefined
-	            //start: undefined
-	        };
-	        this._pool = {
-	            layoutNodes: {
-	                size: 0
-	                //first: undefined
-	            },
-	            resolveSize: [0, 0]
-	        };
-	        //this._first = undefined; // first item in the linked list
-	        //this._nodesById = undefined;
-	        //this._trueSizeRequested = false;
-	    }
-	
-	    /**
-	     * Prepares the manager for a new layout iteration, after which it returns the
-	     * context which can be used by the layout-function.
-	     *
-	     * @param {ViewSequence} viewSequence first node to layout
-	     * @param {Object} [nodesById] dictionary to use when looking up nodes by id
-	     * @return {LayoutContext} context which can be passed to the layout-function
-	     */
-	    LayoutNodeManager.prototype.prepareForLayout = function(viewSequence, nodesById, contextData) {
-	
-	        // Reset all nodes
-	        var node = this._first;
-	        while (node) {
-	            node.reset();
-	            node = node._next;
-	        }
-	
-	        // Prepare data
-	        var context = this._context;
-	        this._layoutCount++;
-	        this._nodesById = nodesById;
-	        this._trueSizeRequested = false;
-	        this._reevalTrueSize =
-	            contextData.reevalTrueSize ||
-	            !context.size ||
-	            (context.size[0] !== contextData.size[0]) ||
-	            (context.size[1] !== contextData.size[1]);
-	
-	        // Prepare context for enumation
-	        var contextState = this._contextState;
-	        contextState.startSequence = viewSequence;
-	        contextState.nextSequence = viewSequence;
-	        contextState.prevSequence = viewSequence;
-	        contextState.start = undefined;
-	        contextState.nextGetIndex = 0;
-	        contextState.prevGetIndex = 0;
-	        contextState.nextSetIndex = 0;
-	        contextState.prevSetIndex = 0;
-	        contextState.addCount = 0;
-	        contextState.removeCount = 0;
-	        contextState.lastRenderNode = undefined;
-	
-	        // Prepare content
-	        context.size[0] = contextData.size[0];
-	        context.size[1] = contextData.size[1];
-	        context.direction = contextData.direction;
-	        context.reverse = contextData.reverse;
-	        context.alignment = contextData.reverse ? 1 : 0;
-	        context.scrollOffset = contextData.scrollOffset || 0;
-	        context.scrollStart = contextData.scrollStart || 0;
-	        context.scrollEnd = contextData.scrollEnd || context.size[context.direction];
-	        //context.cycle++;
-	        return context;
-	    };
-	
-	    /**
-	     * When the layout-function no longer lays-out the node, then it is not longer
-	     * being invalidated. In this case the destination is set to the removeSpec
-	     * after which the node is animated towards the remove-spec.
-	     *
-	     * @param {Spec} [removeSpec] spec towards which the no longer layed-out nodes are animated
-	     */
-	    LayoutNodeManager.prototype.removeNonInvalidatedNodes = function(removeSpec) {
-	        var node = this._first;
-	        while (node) {
-	
-	            // If a node existed, but it is no longer being layed out,
-	            // then set it to the '_removing' state.
-	            if (!node._invalidated && !node._removing) {
-	                node.remove(removeSpec);
-	            }
-	
-	            // Move to next node
-	            node = node._next;
-	        }
-	    };
-	
-	    /**
-	     * Cleans up any unaccessed virtual nodes that have been created by a VirtualViewSequence.
-	     */
-	    LayoutNodeManager.prototype.removeVirtualViewSequenceNodes = function() {
-	        if (this._contextState.startSequence && this._contextState.startSequence.cleanup) {
-	            this._contextState.startSequence.cleanup();
-	        }
-	    };
-	
-	    /**
-	     * Builds the render-spec and destroy any layout-nodes that no longer
-	     * return a render-spec.
-	     *
-	     * @return {Array.Spec} array of Specs
-	     */
-	    LayoutNodeManager.prototype.buildSpecAndDestroyUnrenderedNodes = function(translate) {
-	        var specs = [];
-	        var result = {
-	            specs: specs,
-	            modified: false
-	        };
-	        var node = this._first;
-	        while (node) {
-	            var modified = node._specModified;
-	            var spec = node.getSpec();
-	            if (spec.removed) {
-	
-	                // Destroy node
-	                var destroyNode = node;
-	                node = node._next;
-	                _destroyNode.call(this, destroyNode);
-	
-	                // Mark as modified
-	                result.modified = true;
-	            }
-	            else {
-	
-	                // Update stats
-	                if (modified) {
-	                    if (spec.transform && translate) {
-	                        spec.transform[12] += translate[0];
-	                        spec.transform[13] += translate[1];
-	                        spec.transform[14] += translate[2];
-	                        spec.transform[12] = Math.round(spec.transform[12] * 100000) / 100000;
-	                        spec.transform[13] = Math.round(spec.transform[13] * 100000) / 100000;
-	                        if (spec.endState) {
-	                            spec.endState.transform[12] += translate[0];
-	                            spec.endState.transform[13] += translate[1];
-	                            spec.endState.transform[14] += translate[2];
-	                            spec.endState.transform[12] = Math.round(spec.endState.transform[12] * 100000) / 100000;
-	                            spec.endState.transform[13] = Math.round(spec.endState.transform[13] * 100000) / 100000;
-	                        }
-	                    }
-	                    result.modified = true;
-	                }
-	
-	                // Add node to result output
-	                specs.push(spec);
-	                node = node._next;
-	            }
-	        }
-	        this._contextState.addCount = 0;
-	        this._contextState.removeCount = 0;
-	        return result;
-	    };
-	
-	    /**
-	     * Get the layout-node by its renderable.
-	     *
-	     * @param {Object} renderable renderable
-	     * @return {LayoutNode} layout-node or undefined
-	     */
-	    LayoutNodeManager.prototype.getNodeByRenderNode = function(renderable) {
-	        var node = this._first;
-	        while (node) {
-	            if (node.renderNode === renderable) {
-	                return node;
-	            }
-	            node = node._next;
-	        }
-	        return undefined;
-	    };
-	
-	    /**
-	     * Inserts a layout-node into the linked-list.
-	     *
-	     * @param {LayoutNode} node layout-node to insert
-	     */
-	    LayoutNodeManager.prototype.insertNode = function(node) {
-	        node._next = this._first;
-	        if (this._first) {
-	            this._first._prev = node;
-	        }
-	        this._first = node;
-	    };
-	
-	    /**
-	     * Sets the options for all nodes.
-	     *
-	     * @param {Object} options node options
-	     */
-	    LayoutNodeManager.prototype.setNodeOptions = function(options) {
-	        this._nodeOptions = options;
-	        var node = this._first;
-	        while (node) {
-	            node.setOptions(options);
-	            node = node._next;
-	        }
-	        node = this._pool.layoutNodes.first;
-	        while (node) {
-	            node.setOptions(options);
-	            node = node._next;
-	        }
-	    };
-	
-	    /**
-	     * Pre-allocate layout-nodes ahead of using them.
-	     *
-	     * @param {Number} count number of nodes to pre-allocate with the given spec
-	     * @param {Spec} [spec] render-spec (defined the node properties which to pre-allocate)
-	     */
-	    LayoutNodeManager.prototype.preallocateNodes = function(count, spec) {
-	        var nodes = [];
-	        for (var i = 0; i < count ; i++) {
-	            nodes.push(this.createNode(undefined, spec));
-	        }
-	        for (i = 0; i < count ; i++) {
-	            _destroyNode.call(this, nodes[i]);
-	        }
-	    };
-	
-	    /**
-	     * Creates a layout-node
-	     *
-	     * @param {Object} renderNode render-node for whom to create a layout-node for
-	     * @return {LayoutNode} layout-node
-	     */
-	    LayoutNodeManager.prototype.createNode = function(renderNode, spec) {
-	        var node;
-	        if (this._pool.layoutNodes.first) {
-	            node = this._pool.layoutNodes.first;
-	            this._pool.layoutNodes.first = node._next;
-	            this._pool.layoutNodes.size--;
-	            node.constructor.apply(node, arguments);
-	        }
-	        else {
-	            node = new this.LayoutNode(renderNode, spec);
-	            if (this._nodeOptions) {
-	                node.setOptions(this._nodeOptions);
-	            }
-	        }
-	        node._prev = undefined;
-	        node._next = undefined;
-	        node._viewSequence = undefined;
-	        node._layoutCount = 0;
-	        if (this._initLayoutNodeFn) {
-	            this._initLayoutNodeFn.call(this, node, spec);
-	        }
-	        return node;
-	    };
-	
-	    /**
-	     * Removes all nodes.
-	     */
-	    LayoutNodeManager.prototype.removeAll = function() {
-	        var node = this._first;
-	        while (node) {
-	          var next = node._next;
-	          _destroyNode.call(this, node);
-	          node = next;
-	        }
-	        this._first = undefined;
-	    };
-	
-	    /**
-	     * Destroys a layout-node
-	     */
-	    function _destroyNode(node) {
-	
-	        // Remove node from linked-list
-	        if (node._next) {
-	            node._next._prev = node._prev;
-	        }
-	        if (node._prev) {
-	            node._prev._next = node._next;
-	        }
-	        else {
-	            this._first = node._next;
-	        }
-	
-	        // Destroy the node
-	        node.destroy();
-	
-	        // Add node to pool
-	        if (this._pool.layoutNodes.size < MAX_POOL_SIZE) {
-	            this._pool.layoutNodes.size++;
-	            node._prev = undefined;
-	            node._next = this._pool.layoutNodes.first;
-	            this._pool.layoutNodes.first = node;
-	        }
-	    }
-	
-	    /**
-	     * Gets start layout-node for enumeration.
-	     *
-	     * @param {Bool} [next] undefined = all, true = all next, false = all previous
-	     * @return {LayoutNode} layout-node or undefined
-	     */
-	    LayoutNodeManager.prototype.getStartEnumNode = function(next) {
-	        if (next === undefined) {
-	            return this._first;
-	        }
-	        else if (next === true) {
-	            return (this._contextState.start && this._contextState.startPrev) ? this._contextState.start._next : this._contextState.start;
-	        }
-	        else if (next === false) {
-	            return (this._contextState.start && !this._contextState.startPrev) ? this._contextState.start._prev : this._contextState.start;
-	        }
-	    };
-	
-	    /**
-	     * Checks the integrity of the linked-list.
-	     */
-	    /*function _checkIntegrity() {
-	        var node = this._first;
-	        var count = 0;
-	        var prevNode;
-	        while (node) {
-	            if (!node._prev && (node !== this._first)) {
-	                throw 'No prev but not first';
-	            }
-	            if (node._prev !== prevNode) {
-	                throw 'Bork';
-	            }
-	            prevNode = node;
-	            node = node._next;
-	            count++;
-	        }
-	    }
-	
-	    function _checkContextStateIntegrity() {
-	        var node = this._contextState.start;
-	        while (node) {
-	            if (node === this._contextState.next) {
-	                break;
-	            }
-	            if (!node._invalidated) {
-	                throw 'WTF';
-	            }
-	            node = node._next;
-	        }
-	        node = this._contextState.start;
-	        while (node) {
-	            if (node === this._contextState.prev) {
-	                break;
-	            }
-	            if (!node._invalidated) {
-	                throw 'WTF';
-	            }
-	            node = node._prev;
-	        }
-	    }*/
-	
-	    /**
-	     * Creates or gets a layout node.
-	     */
-	    function _contextGetCreateAndOrderNodes(renderNode, prev) {
-	
-	        // The first time this function is called, the current
-	        // prev/next position is obtained.
-	        var node;
-	        var state = this._contextState;
-	        if (!state.start) {
-	            node = this._first;
-	            while (node) {
-	                if (node.renderNode === renderNode) {
-	                    break;
-	                }
-	                node = node._next;
-	            }
-	            if (!node) {
-	                node = this.createNode(renderNode);
-	                node._next = this._first;
-	                if (this._first) {
-	                    this._first._prev = node;
-	                }
-	                this._first = node;
-	            }
-	            state.start = node;
-	            state.startPrev = prev;
-	            state.prev = node;
-	            state.next = node;
-	            return node;
-	        }
-	
-	        // Check whether node already exist at the correct position
-	        // in the linked-list. If so, return that node immediately
-	        // and advance the prev/next pointer for the next/prev
-	        // lookup operation.
-	        if (prev) {
-	            if (state.prev._prev && (state.prev._prev.renderNode === renderNode)) {
-	                state.prev = state.prev._prev;
-	                return state.prev;
-	            }
-	        }
-	        else {
-	            if (state.next._next && (state.next._next.renderNode === renderNode)) {
-	                state.next = state.next._next;
-	                return state.next;
-	            }
-	        }
-	
-	        // Lookup the node anywhere in the list..
-	        node = this._first;
-	        while (node) {
-	            if (node.renderNode === renderNode) {
-	                break;
-	            }
-	            node = node._next;
-	        }
-	
-	        // Create new node if neccessary
-	        if (!node) {
-	            node = this.createNode(renderNode);
-	        }
-	
-	        // Node existed, remove from linked-list
-	        else {
-	            if (node._next) {
-	                node._next._prev = node._prev;
-	            }
-	            if (node._prev) {
-	                node._prev._next = node._next;
-	            }
-	            else {
-	                this._first = node._next;
-	            }
-	            node._next = undefined;
-	            node._prev = undefined;
-	        }
-	
-	        // Insert node into the linked list
-	        if (prev) {
-	            if (state.prev._prev) {
-	                node._prev = state.prev._prev;
-	                state.prev._prev._next = node;
-	            }
-	            else {
-	                this._first = node;
-	            }
-	            state.prev._prev = node;
-	            node._next = state.prev;
-	            state.prev = node;
-	        }
-	        else {
-	            if (state.next._next) {
-	                node._next = state.next._next;
-	                state.next._next._prev = node;
-	            }
-	            state.next._next = node;
-	            node._prev = state.next;
-	            state.next = node;
-	        }
-	
-	        return node;
-	    }
-	
-	    /**
-	     * Get the next render-node
-	     */
-	    function _contextNext() {
-	
-	        // Get the next node from the sequence
-	        if (!this._contextState.nextSequence) {
-	            return undefined;
-	        }
-	        if (this._context.reverse) {
-	            this._contextState.nextSequence = this._contextState.nextSequence.getNext();
-	            if (!this._contextState.nextSequence) {
-	                return undefined;
-	            }
-	        }
-	        var renderNode = this._contextState.nextSequence.get();
-	        if (!renderNode) {
-	            this._contextState.nextSequence = undefined;
-	            return undefined;
-	        }
-	        var nextSequence = this._contextState.nextSequence;
-	        if (!this._context.reverse) {
-	            this._contextState.nextSequence = this._contextState.nextSequence.getNext();
-	        }
-	        if (this._contextState.lastRenderNode === renderNode) {
-	          throw 'ViewSequence is corrupted, should never contain the same renderNode twice, index: ' + nextSequence.getIndex();
-	        }
-	        this._contextState.lastRenderNode = renderNode;
-	        return {
-	            renderNode: renderNode,
-	            viewSequence: nextSequence,
-	            next: true,
-	            index: ++this._contextState.nextGetIndex
-	        };
-	    }
-	
-	    /**
-	     * Get the previous render-node
-	     */
-	    function _contextPrev() {
-	
-	        // Get the previous node from the sequence
-	        if (!this._contextState.prevSequence) {
-	            return undefined;
-	        }
-	        if (!this._context.reverse) {
-	            this._contextState.prevSequence = this._contextState.prevSequence.getPrevious();
-	            if (!this._contextState.prevSequence) {
-	                return undefined;
-	            }
-	        }
-	        var renderNode = this._contextState.prevSequence.get();
-	        if (!renderNode) {
-	            this._contextState.prevSequence = undefined;
-	            return undefined;
-	        }
-	        var prevSequence = this._contextState.prevSequence;
-	        if (this._context.reverse) {
-	            this._contextState.prevSequence = this._contextState.prevSequence.getPrevious();
-	        }
-	        if (this._contextState.lastRenderNode === renderNode) {
-	          throw 'ViewSequence is corrupted, should never contain the same renderNode twice, index: ' + prevSequence.getIndex();
-	        }
-	        this._contextState.lastRenderNode = renderNode;
-	        return {
-	            renderNode: renderNode,
-	            viewSequence: prevSequence,
-	            prev: true,
-	            index: --this._contextState.prevGetIndex
-	        };
-	    }
-	
-	    /**
-	     * Resolve id into a context-node.
-	     */
-	     function _contextGet(contextNodeOrId) {
-	        if (this._nodesById && ((contextNodeOrId instanceof String) || (typeof contextNodeOrId === 'string'))) {
-	            var renderNode = this._nodesById[contextNodeOrId];
-	            if (!renderNode) {
-	                return undefined;
-	            }
-	
-	            // Return array
-	            if (renderNode instanceof Array) {
-	                var result = [];
-	                for (var i = 0, j = renderNode.length; i < j; i++) {
-	                    result.push({
-	                        renderNode: renderNode[i],
-	                        arrayElement: true
-	                    });
-	                }
-	                return result;
-	            }
-	
-	            // Create context node
-	            return {
-	                renderNode: renderNode,
-	                byId: true
-	            };
-	        }
-	        else {
-	            return contextNodeOrId;
-	        }
-	    }
-	
-	    /**
-	     * Set the node content
-	     */
-	    function _contextSet(contextNodeOrId, set) {
-	        var contextNode = this._nodesById ? _contextGet.call(this, contextNodeOrId) : contextNodeOrId;
-	        if (contextNode) {
-	            var node = contextNode.node;
-	            if (!node) {
-	                if (contextNode.next) {
-	                     if (contextNode.index < this._contextState.nextSetIndex) {
-	                        LayoutUtility.error('Nodes must be layed out in the same order as they were requested!');
-	                     }
-	                     this._contextState.nextSetIndex = contextNode.index;
-	                }
-	                else if (contextNode.prev) {
-	                     if (contextNode.index > this._contextState.prevSetIndex) {
-	                        LayoutUtility.error('Nodes must be layed out in the same order as they were requested!');
-	                     }
-	                     this._contextState.prevSetIndex = contextNode.index;
-	                }
-	                node = _contextGetCreateAndOrderNodes.call(this, contextNode.renderNode, contextNode.prev);
-	                node._viewSequence = contextNode.viewSequence;
-	                node._layoutCount++;
-	                if (node._layoutCount === 1) {
-	                    this._contextState.addCount++;
-	                }
-	                contextNode.node = node;
-	            }
-	            node.usesTrueSize = contextNode.usesTrueSize;
-	            node.trueSizeRequested = contextNode.trueSizeRequested;
-	            node.set(set, this._context.size);
-	            contextNode.set = set;
-	        }
-	        return set;
-	    }
-	
-	    /**
-	     * Resolve the size of the layout-node from the renderable itsself
-	     */
-	    function _contextResolveSize(contextNodeOrId, parentSize) {
-	        var contextNode = this._nodesById ? _contextGet.call(this, contextNodeOrId) : contextNodeOrId;
-	        var resolveSize = this._pool.resolveSize;
-	        if (!contextNode) {
-	            resolveSize[0] = 0;
-	            resolveSize[1] = 0;
-	            return resolveSize;
-	        }
-	
-	        // Get in use size
-	        var renderNode = contextNode.renderNode;
-	        var size = renderNode.getSize();
-	        if (!size) {
-	            return parentSize;
-	        }
-	
-	        // Check if true-size is used and it must be reavaluated.
-	        // This particular piece of code specifically handles true-size Surfaces in famo.us.
-	        // It contains portions that ensure that the true-size of a Surface is re-evaluated
-	        // and also workaround code that backs up the size of a Surface, so that when the surface
-	        // is re-added to the DOM (e.g. when scrolling) it doesn't temporarily have a size of 0.
-	        var configSize = renderNode.size && (renderNode._trueSizeCheck !== undefined) ? renderNode.size : undefined;
-	        if (configSize && ((configSize[0] === true) || (configSize[1] === true))) {
-	            contextNode.usesTrueSize = true;
-	            var backupSize = renderNode._backupSize;
-	            if (renderNode._contentDirty || renderNode._trueSizeCheck) {
-	              this._trueSizeRequested = true;
-	              contextNode.trueSizeRequested = true;
-	            }
-	            if (renderNode._trueSizeCheck) {
-	
-	                // Fix for true-size renderables. When true-size is used, the size
-	                // is incorrect for one render-cycle due to the fact that Surface.commit
-	                // updates the content after asking the DOM for the offsetHeight/offsetWidth.
-	                // The code below backs the size up, and re-uses that when this scenario
-	                // occurs.
-	                if (backupSize && (configSize !== size)) {
-	                    var newWidth = (configSize[0] === true) ? Math.max(backupSize[0], size[0]) : size[0];
-	                    var newHeight = (configSize[1] === true) ? Math.max(backupSize[1], size[1]) : size[1];
-	                    backupSize[0] = newWidth;
-	                    backupSize[1] = newHeight;
-	                    size = backupSize;
-	                    renderNode._backupSize = undefined;
-	                    backupSize = undefined;
-	                }
-	            }
-	            if (this._reevalTrueSize || (backupSize && ((backupSize[0] !== size[0]) || (backupSize[1] !== size[1])))) {
-	                renderNode._trueSizeCheck = true; // force request of true-size from DOM
-	                renderNode._sizeDirty = true;
-	                this._trueSizeRequested = true;
-	            }
-	
-	            // Backup the size of the node
-	            if (!backupSize) {
-	                renderNode._backupSize = [0, 0];
-	                backupSize = renderNode._backupSize;
-	            }
-	            backupSize[0] = size[0];
-	            backupSize[1] = size[1];
-	        }
-	
-	        // Ensure re-layout when a child layout-controller is using true-size and it
-	        // has ben changed.
-	        configSize = renderNode._nodes ? renderNode.options.size : undefined;
-	        if (configSize && ((configSize[0] === true) || (configSize[1] === true))) {
-	            if (this._reevalTrueSize || renderNode._nodes._trueSizeRequested) {
-	                contextNode.usesTrueSize = true;
-	                contextNode.trueSizeRequested = true;
-	                this._trueSizeRequested = true;
-	            }
-	        }
-	
-	        // Resolve 'undefined' to parent-size and true to 0
-	        if ((size[0] === undefined) || (size[0] === true) || (size[1] === undefined) || (size[1] === true)) {
-	            resolveSize[0] = size[0];
-	            resolveSize[1] = size[1];
-	            size = resolveSize;
-	            if (size[0] === undefined) {
-	                size[0] = parentSize[0];
-	            }
-	            else if (size[0] === true) {
-	                size[0] = 0;
-	                this._trueSizeRequested = true;
-	                contextNode.trueSizeRequested = true;
-	            }
-	            if (size[1] === undefined) {
-	                size[1] = parentSize[1];
-	            }
-	            else if (size[1] === true) {
-	                size[1] = 0;
-	                this._trueSizeRequested = true;
-	                contextNode.trueSizeRequested = true;
-	            }
-	        }
-	        return size;
-	    }
-	
-	    module.exports = LayoutNodeManager;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 54 */
+/* 44 */
 /*!******************************************!*\
   !*** ../~/famous-flex/src/LayoutNode.js ***!
   \******************************************/
@@ -12732,8 +9638,8 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var Transform = __webpack_require__(/*! famous/core/Transform */ 28);
-	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 52);
+	    var Transform = __webpack_require__(/*! famous/core/Transform */ 19);
+	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 43);
 	
 	    /**
 	     * @class
@@ -12917,7 +9823,7 @@
 
 
 /***/ },
-/* 55 */
+/* 45 */
 /*!**********************************************!*\
   !*** ../~/famous-flex/src/FlowLayoutNode.js ***!
   \**********************************************/
@@ -12941,14 +9847,14 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	
 	    // import dependencies
-	    var OptionsManager = __webpack_require__(/*! famous/core/OptionsManager */ 42);
-	    var Transform = __webpack_require__(/*! famous/core/Transform */ 28);
-	    var Vector = __webpack_require__(/*! famous/math/Vector */ 58);
-	    var Particle = __webpack_require__(/*! famous/physics/bodies/Particle */ 60);
-	    var Spring = __webpack_require__(/*! famous/physics/forces/Spring */ 62);
-	    var PhysicsEngine = __webpack_require__(/*! famous/physics/PhysicsEngine */ 59);
-	    var LayoutNode = __webpack_require__(/*! ./LayoutNode */ 54);
-	    var Transitionable = __webpack_require__(/*! famous/transitions/Transitionable */ 34);
+	    var OptionsManager = __webpack_require__(/*! famous/core/OptionsManager */ 39);
+	    var Transform = __webpack_require__(/*! famous/core/Transform */ 19);
+	    var Vector = __webpack_require__(/*! famous/math/Vector */ 49);
+	    var Particle = __webpack_require__(/*! famous/physics/bodies/Particle */ 51);
+	    var Spring = __webpack_require__(/*! famous/physics/forces/Spring */ 53);
+	    var PhysicsEngine = __webpack_require__(/*! famous/physics/PhysicsEngine */ 50);
+	    var LayoutNode = __webpack_require__(/*! ./LayoutNode */ 44);
+	    var Transitionable = __webpack_require__(/*! famous/transitions/Transitionable */ 33);
 	
 	    /**
 	     * @class
@@ -13485,7 +10391,813 @@
 
 
 /***/ },
-/* 56 */
+/* 46 */
+/*!*************************************************!*\
+  !*** ../~/famous-flex/src/LayoutNodeManager.js ***!
+  \*************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2014/2015
+	 */
+	
+	/**
+	 * LayoutNodeManager is a private class used internally by LayoutController, ScrollController
+	 * and ScrollView. It manages the layout-nodes that are rendered and exposes the layout-context
+	 * which is passed along to the layout-function.
+	 *
+	 * LayoutNodeManager keeps track of every rendered node through an ordered double-linked
+	 * list. The first time the layout-function is called, the linked list is created.
+	 * After that, the linked list is updated to reflect the output of the layout-function.
+	 * When the layout is unchanged, then the linked-list exactly matches the order of the
+	 * accessed nodes in the layout-function, and no layout-nodes need to be created or
+	 * re-ordered.
+	 *
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var LayoutContext = __webpack_require__(/*! ./LayoutContext */ 66);
+	    var LayoutUtility = __webpack_require__(/*! ./LayoutUtility */ 43);
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
+	    var RenderNode = __webpack_require__(/*! famous/core/RenderNode */ 41);
+	
+	    var MAX_POOL_SIZE = 100;
+	
+	    /**
+	     * @class
+	     * @param {LayoutNode} LayoutNode Layout-nodes to create
+	     * @param {Function} initLayoutNodeFn function to use when initializing new nodes
+	     * @alias module:LayoutNodeManager
+	     */
+	    function LayoutNodeManager(LayoutNode, initLayoutNodeFn) {
+	        this.LayoutNode = LayoutNode;
+	        this._initLayoutNodeFn = initLayoutNodeFn;
+	        this._layoutCount = 0;
+	        this._context = new LayoutContext({
+	            next: _contextNext.bind(this),
+	            prev: _contextPrev.bind(this),
+	            get: _contextGet.bind(this),
+	            set: _contextSet.bind(this),
+	            resolveSize: _contextResolveSize.bind(this),
+	            size: [0, 0]
+	            //,cycle: 0
+	        });
+	        this._contextState = {
+	            // enumation state for the context
+	            //nextSequence: undefined,
+	            //prevSequence: undefined,
+	            //next: undefined
+	            //prev: undefined
+	            //start: undefined
+	        };
+	        this._pool = {
+	            layoutNodes: {
+	                size: 0
+	                //first: undefined
+	            },
+	            resolveSize: [0, 0]
+	        };
+	        //this._first = undefined; // first item in the linked list
+	        //this._nodesById = undefined;
+	        //this._trueSizeRequested = false;
+	    }
+	
+	    /**
+	     * Prepares the manager for a new layout iteration, after which it returns the
+	     * context which can be used by the layout-function.
+	     *
+	     * @param {ViewSequence} viewSequence first node to layout
+	     * @param {Object} [nodesById] dictionary to use when looking up nodes by id
+	     * @return {LayoutContext} context which can be passed to the layout-function
+	     */
+	    LayoutNodeManager.prototype.prepareForLayout = function(viewSequence, nodesById, contextData) {
+	
+	        // Reset all nodes
+	        var node = this._first;
+	        while (node) {
+	            node.reset();
+	            node = node._next;
+	        }
+	
+	        // Prepare data
+	        var context = this._context;
+	        this._layoutCount++;
+	        this._nodesById = nodesById;
+	        this._trueSizeRequested = false;
+	        this._reevalTrueSize =
+	            contextData.reevalTrueSize ||
+	            !context.size ||
+	            (context.size[0] !== contextData.size[0]) ||
+	            (context.size[1] !== contextData.size[1]);
+	
+	        // Prepare context for enumation
+	        var contextState = this._contextState;
+	        contextState.startSequence = viewSequence;
+	        contextState.nextSequence = viewSequence;
+	        contextState.prevSequence = viewSequence;
+	        contextState.start = undefined;
+	        contextState.nextGetIndex = 0;
+	        contextState.prevGetIndex = 0;
+	        contextState.nextSetIndex = 0;
+	        contextState.prevSetIndex = 0;
+	        contextState.addCount = 0;
+	        contextState.removeCount = 0;
+	        contextState.lastRenderNode = undefined;
+	
+	        // Prepare content
+	        context.size[0] = contextData.size[0];
+	        context.size[1] = contextData.size[1];
+	        context.direction = contextData.direction;
+	        context.reverse = contextData.reverse;
+	        context.alignment = contextData.reverse ? 1 : 0;
+	        context.scrollOffset = contextData.scrollOffset || 0;
+	        context.scrollStart = contextData.scrollStart || 0;
+	        context.scrollEnd = contextData.scrollEnd || context.size[context.direction];
+	        //context.cycle++;
+	        return context;
+	    };
+	
+	    /**
+	     * When the layout-function no longer lays-out the node, then it is not longer
+	     * being invalidated. In this case the destination is set to the removeSpec
+	     * after which the node is animated towards the remove-spec.
+	     *
+	     * @param {Spec} [removeSpec] spec towards which the no longer layed-out nodes are animated
+	     */
+	    LayoutNodeManager.prototype.removeNonInvalidatedNodes = function(removeSpec) {
+	        var node = this._first;
+	        while (node) {
+	
+	            // If a node existed, but it is no longer being layed out,
+	            // then set it to the '_removing' state.
+	            if (!node._invalidated && !node._removing) {
+	                node.remove(removeSpec);
+	            }
+	
+	            // Move to next node
+	            node = node._next;
+	        }
+	    };
+	
+	    /**
+	     * Cleans up any unaccessed virtual nodes that have been created by a VirtualViewSequence.
+	     */
+	    LayoutNodeManager.prototype.removeVirtualViewSequenceNodes = function() {
+	        if (this._contextState.startSequence && this._contextState.startSequence.cleanup) {
+	            this._contextState.startSequence.cleanup();
+	        }
+	    };
+	
+	    /**
+	     * Builds the render-spec and destroy any layout-nodes that no longer
+	     * return a render-spec.
+	     *
+	     * @return {Array.Spec} array of Specs
+	     */
+	    LayoutNodeManager.prototype.buildSpecAndDestroyUnrenderedNodes = function(translate) {
+	        var specs = [];
+	        var result = {
+	            specs: specs,
+	            modified: false
+	        };
+	        var node = this._first;
+	        while (node) {
+	            var modified = node._specModified;
+	            var spec = node.getSpec();
+	            if (spec.removed) {
+	
+	                // Destroy node
+	                var destroyNode = node;
+	                node = node._next;
+	                _destroyNode.call(this, destroyNode);
+	
+	                // Mark as modified
+	                result.modified = true;
+	            }
+	            else {
+	
+	                // Update stats
+	                if (modified) {
+	                    if (spec.transform && translate) {
+	                        spec.transform[12] += translate[0];
+	                        spec.transform[13] += translate[1];
+	                        spec.transform[14] += translate[2];
+	                        spec.transform[12] = Math.round(spec.transform[12] * 100000) / 100000;
+	                        spec.transform[13] = Math.round(spec.transform[13] * 100000) / 100000;
+	                        if (spec.endState) {
+	                            spec.endState.transform[12] += translate[0];
+	                            spec.endState.transform[13] += translate[1];
+	                            spec.endState.transform[14] += translate[2];
+	                            spec.endState.transform[12] = Math.round(spec.endState.transform[12] * 100000) / 100000;
+	                            spec.endState.transform[13] = Math.round(spec.endState.transform[13] * 100000) / 100000;
+	                        }
+	                    }
+	                    result.modified = true;
+	                }
+	
+	                // Set meta data
+	                spec.usesTrueSize = node.usesTrueSize;
+	                spec.trueSizeRequested = node.trueSizeRequested;
+	
+	                // Add node to result output
+	                specs.push(spec);
+	                node = node._next;
+	            }
+	        }
+	        this._contextState.addCount = 0;
+	        this._contextState.removeCount = 0;
+	        return result;
+	    };
+	
+	    /**
+	     * Get the layout-node by its renderable.
+	     *
+	     * @param {Object} renderable renderable
+	     * @return {LayoutNode} layout-node or undefined
+	     */
+	    LayoutNodeManager.prototype.getNodeByRenderNode = function(renderable) {
+	        var node = this._first;
+	        while (node) {
+	            if (node.renderNode === renderable) {
+	                return node;
+	            }
+	            node = node._next;
+	        }
+	        return undefined;
+	    };
+	
+	    /**
+	     * Inserts a layout-node into the linked-list.
+	     *
+	     * @param {LayoutNode} node layout-node to insert
+	     */
+	    LayoutNodeManager.prototype.insertNode = function(node) {
+	        node._next = this._first;
+	        if (this._first) {
+	            this._first._prev = node;
+	        }
+	        this._first = node;
+	    };
+	
+	    /**
+	     * Sets the options for all nodes.
+	     *
+	     * @param {Object} options node options
+	     */
+	    LayoutNodeManager.prototype.setNodeOptions = function(options) {
+	        this._nodeOptions = options;
+	        var node = this._first;
+	        while (node) {
+	            node.setOptions(options);
+	            node = node._next;
+	        }
+	        node = this._pool.layoutNodes.first;
+	        while (node) {
+	            node.setOptions(options);
+	            node = node._next;
+	        }
+	    };
+	
+	    /**
+	     * Pre-allocate layout-nodes ahead of using them.
+	     *
+	     * @param {Number} count number of nodes to pre-allocate with the given spec
+	     * @param {Spec} [spec] render-spec (defined the node properties which to pre-allocate)
+	     */
+	    LayoutNodeManager.prototype.preallocateNodes = function(count, spec) {
+	        var nodes = [];
+	        for (var i = 0; i < count; i++) {
+	            nodes.push(this.createNode(undefined, spec));
+	        }
+	        for (i = 0; i < count; i++) {
+	            _destroyNode.call(this, nodes[i]);
+	        }
+	    };
+	
+	    /**
+	     * Creates a layout-node
+	     *
+	     * @param {Object} renderNode render-node for whom to create a layout-node for
+	     * @return {LayoutNode} layout-node
+	     */
+	    LayoutNodeManager.prototype.createNode = function(renderNode, spec) {
+	        var node;
+	        if (this._pool.layoutNodes.first) {
+	            node = this._pool.layoutNodes.first;
+	            this._pool.layoutNodes.first = node._next;
+	            this._pool.layoutNodes.size--;
+	            node.constructor.apply(node, arguments);
+	        }
+	        else {
+	            node = new this.LayoutNode(renderNode, spec);
+	            if (this._nodeOptions) {
+	                node.setOptions(this._nodeOptions);
+	            }
+	        }
+	        node._prev = undefined;
+	        node._next = undefined;
+	        node._viewSequence = undefined;
+	        node._layoutCount = 0;
+	        if (this._initLayoutNodeFn) {
+	            this._initLayoutNodeFn.call(this, node, spec);
+	        }
+	        return node;
+	    };
+	
+	    /**
+	     * Removes all nodes.
+	     */
+	    LayoutNodeManager.prototype.removeAll = function() {
+	        var node = this._first;
+	        while (node) {
+	          var next = node._next;
+	          _destroyNode.call(this, node);
+	          node = next;
+	        }
+	        this._first = undefined;
+	    };
+	
+	    /**
+	     * Destroys a layout-node
+	     */
+	    function _destroyNode(node) {
+	
+	        // Remove node from linked-list
+	        if (node._next) {
+	            node._next._prev = node._prev;
+	        }
+	        if (node._prev) {
+	            node._prev._next = node._next;
+	        }
+	        else {
+	            this._first = node._next;
+	        }
+	
+	        // Destroy the node
+	        node.destroy();
+	
+	        // Add node to pool
+	        if (this._pool.layoutNodes.size < MAX_POOL_SIZE) {
+	            this._pool.layoutNodes.size++;
+	            node._prev = undefined;
+	            node._next = this._pool.layoutNodes.first;
+	            this._pool.layoutNodes.first = node;
+	        }
+	    }
+	
+	    /**
+	     * Gets start layout-node for enumeration.
+	     *
+	     * @param {Bool} [next] undefined = all, true = all next, false = all previous
+	     * @return {LayoutNode} layout-node or undefined
+	     */
+	    LayoutNodeManager.prototype.getStartEnumNode = function(next) {
+	        if (next === undefined) {
+	            return this._first;
+	        }
+	        else if (next === true) {
+	            return (this._contextState.start && this._contextState.startPrev) ? this._contextState.start._next : this._contextState.start;
+	        }
+	        else if (next === false) {
+	            return (this._contextState.start && !this._contextState.startPrev) ? this._contextState.start._prev : this._contextState.start;
+	        }
+	    };
+	
+	    /**
+	     * Checks the integrity of the linked-list.
+	     */
+	    /*function _checkIntegrity() {
+	        var node = this._first;
+	        var count = 0;
+	        var prevNode;
+	        while (node) {
+	            if (!node._prev && (node !== this._first)) {
+	                throw 'No prev but not first';
+	            }
+	            if (node._prev !== prevNode) {
+	                throw 'Bork';
+	            }
+	            prevNode = node;
+	            node = node._next;
+	            count++;
+	        }
+	    }
+	
+	    function _checkContextStateIntegrity() {
+	        var node = this._contextState.start;
+	        while (node) {
+	            if (node === this._contextState.next) {
+	                break;
+	            }
+	            if (!node._invalidated) {
+	                throw 'WTF';
+	            }
+	            node = node._next;
+	        }
+	        node = this._contextState.start;
+	        while (node) {
+	            if (node === this._contextState.prev) {
+	                break;
+	            }
+	            if (!node._invalidated) {
+	                throw 'WTF';
+	            }
+	            node = node._prev;
+	        }
+	    }*/
+	
+	    /**
+	     * Creates or gets a layout node.
+	     */
+	    function _contextGetCreateAndOrderNodes(renderNode, prev) {
+	
+	        // The first time this function is called, the current
+	        // prev/next position is obtained.
+	        var node;
+	        var state = this._contextState;
+	        if (!state.start) {
+	            node = this._first;
+	            while (node) {
+	                if (node.renderNode === renderNode) {
+	                    break;
+	                }
+	                node = node._next;
+	            }
+	            if (!node) {
+	                node = this.createNode(renderNode);
+	                node._next = this._first;
+	                if (this._first) {
+	                    this._first._prev = node;
+	                }
+	                this._first = node;
+	            }
+	            state.start = node;
+	            state.startPrev = prev;
+	            state.prev = node;
+	            state.next = node;
+	            return node;
+	        }
+	
+	        // Check whether node already exist at the correct position
+	        // in the linked-list. If so, return that node immediately
+	        // and advance the prev/next pointer for the next/prev
+	        // lookup operation.
+	        if (prev) {
+	            if (state.prev._prev && (state.prev._prev.renderNode === renderNode)) {
+	                state.prev = state.prev._prev;
+	                return state.prev;
+	            }
+	        }
+	        else {
+	            if (state.next._next && (state.next._next.renderNode === renderNode)) {
+	                state.next = state.next._next;
+	                return state.next;
+	            }
+	        }
+	
+	        // Lookup the node anywhere in the list..
+	        node = this._first;
+	        while (node) {
+	            if (node.renderNode === renderNode) {
+	                break;
+	            }
+	            node = node._next;
+	        }
+	
+	        // Create new node if neccessary
+	        if (!node) {
+	            node = this.createNode(renderNode);
+	        }
+	
+	        // Node existed, remove from linked-list
+	        else {
+	            if (node._next) {
+	                node._next._prev = node._prev;
+	            }
+	            if (node._prev) {
+	                node._prev._next = node._next;
+	            }
+	            else {
+	                this._first = node._next;
+	            }
+	            node._next = undefined;
+	            node._prev = undefined;
+	        }
+	
+	        // Insert node into the linked list
+	        if (prev) {
+	            if (state.prev._prev) {
+	                node._prev = state.prev._prev;
+	                state.prev._prev._next = node;
+	            }
+	            else {
+	                this._first = node;
+	            }
+	            state.prev._prev = node;
+	            node._next = state.prev;
+	            state.prev = node;
+	        }
+	        else {
+	            if (state.next._next) {
+	                node._next = state.next._next;
+	                state.next._next._prev = node;
+	            }
+	            state.next._next = node;
+	            node._prev = state.next;
+	            state.next = node;
+	        }
+	
+	        return node;
+	    }
+	
+	    /**
+	     * Get the next render-node
+	     */
+	    function _contextNext() {
+	
+	        // Get the next node from the sequence
+	        if (!this._contextState.nextSequence) {
+	            return undefined;
+	        }
+	        if (this._context.reverse) {
+	            this._contextState.nextSequence = this._contextState.nextSequence.getNext();
+	            if (!this._contextState.nextSequence) {
+	                return undefined;
+	            }
+	        }
+	        var renderNode = this._contextState.nextSequence.get();
+	        if (!renderNode) {
+	            this._contextState.nextSequence = undefined;
+	            return undefined;
+	        }
+	        var nextSequence = this._contextState.nextSequence;
+	        if (!this._context.reverse) {
+	            this._contextState.nextSequence = this._contextState.nextSequence.getNext();
+	        }
+	        if (this._contextState.lastRenderNode === renderNode) {
+	          throw 'ViewSequence is corrupted, should never contain the same renderNode twice, index: ' + nextSequence.getIndex();
+	        }
+	        this._contextState.lastRenderNode = renderNode;
+	        return {
+	            renderNode: renderNode,
+	            viewSequence: nextSequence,
+	            next: true,
+	            index: ++this._contextState.nextGetIndex
+	        };
+	    }
+	
+	    /**
+	     * Get the previous render-node
+	     */
+	    function _contextPrev() {
+	
+	        // Get the previous node from the sequence
+	        if (!this._contextState.prevSequence) {
+	            return undefined;
+	        }
+	        if (!this._context.reverse) {
+	            this._contextState.prevSequence = this._contextState.prevSequence.getPrevious();
+	            if (!this._contextState.prevSequence) {
+	                return undefined;
+	            }
+	        }
+	        var renderNode = this._contextState.prevSequence.get();
+	        if (!renderNode) {
+	            this._contextState.prevSequence = undefined;
+	            return undefined;
+	        }
+	        var prevSequence = this._contextState.prevSequence;
+	        if (this._context.reverse) {
+	            this._contextState.prevSequence = this._contextState.prevSequence.getPrevious();
+	        }
+	        if (this._contextState.lastRenderNode === renderNode) {
+	          throw 'ViewSequence is corrupted, should never contain the same renderNode twice, index: ' + prevSequence.getIndex();
+	        }
+	        this._contextState.lastRenderNode = renderNode;
+	        return {
+	            renderNode: renderNode,
+	            viewSequence: prevSequence,
+	            prev: true,
+	            index: --this._contextState.prevGetIndex
+	        };
+	    }
+	
+	    /**
+	     * Resolve id into a context-node.
+	     */
+	     function _contextGet(contextNodeOrId) {
+	        if (this._nodesById && ((contextNodeOrId instanceof String) || (typeof contextNodeOrId === 'string'))) {
+	            var renderNode = this._nodesById[contextNodeOrId];
+	            if (!renderNode) {
+	                return undefined;
+	            }
+	
+	            // Return array
+	            if (renderNode instanceof Array) {
+	                var result = [];
+	                for (var i = 0, j = renderNode.length; i < j; i++) {
+	                    result.push({
+	                        renderNode: renderNode[i],
+	                        arrayElement: true
+	                    });
+	                }
+	                return result;
+	            }
+	
+	            // Create context node
+	            return {
+	                renderNode: renderNode,
+	                byId: true
+	            };
+	        }
+	        else {
+	            return contextNodeOrId;
+	        }
+	    }
+	
+	    /**
+	     * Set the node content
+	     */
+	    function _contextSet(contextNodeOrId, set) {
+	        var contextNode = this._nodesById ? _contextGet.call(this, contextNodeOrId) : contextNodeOrId;
+	        if (contextNode) {
+	            var node = contextNode.node;
+	            if (!node) {
+	                if (contextNode.next) {
+	                     if (contextNode.index < this._contextState.nextSetIndex) {
+	                        LayoutUtility.error('Nodes must be layed out in the same order as they were requested!');
+	                     }
+	                     this._contextState.nextSetIndex = contextNode.index;
+	                }
+	                else if (contextNode.prev) {
+	                     if (contextNode.index > this._contextState.prevSetIndex) {
+	                        LayoutUtility.error('Nodes must be layed out in the same order as they were requested!');
+	                     }
+	                     this._contextState.prevSetIndex = contextNode.index;
+	                }
+	                node = _contextGetCreateAndOrderNodes.call(this, contextNode.renderNode, contextNode.prev);
+	                node._viewSequence = contextNode.viewSequence;
+	                node._layoutCount++;
+	                if (node._layoutCount === 1) {
+	                    this._contextState.addCount++;
+	                }
+	                contextNode.node = node;
+	            }
+	            node.usesTrueSize = contextNode.usesTrueSize;
+	            node.trueSizeRequested = contextNode.trueSizeRequested;
+	            node.set(set, this._context.size);
+	            contextNode.set = set;
+	        }
+	        return set;
+	    }
+	
+	    /**
+	     * Helper function that recursively discovers the configured size for a
+	     * given renderNode.
+	     */
+	    function _resolveConfigSize(renderNode) {
+	        if (renderNode instanceof RenderNode) {
+	            var result = null;
+	            var target = renderNode.get();
+	            if (target) {
+	                result = _resolveConfigSize(target);
+	                if (result) {
+	                    return result;
+	                }
+	            }
+	            if (renderNode._child) {
+	                return _resolveConfigSize(renderNode._child);
+	            }
+	        }
+	        else if (renderNode instanceof Surface) {
+	            return renderNode.size ? {
+	                renderNode: renderNode,
+	                size: renderNode.size
+	            } : undefined;
+	        }
+	        else if (renderNode.options && renderNode.options.size) {
+	            return {
+	                renderNode: renderNode,
+	                size: renderNode.options.size
+	            };
+	        }
+	        return undefined;
+	    }
+	
+	    /**
+	     * Resolve the size of the layout-node from the renderable itsself.
+	     */
+	    function _contextResolveSize(contextNodeOrId, parentSize) {
+	        var contextNode = this._nodesById ? _contextGet.call(this, contextNodeOrId) : contextNodeOrId;
+	        var resolveSize = this._pool.resolveSize;
+	        if (!contextNode) {
+	            resolveSize[0] = 0;
+	            resolveSize[1] = 0;
+	            return resolveSize;
+	        }
+	
+	        // Get in use size
+	        var renderNode = contextNode.renderNode;
+	        var size = renderNode.getSize();
+	        if (!size) {
+	            return parentSize;
+	        }
+	
+	        // Check if true-size is used and it must be reavaluated.
+	        // This particular piece of code specifically handles true-size Surfaces in famo.us.
+	        // It contains portions that ensure that the true-size of a Surface is re-evaluated
+	        // and also workaround code that backs up the size of a Surface, so that when the surface
+	        // is re-added to the DOM (e.g. when scrolling) it doesn't temporarily have a size of 0.
+	        var configSize = _resolveConfigSize(renderNode);
+	        if (configSize && ((configSize.size[0] === true) || (configSize.size[1] === true))) {
+	            contextNode.usesTrueSize = true;
+	            if (configSize.renderNode instanceof Surface) {
+	                var backupSize = configSize.renderNode._backupSize;
+	                if (configSize.renderNode._contentDirty || configSize.renderNode._trueSizeCheck) {
+	                  this._trueSizeRequested = true;
+	                  contextNode.trueSizeRequested = true;
+	                }
+	                if (configSize.renderNode._trueSizeCheck) {
+	
+	                    // Fix for true-size renderables. When true-size is used, the size
+	                    // is incorrect for one render-cycle due to the fact that Surface.commit
+	                    // updates the content after asking the DOM for the offsetHeight/offsetWidth.
+	                    // The code below backs the size up, and re-uses that when this scenario
+	                    // occurs.
+	                    if (backupSize && (configSize.size !== size)) {
+	                        var newWidth = (configSize.size[0] === true) ? Math.max(backupSize[0], size[0]) : size[0];
+	                        var newHeight = (configSize.size[1] === true) ? Math.max(backupSize[1], size[1]) : size[1];
+	                        backupSize[0] = newWidth;
+	                        backupSize[1] = newHeight;
+	                        size = backupSize;
+	                        configSize.renderNode._backupSize = undefined;
+	                        backupSize = undefined;
+	                    }
+	                }
+	                if (this._reevalTrueSize || (backupSize && ((backupSize[0] !== size[0]) || (backupSize[1] !== size[1])))) {
+	                    configSize.renderNode._trueSizeCheck = true; // force request of true-size from DOM
+	                    configSize.renderNode._sizeDirty = true;
+	                    this._trueSizeRequested = true;
+	                }
+	
+	                // Backup the size of the node
+	                if (!backupSize) {
+	                    configSize.renderNode._backupSize = [0, 0];
+	                    backupSize = configSize.renderNode._backupSize;
+	                }
+	                backupSize[0] = size[0];
+	                backupSize[1] = size[1];
+	            }
+	
+	            // Ensure re-layout when a child layout-controller is using true-size and it
+	            // has ben changed.
+	            else if (configSize.renderNode._nodes) {
+	                if (this._reevalTrueSize || configSize.renderNode._nodes._trueSizeRequested) {
+	                    contextNode.trueSizeRequested = true;
+	                    this._trueSizeRequested = true;
+	                }
+	            }
+	        }
+	
+	        // Resolve 'undefined' to parent-size and true to 0
+	        if ((size[0] === undefined) || (size[0] === true) || (size[1] === undefined) || (size[1] === true)) {
+	            resolveSize[0] = size[0];
+	            resolveSize[1] = size[1];
+	            size = resolveSize;
+	            if (size[0] === undefined) {
+	                size[0] = parentSize[0];
+	            }
+	            else if (size[0] === true) {
+	                size[0] = 0;
+	                this._trueSizeRequested = true;
+	                contextNode.trueSizeRequested = true;
+	            }
+	            if (size[1] === undefined) {
+	                size[1] = parentSize[1];
+	            }
+	            else if (size[1] === true) {
+	                size[1] = 0;
+	                this._trueSizeRequested = true;
+	                contextNode.trueSizeRequested = true;
+	            }
+	        }
+	        return size;
+	    }
+	
+	    module.exports = LayoutNodeManager;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 47 */
 /*!************************************************!*\
   !*** ../~/famous/surfaces/ContainerSurface.js ***!
   \************************************************/
@@ -13498,8 +11210,8 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Surface = __webpack_require__(/*! ../core/Surface */ 19);
-	var Context = __webpack_require__(/*! ../core/Context */ 40);
+	var Surface = __webpack_require__(/*! ../core/Surface */ 17);
+	var Context = __webpack_require__(/*! ../core/Context */ 37);
 	function ContainerSurface(options) {
 	    Surface.call(this, options);
 	    this._container = document.createElement('div');
@@ -13541,7 +11253,7 @@
 	module.exports = ContainerSurface;
 
 /***/ },
-/* 57 */
+/* 48 */
 /*!*********************************!*\
   !*** ../~/famous/core/Group.js ***!
   \*********************************/
@@ -13554,9 +11266,9 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Context = __webpack_require__(/*! ./Context */ 40);
-	var Transform = __webpack_require__(/*! ./Transform */ 28);
-	var Surface = __webpack_require__(/*! ./Surface */ 19);
+	var Context = __webpack_require__(/*! ./Context */ 37);
+	var Transform = __webpack_require__(/*! ./Transform */ 19);
+	var Surface = __webpack_require__(/*! ./Surface */ 17);
 	function Group(options) {
 	    Surface.call(this, options);
 	    this._shouldRecalculateSize = false;
@@ -13619,7 +11331,7 @@
 	module.exports = Group;
 
 /***/ },
-/* 58 */
+/* 49 */
 /*!**********************************!*\
   !*** ../~/famous/math/Vector.js ***!
   \**********************************/
@@ -13781,7 +11493,7 @@
 	module.exports = Vector;
 
 /***/ },
-/* 59 */
+/* 50 */
 /*!********************************************!*\
   !*** ../~/famous/physics/PhysicsEngine.js ***!
   \********************************************/
@@ -13794,7 +11506,7 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var EventHandler = __webpack_require__(/*! ../core/EventHandler */ 41);
+	var EventHandler = __webpack_require__(/*! ../core/EventHandler */ 38);
 	function PhysicsEngine(options) {
 	    this.options = Object.create(PhysicsEngine.DEFAULT_OPTIONS);
 	    if (options)
@@ -14063,7 +11775,7 @@
 	module.exports = PhysicsEngine;
 
 /***/ },
-/* 60 */
+/* 51 */
 /*!**********************************************!*\
   !*** ../~/famous/physics/bodies/Particle.js ***!
   \**********************************************/
@@ -14076,10 +11788,10 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Vector = __webpack_require__(/*! ../../math/Vector */ 58);
-	var Transform = __webpack_require__(/*! ../../core/Transform */ 28);
-	var EventHandler = __webpack_require__(/*! ../../core/EventHandler */ 41);
-	var Integrator = __webpack_require__(/*! ../integrators/SymplecticEuler */ 71);
+	var Vector = __webpack_require__(/*! ../../math/Vector */ 49);
+	var Transform = __webpack_require__(/*! ../../core/Transform */ 19);
+	var EventHandler = __webpack_require__(/*! ../../core/EventHandler */ 38);
+	var Integrator = __webpack_require__(/*! ../integrators/SymplecticEuler */ 67);
 	function Particle(options) {
 	    options = options || {};
 	    var defaults = Particle.DEFAULT_OPTIONS;
@@ -14274,7 +11986,7 @@
 	module.exports = Particle;
 
 /***/ },
-/* 61 */
+/* 52 */
 /*!******************************************!*\
   !*** ../~/famous/physics/forces/Drag.js ***!
   \******************************************/
@@ -14287,7 +11999,7 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Force = __webpack_require__(/*! ./Force */ 72);
+	var Force = __webpack_require__(/*! ./Force */ 68);
 	function Drag(options) {
 	    this.options = Object.create(this.constructor.DEFAULT_OPTIONS);
 	    if (options)
@@ -14327,7 +12039,7 @@
 	module.exports = Drag;
 
 /***/ },
-/* 62 */
+/* 53 */
 /*!********************************************!*\
   !*** ../~/famous/physics/forces/Spring.js ***!
   \********************************************/
@@ -14340,8 +12052,8 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Force = __webpack_require__(/*! ./Force */ 72);
-	var Vector = __webpack_require__(/*! ../../math/Vector */ 58);
+	var Force = __webpack_require__(/*! ./Force */ 68);
+	var Vector = __webpack_require__(/*! ../../math/Vector */ 49);
 	function Spring(options) {
 	    Force.call(this);
 	    this.options = Object.create(this.constructor.DEFAULT_OPTIONS);
@@ -14465,7 +12177,7 @@
 	module.exports = Spring;
 
 /***/ },
-/* 63 */
+/* 54 */
 /*!****************************************!*\
   !*** ../~/famous/inputs/ScrollSync.js ***!
   \****************************************/
@@ -14478,9 +12190,9 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var EventHandler = __webpack_require__(/*! ../core/EventHandler */ 41);
+	var EventHandler = __webpack_require__(/*! ../core/EventHandler */ 38);
 	var Engine = __webpack_require__(/*! ../core/Engine */ 14);
-	var OptionsManager = __webpack_require__(/*! ../core/OptionsManager */ 42);
+	var OptionsManager = __webpack_require__(/*! ../core/OptionsManager */ 39);
 	function ScrollSync(options) {
 	    this.options = Object.create(ScrollSync.DEFAULT_OPTIONS);
 	    this._optionsManager = new OptionsManager(this.options);
@@ -14611,7 +12323,1967 @@
 	module.exports = ScrollSync;
 
 /***/ },
-/* 64 */
+/* 55 */
+/*!****************************************!*\
+  !*** ../~/famous/core/ViewSequence.js ***!
+  \****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	function ViewSequence(options) {
+	    if (!options)
+	        options = [];
+	    if (options instanceof Array)
+	        options = { array: options };
+	    this._ = null;
+	    this.index = options.index || 0;
+	    if (options.array)
+	        this._ = new this.constructor.Backing(options.array);
+	    else if (options._)
+	        this._ = options._;
+	    if (this.index === this._.firstIndex)
+	        this._.firstNode = this;
+	    if (this.index === this._.firstIndex + this._.array.length - 1)
+	        this._.lastNode = this;
+	    if (options.loop !== undefined)
+	        this._.loop = options.loop;
+	    if (options.trackSize !== undefined)
+	        this._.trackSize = options.trackSize;
+	    this._previousNode = null;
+	    this._nextNode = null;
+	}
+	ViewSequence.Backing = function Backing(array) {
+	    this.array = array;
+	    this.firstIndex = 0;
+	    this.loop = false;
+	    this.firstNode = null;
+	    this.lastNode = null;
+	    this.cumulativeSizes = [[
+	            0,
+	            0
+	        ]];
+	    this.sizeDirty = true;
+	    this.trackSize = false;
+	};
+	ViewSequence.Backing.prototype.getValue = function getValue(i) {
+	    var _i = i - this.firstIndex;
+	    if (_i < 0 || _i >= this.array.length)
+	        return null;
+	    return this.array[_i];
+	};
+	ViewSequence.Backing.prototype.setValue = function setValue(i, value) {
+	    this.array[i - this.firstIndex] = value;
+	};
+	ViewSequence.Backing.prototype.getSize = function getSize(index) {
+	    return this.cumulativeSizes[index];
+	};
+	ViewSequence.Backing.prototype.calculateSize = function calculateSize(index) {
+	    index = index || this.array.length;
+	    var size = [
+	        0,
+	        0
+	    ];
+	    for (var i = 0; i < index; i++) {
+	        var nodeSize = this.array[i].getSize();
+	        if (!nodeSize)
+	            return undefined;
+	        if (size[0] !== undefined) {
+	            if (nodeSize[0] === undefined)
+	                size[0] = undefined;
+	            else
+	                size[0] += nodeSize[0];
+	        }
+	        if (size[1] !== undefined) {
+	            if (nodeSize[1] === undefined)
+	                size[1] = undefined;
+	            else
+	                size[1] += nodeSize[1];
+	        }
+	        this.cumulativeSizes[i + 1] = size.slice();
+	    }
+	    this.sizeDirty = false;
+	    return size;
+	};
+	ViewSequence.Backing.prototype.reindex = function reindex(start, removeCount, insertCount) {
+	    if (!this.array[0])
+	        return;
+	    var i = 0;
+	    var index = this.firstIndex;
+	    var indexShiftAmount = insertCount - removeCount;
+	    var node = this.firstNode;
+	    while (index < start - 1) {
+	        node = node.getNext();
+	        index++;
+	    }
+	    var spliceStartNode = node;
+	    for (i = 0; i < removeCount; i++) {
+	        node = node.getNext();
+	        if (node)
+	            node._previousNode = spliceStartNode;
+	    }
+	    var spliceResumeNode = node ? node.getNext() : null;
+	    spliceStartNode._nextNode = null;
+	    node = spliceStartNode;
+	    for (i = 0; i < insertCount; i++)
+	        node = node.getNext();
+	    index += insertCount;
+	    if (node !== spliceResumeNode) {
+	        node._nextNode = spliceResumeNode;
+	        if (spliceResumeNode)
+	            spliceResumeNode._previousNode = node;
+	    }
+	    if (spliceResumeNode) {
+	        node = spliceResumeNode;
+	        index++;
+	        while (node && index < this.array.length + this.firstIndex) {
+	            if (node._nextNode)
+	                node.index += indexShiftAmount;
+	            else
+	                node.index = index;
+	            node = node.getNext();
+	            index++;
+	        }
+	    }
+	    if (this.trackSize)
+	        this.sizeDirty = true;
+	};
+	ViewSequence.prototype.getPrevious = function getPrevious() {
+	    var len = this._.array.length;
+	    if (!len) {
+	        this._previousNode = null;
+	    } else if (this.index === this._.firstIndex) {
+	        if (this._.loop) {
+	            this._previousNode = this._.lastNode || new this.constructor({
+	                _: this._,
+	                index: this._.firstIndex + len - 1
+	            });
+	            this._previousNode._nextNode = this;
+	        } else {
+	            this._previousNode = null;
+	        }
+	    } else if (!this._previousNode) {
+	        this._previousNode = new this.constructor({
+	            _: this._,
+	            index: this.index - 1
+	        });
+	        this._previousNode._nextNode = this;
+	    }
+	    return this._previousNode;
+	};
+	ViewSequence.prototype.getNext = function getNext() {
+	    var len = this._.array.length;
+	    if (!len) {
+	        this._nextNode = null;
+	    } else if (this.index === this._.firstIndex + len - 1) {
+	        if (this._.loop) {
+	            this._nextNode = this._.firstNode || new this.constructor({
+	                _: this._,
+	                index: this._.firstIndex
+	            });
+	            this._nextNode._previousNode = this;
+	        } else {
+	            this._nextNode = null;
+	        }
+	    } else if (!this._nextNode) {
+	        this._nextNode = new this.constructor({
+	            _: this._,
+	            index: this.index + 1
+	        });
+	        this._nextNode._previousNode = this;
+	    }
+	    return this._nextNode;
+	};
+	ViewSequence.prototype.indexOf = function indexOf(item) {
+	    return this._.array.indexOf(item);
+	};
+	ViewSequence.prototype.getIndex = function getIndex() {
+	    return this.index;
+	};
+	ViewSequence.prototype.toString = function toString() {
+	    return '' + this.index;
+	};
+	ViewSequence.prototype.unshift = function unshift(value) {
+	    this._.array.unshift.apply(this._.array, arguments);
+	    this._.firstIndex -= arguments.length;
+	    if (this._.trackSize)
+	        this._.sizeDirty = true;
+	};
+	ViewSequence.prototype.push = function push(value) {
+	    this._.array.push.apply(this._.array, arguments);
+	    if (this._.trackSize)
+	        this._.sizeDirty = true;
+	};
+	ViewSequence.prototype.splice = function splice(index, howMany) {
+	    var values = Array.prototype.slice.call(arguments, 2);
+	    this._.array.splice.apply(this._.array, [
+	        index - this._.firstIndex,
+	        howMany
+	    ].concat(values));
+	    this._.reindex(index, howMany, values.length);
+	};
+	ViewSequence.prototype.swap = function swap(other) {
+	    var otherValue = other.get();
+	    var myValue = this.get();
+	    this._.setValue(this.index, otherValue);
+	    this._.setValue(other.index, myValue);
+	    var myPrevious = this._previousNode;
+	    var myNext = this._nextNode;
+	    var myIndex = this.index;
+	    var otherPrevious = other._previousNode;
+	    var otherNext = other._nextNode;
+	    var otherIndex = other.index;
+	    this.index = otherIndex;
+	    this._previousNode = otherPrevious === this ? other : otherPrevious;
+	    if (this._previousNode)
+	        this._previousNode._nextNode = this;
+	    this._nextNode = otherNext === this ? other : otherNext;
+	    if (this._nextNode)
+	        this._nextNode._previousNode = this;
+	    other.index = myIndex;
+	    other._previousNode = myPrevious === other ? this : myPrevious;
+	    if (other._previousNode)
+	        other._previousNode._nextNode = other;
+	    other._nextNode = myNext === other ? this : myNext;
+	    if (other._nextNode)
+	        other._nextNode._previousNode = other;
+	    if (this.index === this._.firstIndex)
+	        this._.firstNode = this;
+	    else if (this.index === this._.firstIndex + this._.array.length - 1)
+	        this._.lastNode = this;
+	    if (other.index === this._.firstIndex)
+	        this._.firstNode = other;
+	    else if (other.index === this._.firstIndex + this._.array.length - 1)
+	        this._.lastNode = other;
+	    if (this._.trackSize)
+	        this._.sizeDirty = true;
+	};
+	ViewSequence.prototype.get = function get() {
+	    return this._.getValue(this.index);
+	};
+	ViewSequence.prototype.getSize = function getSize() {
+	    var target = this.get();
+	    return target ? target.getSize() : null;
+	};
+	ViewSequence.prototype.render = function render() {
+	    if (this._.trackSize && this._.sizeDirty)
+	        this._.calculateSize();
+	    var target = this.get();
+	    return target ? target.render.apply(target, arguments) : null;
+	};
+	module.exports = ViewSequence;
+
+/***/ },
+/* 56 */
+/*!**********************************!*\
+  !*** ../~/famous/core/Entity.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var entities = [];
+	function get(id) {
+	    return entities[id];
+	}
+	function set(id, entity) {
+	    entities[id] = entity;
+	}
+	function register(entity) {
+	    var id = entities.length;
+	    set(id, entity);
+	    return id;
+	}
+	function unregister(id) {
+	    set(id, null);
+	}
+	module.exports = {
+	    register: register,
+	    unregister: unregister,
+	    get: get,
+	    set: set
+	};
+
+/***/ },
+/* 57 */
+/*!********************************************************!*\
+  !*** ../~/famous-flex/src/helpers/LayoutDockHelper.js ***!
+  \********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2014 - 2015
+	 */
+	
+	/**
+	 * LayoutDockHelper helps positioning nodes using docking principles.
+	 *
+	 * **Example:**
+	 *
+	 * ```javascript
+	 * var LayoutDockHelper = require('famous-flex/helpers/LayoutDockHelper');
+	 *
+	 * function HeaderFooterLayout(context, options) {
+	 *   var dock = new LayoutDockHelper(context);
+	 *   dock.top('header', options.headerSize);
+	 *   dock.bottom('footer', options.footerSize);
+	 *   dock.fill('content');
+	 * };
+	 * ```
+	 *
+	 * You can also use layout-literals to create layouts using docking semantics:
+	 *
+	 * ```javascript
+	 * var layoutController = new LayoutController({
+	 *   layout: {dock: [
+	 *     ['top', 'header', 40],
+	 *     ['bottom', 'footer', 40, 1], // z-index +1
+	 *     ['fill', 'content']
+	 *   ]},
+	 *   dataSource: {
+	 *     header: new Surface({content: 'header'}),
+	 *     footer: new Surface({content: 'footer'}),
+	 *     content: new Surface({content: 'content'}),
+	 *   }
+	 * });
+	 * ```
+	 *
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var LayoutUtility = __webpack_require__(/*! ../LayoutUtility */ 43);
+	
+	    /**
+	     * @class
+	     * @param {LayoutContext} context layout-context
+	     * @param {Object} [options] additional options
+	     * @param {Object} [options.margins] margins to start out with (default: 0px)
+	     * @param {Number} [options.translateZ] z-index to use when translating objects (default: 0)
+	     * @alias module:LayoutDockHelper
+	     */
+	    function LayoutDockHelper(context, options) {
+	        var size = context.size;
+	        this._size = size;
+	        this._context = context;
+	        this._options = options;
+	        this._data = {
+	            z: (options && options.translateZ) ? options.translateZ : 0
+	        };
+	        if (options && options.margins) {
+	            var margins = LayoutUtility.normalizeMargins(options.margins);
+	            this._data.left = margins[3];
+	            this._data.top = margins[0];
+	            this._data.right = size[0] - margins[1];
+	            this._data.bottom = size[1] - margins[2];
+	        }
+	        else {
+	            this._data.left = 0;
+	            this._data.top = 0;
+	            this._data.right = size[0];
+	            this._data.bottom = size[1];
+	        }
+	    }
+	
+	    /**
+	     * Parses the layout-rules based on a JSON data object.
+	     * The object should be an array with the following syntax:
+	     * `[[rule, node, value, z], [rule, node, value, z], ...]`
+	     *
+	     * **Example:**
+	     *
+	     * ```JSON
+	     * [
+	     *   ['top', 'header', 50],
+	     *   ['bottom', 'footer', 50, 10], // z-index: 10
+	     *   ['margins', [10, 5]], // marginate remaining space: 10px top/bottom, 5px left/right
+	     *   ['fill', 'content']
+	     * ]
+	     * ```
+	     *
+	     * @param {Object} data JSON object
+	     */
+	    LayoutDockHelper.prototype.parse = function(data) {
+	        for (var i = 0; i < data.length; i++) {
+	            var rule = data[i];
+	            var value = (rule.length >= 3) ? rule[2] : undefined;
+	            if (rule[0] === 'top') {
+	                this.top(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
+	            }
+	            else if (rule[0] === 'left') {
+	                this.left(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
+	            }
+	            else if (rule[0] === 'right') {
+	                this.right(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
+	            }
+	            else if (rule[0] === 'bottom') {
+	                this.bottom(rule[1], value, (rule.length >=4) ? rule[3] : undefined);
+	            }
+	            else if (rule[0] === 'fill') {
+	                this.fill(rule[1], (rule.length >=3) ? rule[2] : undefined);
+	            }
+	            else if (rule[0] === 'margins') {
+	                this.margins(rule[1]);
+	            }
+	        }
+	    };
+	
+	    /**
+	     * Dock the node to the top.
+	     *
+	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `height` argument argument is used for padding
+	     * @param {Number} [height] height of the layout-node, when omitted the height of the node is used
+	     * @param {Number} [z] z-index to use for the node
+	     * @return {LayoutDockHelper} this
+	     */
+	    LayoutDockHelper.prototype.top = function(node, height, z) {
+	        if (height instanceof Array) {
+	            height = height[1];
+	        }
+	        if (height === undefined) {
+	            var size = this._context.resolveSize(node, [this._data.right - this._data.left, this._data.bottom - this._data.top]);
+	            height = size[1];
+	        }
+	        this._context.set(node, {
+	            size: [this._data.right - this._data.left, height],
+	            origin: [0, 0],
+	            align: [0, 0],
+	            translate: [this._data.left, this._data.top, (z === undefined) ? this._data.z : z]
+	        });
+	        this._data.top += height;
+	        return this;
+	    };
+	
+	    /**
+	     * Dock the node to the left
+	     *
+	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `width` argument argument is used for padding
+	     * @param {Number} [width] width of the layout-node, when omitted the width of the node is used
+	     * @param {Number} [z] z-index to use for the node
+	     * @return {LayoutDockHelper} this
+	     */
+	    LayoutDockHelper.prototype.left = function(node, width, z) {
+	        if (width instanceof Array) {
+	            width = width[0];
+	        }
+	        if (width === undefined) {
+	            var size = this._context.resolveSize(node, [this._data.right - this._data.left, this._data.bottom - this._data.top]);
+	            width = size[0];
+	        }
+	        this._context.set(node, {
+	            size: [width, this._data.bottom - this._data.top],
+	            origin: [0, 0],
+	            align: [0, 0],
+	            translate: [this._data.left, this._data.top, (z === undefined) ? this._data.z : z]
+	        });
+	        this._data.left += width;
+	        return this;
+	    };
+	
+	    /**
+	     * Dock the node to the bottom
+	     *
+	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `height` argument argument is used for padding
+	     * @param {Number} [height] height of the layout-node, when omitted the height of the node is used
+	     * @param {Number} [z] z-index to use for the node
+	     * @return {LayoutDockHelper} this
+	     */
+	    LayoutDockHelper.prototype.bottom = function(node, height, z) {
+	        if (height instanceof Array) {
+	            height = height[1];
+	        }
+	        if (height === undefined) {
+	            var size = this._context.resolveSize(node, [this._data.right - this._data.left, this._data.bottom - this._data.top]);
+	            height = size[1];
+	        }
+	        this._context.set(node, {
+	            size: [this._data.right - this._data.left, height],
+	            origin: [0, 1],
+	            align: [0, 1],
+	            translate: [this._data.left, -(this._size[1] - this._data.bottom), (z === undefined) ? this._data.z : z]
+	        });
+	        this._data.bottom -= height;
+	        return this;
+	    };
+	
+	    /**
+	     * Dock the node to the right.
+	     *
+	     * @param {LayoutNode|String} [node] layout-node to dock, when omitted the `width` argument argument is used for padding
+	     * @param {Number} [width] width of the layout-node, when omitted the width of the node is used
+	     * @param {Number} [z] z-index to use for the node
+	     * @return {LayoutDockHelper} this
+	     */
+	    LayoutDockHelper.prototype.right = function(node, width, z) {
+	        if (width instanceof Array) {
+	            width = width[0];
+	        }
+	        if (node) {
+	            if (width === undefined) {
+	                var size = this._context.resolveSize(node, [this._data.right - this._data.left, this._data.bottom - this._data.top]);
+	                width = size[0];
+	            }
+	            this._context.set(node, {
+	                size: [width, this._data.bottom - this._data.top],
+	                origin: [1, 0],
+	                align: [1, 0],
+	                translate: [-(this._size[0] - this._data.right), this._data.top, (z === undefined) ? this._data.z : z]
+	            });
+	        }
+	        if (width) {
+	            this._data.right -= width;
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Fills the node to the remaining content.
+	     *
+	     * @param {LayoutNode|String} node layout-node to dock
+	     * @param {Number} [z] z-index to use for the node
+	     * @return {LayoutDockHelper} this
+	     */
+	    LayoutDockHelper.prototype.fill = function(node, z) {
+	        this._context.set(node, {
+	            size: [this._data.right - this._data.left, this._data.bottom - this._data.top],
+	            translate: [this._data.left, this._data.top, (z === undefined) ? this._data.z : z]
+	        });
+	        return this;
+	    };
+	
+	    /**
+	     * Applies indent margins to the remaining content.
+	     *
+	     * @param {Number|Array} margins margins shorthand (e.g. '5', [10, 10], [5, 10, 5, 10])
+	     * @return {LayoutDockHelper} this
+	     */
+	    LayoutDockHelper.prototype.margins = function(margins) {
+	        margins = LayoutUtility.normalizeMargins(margins);
+	        this._data.left += margins[3];
+	        this._data.top += margins[0];
+	        this._data.right -= margins[1];
+	        this._data.bottom -= margins[2];
+	        return this;
+	    };
+	
+	    /**
+	     * Gets the current left/right/top/bottom/z bounds used by the dock-helper.
+	     *
+	     * @return {Object} `{left: x, right: x, top: x, bottom: x, z: x}`
+	     */
+	    LayoutDockHelper.prototype.get = function() {
+	        return this._data;
+	    };
+	
+	    // Register the helper
+	    LayoutUtility.registerHelper('dock', LayoutDockHelper);
+	
+	    module.exports = LayoutDockHelper;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 58 */
+/*!***************************************************!*\
+  !*** ../~/famous-flex/src/AnimationController.js ***!
+  \***************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2015
+	 */
+	
+	/**
+	 * Animating between famo.us views in awesome ways.
+	 *
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var LayoutController = __webpack_require__(/*! ./LayoutController */ 24);
+	    var Transform = __webpack_require__(/*! famous/core/Transform */ 19);
+	    var Modifier = __webpack_require__(/*! famous/core/Modifier */ 69);
+	    var StateModifier = __webpack_require__(/*! famous/modifiers/StateModifier */ 70);
+	    var RenderNode = __webpack_require__(/*! famous/core/RenderNode */ 41);
+	    var Timer = __webpack_require__(/*! famous/utilities/Timer */ 71);
+	    var Easing = __webpack_require__(/*! famous/transitions/Easing */ 60);
+	    //var Transitionable = require('famous/animations/Transitionable');
+	
+	    /**
+	     * @class
+	     * @param {Object} [options] Configurable options.
+	     * @param {Object} [options.transition] Transition options (default: `{duration: 400, curve: Easing.inOutQuad}`).
+	     * @param {Function} [options.animation] Animation function (default: `AnimationController.Animation.Slide.Left`).
+	     * @param {Number} [options.zIndexOffset] Optional z-index difference between the hiding & showing renderable (default: 0).
+	     * @param {Object} [options.show] Show specific options.
+	     * @param {Object} [options.show.transition] Show specific transition options.
+	     * @param {Function} [options.show.animation] Show specific animation function.
+	     * @param {Object} [options.hide] Hide specific options.
+	     * @param {Object} [options.hide.transition] Hide specific transition options.
+	     * @param {Function} [options.hide.animation] Hide specific animation function.
+	     * @param {Object} [options.transfer] Transfer options.
+	     * @param {Object} [options.transfer.transition] Transfer specific transition options.
+	     * @param {Number} [options.transfer.zIndex] Z-index the tranferables are moved on top while animating (default: 10).
+	     * @param {Bool} [options.transfer.fastResize] When enabled, scales the renderable i.s.o. resizing when doing the transfer animation (default: true).
+	     * @param {Array} [options.transfer.items] Ids (key/value) pairs (source-id/target-id) of the renderables that should be transferred.
+	     * @alias module:AnimationController
+	     */
+	    function AnimationController(options) {
+	        View.apply(this, arguments);
+	
+	        this._size = [0, 0];
+	        _createLayout.call(this);
+	
+	        if (options) {
+	            this.setOptions(options);
+	        }
+	    }
+	    AnimationController.prototype = Object.create(View.prototype);
+	    AnimationController.prototype.constructor = AnimationController;
+	
+	    /**
+	     * Out of the box supported animations.
+	     */
+	    AnimationController.Animation = {
+	        Slide: {
+	            Left: function(show, size) {
+	                return {transform: Transform.translate(show ? size[0] : -size[0], 0, 0)};
+	            },
+	            Right: function(show, size) {
+	                return {transform: Transform.translate(show ? -size[0] : size[0], 0, 0)};
+	            },
+	            Up: function(show, size) {
+	                return {transform: Transform.translate(0, show ? size[1] : -size[1], 0)};
+	            },
+	            Down: function(show, size) {
+	                return {transform: Transform.translate(0, show ? -size[1] : size[1], 0)};
+	            }
+	        },
+	        Fade: function(show, size) {
+	            return {
+	                opacity: (this && (this.opacity !== undefined)) ? this.opacity : 0
+	            };
+	        },
+	        Zoom: function(show, size) {
+	            var scale = (this && (this.scale !== undefined)) ? this.scale : 0.5;
+	            return {
+	                transform: Transform.scale(scale, scale, 1),
+	                align: [0.5, 0.5],
+	                origin: [0.5, 0.5]
+	            };
+	        },
+	        FadedZoom: function(show, size) {
+	            var scale = show ? ((this && (this.showScale !== undefined)) ? this.showScale : 0.9) : ((this && (this.hideScale !== undefined)) ? this.hideScale : 1.1);
+	            return {
+	                opacity: (this && (this.opacity !== undefined)) ? this.opacity : 0,
+	                transform: Transform.scale(scale, scale, 1),
+	                align: [0.5, 0.5],
+	                origin: [0.5, 0.5]
+	            };
+	        }
+	        /*,
+	        Flip: {
+	            Left: function(show, size) {
+	                return {transform: Transform.rotate(0, show ? Math.PI : -Math.PI, 0)};
+	            },
+	            Right: function(show, size) {
+	                return {transform: Transform.rotate(0, show ? -Math.PI : Math.PI, 0)};
+	            },
+	            Up: function(show, size) {
+	                return {transform: Transform.rotate(show ? Math.PI : -Math.PI, 0, 0)};
+	            },
+	            Down: function(show, size) {
+	                return {transform: Transform.rotate(show ? -Math.PI : Math.PI, 0, 0)};
+	            }
+	        }*/
+	    };
+	
+	    AnimationController.DEFAULT_OPTIONS = {
+	        transition: {duration: 400, curve: Easing.inOutQuad},
+	        animation: AnimationController.Animation.Fade,
+	        show: {
+	            // transition,
+	            // animation
+	        },
+	        hide: {
+	            // transition,
+	            // animation
+	        },
+	        transfer: {
+	            fastResize: true,
+	            zIndex: 10 // z-index offset the items are translated while transferring
+	            // transition,
+	            // items: {
+	            //   'image': 'image'
+	            //   'image': ['image', 'image2']
+	            // }
+	        },
+	        zIndexOffset: 0
+	    };
+	
+	    var ItemState = {
+	        NONE: 0,
+	        HIDE: 1,
+	        HIDING: 2,
+	        SHOW: 3,
+	        SHOWING: 4,
+	        VISIBLE: 5,
+	        QUEUED: 6
+	    };
+	
+	    /**
+	     * Stacks the renderables on top of each other
+	     * with a z-translation of this.options.zIndexOffset.
+	     */
+	    function ViewStackLayout(context, options) {
+	        var set = {
+	            size: context.size,
+	            translate: [0, 0, 0]
+	        };
+	        this._size[0] = context.size[0];
+	        this._size[1] = context.size[1];
+	        var views = context.get('views');
+	        var transferables = context.get('transferables');
+	        for (var i = 0; i < Math.min(views.length, 2); i++) {
+	            var item = this._viewStack[i];
+	            switch (item.state) {
+	                case ItemState.HIDE:
+	                case ItemState.HIDING:
+	                case ItemState.VISIBLE:
+	                case ItemState.SHOW:
+	                case ItemState.SHOWING:
+	
+	                    // Layout view
+	                    var view = views[i];
+	                    context.set(view, set);
+	
+	                    // Layout any transferables
+	                    for (var j = 0; j < transferables.length; j++) {
+	                        for (var k = 0; k < item.transferables.length; k++) {
+	                            if (transferables[j].renderNode === item.transferables[k].renderNode) {
+	                                context.set(transferables[j], {
+	                                    translate: [0, 0, set.translate[2]],
+	                                    size: [context.size[0], context.size[1]]
+	                                });
+	                            }
+	                        }
+	                    }
+	
+	                    // Increase z-index for next view
+	                    set.translate[2] += options.zIndexOffset;
+	                    break;
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Creates the view-stack layout.
+	     */
+	    function _createLayout() {
+	        this._renderables = {
+	            views: [],
+	            transferables: []
+	        };
+	        this._viewStack = [];
+	        this.layout = new LayoutController({
+	            layout: ViewStackLayout.bind(this),
+	            layoutOptions: this.options,
+	            dataSource: this._renderables
+	        });
+	        this.add(this.layout);
+	        this.layout.on('layoutend', _processAnimations.bind(this));
+	    }
+	
+	    /**
+	     * Gets the spec from a spec.
+	     */
+	    function _getViewSpec(item, view, id, callback) {
+	        if (!item.view) {
+	            return;
+	        }
+	        var spec = view.getSpec(id);
+	        if (spec && !spec.trueSizeRequested) {
+	            callback(spec);
+	        }
+	        else {
+	            Timer.after(_getViewSpec.bind(this, item, view, id, callback), 1);
+	        }
+	    }
+	
+	    /**
+	     * Gets the transferable delegate for the given id.
+	     */
+	    function _getTransferable(item, view, id) {
+	        // 1. If view supports getTransferable, use that
+	        if (view.getTransferable) {
+	            return view.getTransferable(id);
+	        }
+	        // 2. If view is derived from layoutcontroller, use that
+	        if (view.getSpec && view.get && view.replace) {
+	            if (view.get(id) !== undefined) {
+	                return {
+	                    get: function() {
+	                        return view.get(id);
+	                    },
+	                    show: function(renderable) {
+	                        view.replace(id, renderable);
+	                    },
+	                    getSpec: _getViewSpec.bind(this, item, view, id)
+	                };
+	            }
+	        }
+	        // 3. If view has an embedded layout, use that as fallback
+	        if (view.layout) {
+	            return _getTransferable.call(this, item, view.layout, id);
+	        }
+	    }
+	
+	    /**
+	     * Begins visual transfer or renderables from the previous item
+	     * to the new item.
+	     */
+	    function _initTransferableAnimations(item, prevItem, callback) {
+	        var callbackCount = 0;
+	        function waitForAll() {
+	            callbackCount--;
+	            if (callbackCount === 0) {
+	                callback();
+	            }
+	        }
+	        for (var sourceId in item.options.transfer.items) {
+	            if (_initTransferableAnimation.call(this, item, prevItem, sourceId, waitForAll)) {
+	                callbackCount++;
+	            }
+	        }
+	        if (!callbackCount) {
+	            callback();
+	        }
+	    }
+	    function _initTransferableAnimation(item, prevItem, sourceId, callback) {
+	        var target = item.options.transfer.items[sourceId];
+	        var transferable = {};
+	        transferable.source = _getTransferable.call(this, prevItem, prevItem.view, sourceId);
+	        if (Array.isArray(target)) {
+	            for (var i = 0; i < target.length; i++) {
+	                transferable.target = _getTransferable.call(this, item, item.view, target[i]);
+	                if (transferable.target) {
+	                    break;
+	                }
+	            }
+	        }
+	        else {
+	            transferable.target = _getTransferable.call(this, item, item.view, target);
+	        }
+	        if (transferable.source && transferable.target) {
+	            transferable.source.getSpec(function(sourceSpec) {
+	
+	                // Replace source & target renderables in the views
+	                // source: dummy-node
+	                // target: target-renderable with opacity: 0.
+	                transferable.sourceSpec = sourceSpec;
+	                transferable.originalSource = transferable.source.get();
+	                transferable.source.show(new RenderNode(new Modifier(sourceSpec)));
+	                transferable.originalTarget = transferable.target.get();
+	                var targetNode = new RenderNode(new Modifier({opacity: 0}));
+	                targetNode.add(transferable.originalTarget);
+	                transferable.target.show(targetNode);
+	
+	                // Take ownership of the source renderable.
+	                // This renderable will be layouted by the layout-function
+	                var zIndexMod = new Modifier({
+	                    transform: Transform.translate(0, 0, item.options.transfer.zIndex)
+	                });
+	                transferable.mod = new StateModifier(sourceSpec);
+	                transferable.renderNode = new RenderNode(zIndexMod);
+	                transferable.renderNode.add(transferable.mod).add(transferable.originalSource);
+	                item.transferables.push(transferable);
+	                this._renderables.transferables.push(transferable.renderNode);
+	                this.layout.reflowLayout();
+	
+	                // Wait for the target spec to have settled. This may take a couple render
+	                // cycles if for instance, this involves a true-size renderable or the
+	                // renderable is affected by other true-size renderables around itsself.
+	                Timer.after(function() {
+	                    var callbackCalled;
+	                    transferable.target.getSpec(function(targetSpec, transition) {
+	                        transferable.targetSpec = targetSpec;
+	                        transferable.transition = transition;
+	                        if (!callbackCalled) {
+	                            callback();
+	                        }
+	                    }, true);
+	                }, 1);
+	            }.bind(this), false);
+	            return true;
+	        }
+	        else {
+	            return false;
+	        }
+	    }
+	    function _startTransferableAnimations(item, callback) {
+	        for (var j = 0; j < item.transferables.length; j++) {
+	            var transferable = item.transferables[j];
+	            transferable.mod.halt();
+	            if ((transferable.sourceSpec.opacity !== undefined) || (transferable.targetSpec.opacity !== undefined)) {
+	                transferable.mod.setOpacity((transferable.targetSpec.opacity === undefined) ? 1 : transferable.targetSpec.opacity, transferable.transition || item.options.transfer.transition);
+	            }
+	            if (item.options.transfer.fastResize) {
+	                if (transferable.sourceSpec.transform || transferable.targetSpec.transform || transferable.sourceSpec.size || transferable.targetSpec.size) {
+	                    var transform = transferable.targetSpec.transform || Transform.identity;
+	                    if (transferable.sourceSpec.size && transferable.targetSpec.size) {
+	                        transform = Transform.multiply(transform, Transform.scale(transferable.targetSpec.size[0] / transferable.sourceSpec.size[0], transferable.targetSpec.size[1] / transferable.sourceSpec.size[1], 1));
+	                    }
+	                    transferable.mod.setTransform(transform, transferable.transition || item.options.transfer.transition, callback);
+	                    callback = undefined;
+	                }
+	            }
+	            else {
+	                if (transferable.sourceSpec.transform || transferable.targetSpec.transform) {
+	                    transferable.mod.setTransform(transferable.targetSpec.transform || Transform.identity, transferable.transition || item.options.transfer.transition, callback);
+	                    callback = undefined;
+	                }
+	                if (transferable.sourceSpec.size || transferable.targetSpec.size) {
+	                    transferable.mod.setSize(transferable.targetSpec.size || transferable.sourceSpec.size, transferable.transition || item.options.transfer.transition, callback);
+	                    callback = undefined;
+	                }
+	            }
+	        }
+	        if (callback) {
+	            callback();
+	        }
+	    }
+	
+	    /**
+	     * Called whenever the view has been shown and the
+	     * transferable animations should be ended. This returns
+	     * the renderables to their original views.
+	     */
+	    function _endTransferableAnimations(item) {
+	        for (var j = 0; j < item.transferables.length; j++) {
+	            var transferable = item.transferables[j];
+	            for (var i = 0; i < this._renderables.transferables.length; i++) {
+	                if (this._renderables.transferables[i] === transferable.renderNode) {
+	                    this._renderables.transferables.splice(i, 1);
+	                    break;
+	                }
+	            }
+	            transferable.source.show(transferable.originalSource);
+	            transferable.target.show(transferable.originalTarget);
+	        }
+	        item.transferables = [];
+	        this.layout.reflowLayout();
+	    }
+	
+	    /**
+	     * Starts a show or hide animation.
+	     */
+	    function _processAnimations(event) {
+	        var prevItem;
+	        for (var i = 0; i < this._viewStack.length; i++) {
+	            var item = this._viewStack[i];
+	            switch (item.state) {
+	                case ItemState.HIDE:
+	                    item.state = ItemState.HIDING;
+	                    _startHideAnimation.call(this, item, prevItem, event.size);
+	                    _updateState.call(this);
+	                    break;
+	                case ItemState.SHOW:
+	                    item.state = ItemState.SHOWING;
+	                    _initShowAnimation.call(this, item, prevItem, event.size);
+	                    _updateState.call(this);
+	                    break;
+	            }
+	            prevItem = item;
+	        }
+	    }
+	
+	    /**
+	     * Starts the view animation.
+	     */
+	    function _initShowAnimation(item, prevItem, size) {
+	        var spec = item.options.show.animation ? item.options.show.animation.call(undefined, true, size) : {};
+	        item.startSpec = spec;
+	        item.endSpec = {
+	            opacity: 1,
+	            transform: Transform.identity
+	        };
+	        item.mod.halt();
+	        if (spec.transform) {
+	            item.mod.setTransform(spec.transform);
+	        }
+	        if (spec.opacity !== undefined) {
+	            item.mod.setOpacity(spec.opacity);
+	        }
+	        if (spec.align) {
+	            item.mod.setAlign(spec.align);
+	        }
+	        if (spec.origin) {
+	            item.mod.setOrigin(spec.origin);
+	        }
+	        if (prevItem) {
+	            _initTransferableAnimations.call(this, item, prevItem, _startShowAnimation.bind(this, item, spec));
+	        }
+	        else {
+	            _startShowAnimation.call(this, item, spec);
+	        }
+	    }
+	
+	    /**
+	     * Starts the show animation whenever init has completed.
+	     */
+	    function _startShowAnimation(item, spec) {
+	        if (!item.halted) {
+	            var callback = item.showCallback;
+	            if (spec.transform) {
+	                item.mod.setTransform(Transform.identity, item.options.show.transition, callback);
+	                callback = undefined;
+	            }
+	            if (spec.opacity !== undefined) {
+	                item.mod.setOpacity(1, item.options.show.transition, callback);
+	                callback = undefined;
+	            }
+	            _startTransferableAnimations.call(this, item, callback);
+	        }
+	    }
+	
+	    /**
+	     * Helper function for interpolating between start/end state based on percentage.
+	     */
+	    function _interpolate(start, end, perc) {
+	        return start + ((end - start) * perc);
+	    }
+	
+	    /**
+	     * Halts a item at a given frame. The frame is provided as a percentage
+	     * of the whole transition.
+	     */
+	    function _haltItemAtFrame(item, perc) {
+	        item.mod.halt();
+	        item.halted = true;
+	        if (item.startSpec && (perc !== undefined)) {
+	            if ((item.startSpec.opacity !== undefined) && (item.endSpec.opacity !== undefined)) {
+	                item.mod.setOpacity(_interpolate(item.startSpec.opacity, item.endSpec.opacity, perc));
+	            }
+	            if (item.startSpec.transform && item.endSpec.transform) {
+	                var transform = [];
+	                for (var i = 0; i < item.startSpec.transform.length; i++) {
+	                    transform.push(_interpolate(item.startSpec.transform[i], item.endSpec.transform[i], perc));
+	                }
+	                item.mod.setTransform(transform);
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Starts the hide animation.
+	     */
+	    function _startHideAnimation(item, prevItem, size) {
+	        var spec = item.options.hide.animation ? item.options.hide.animation.call(undefined, false, size) : {};
+	        item.endSpec = spec;
+	        item.startSpec = {
+	            opacity: 1,
+	            transform: Transform.identity
+	        };
+	        if (!item.halted) {
+	            item.mod.halt();
+	            var callback = item.hideCallback;
+	            if (spec.transform) {
+	                item.mod.setTransform(spec.transform, item.options.hide.transition, callback);
+	                callback = undefined;
+	            }
+	            if (spec.opacity !== undefined) {
+	                item.mod.setOpacity(spec.opacity, item.options.hide.transition, callback);
+	                callback = undefined;
+	            }
+	            if (callback) {
+	                callback();
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Sets the options for an item.
+	     */
+	    function _setItemOptions(item, options) {
+	        item.options = {
+	            show: {
+	                transition: this.options.show.transition || this.options.transition,
+	                animation: this.options.show.animation || this.options.animation
+	            },
+	            hide: {
+	                transition: this.options.hide.transition || this.options.transition,
+	                animation: this.options.hide.animation || this.options.animation
+	            },
+	            transfer: {
+	                transition: this.options.transfer.transition || this.options.transition,
+	                items: this.options.transfer.items || {},
+	                zIndex: this.options.transfer.zIndex,
+	                fastResize: this.options.transfer.fastResize
+	            }
+	        };
+	        if (options) {
+	            item.options.show.transition = (options.show ? options.show.transition : undefined) || options.transition || item.options.show.transition;
+	            if (options && options.show && (options.show.animation !== undefined)) {
+	                item.options.show.animation = options.show.animation;
+	            }
+	            else if (options && (options.animation !== undefined)) {
+	                item.options.show.animation = options.animation;
+	            }
+	            item.options.transfer.transition = (options.transfer ? options.transfer.transition : undefined) || options.transition || item.options.transfer.transition;
+	            item.options.transfer.items = (options.transfer ? options.transfer.items : undefined) || item.options.transfer.items;
+	            item.options.transfer.zIndex = (options.transfer && (options.transfer.zIndex !== undefined)) ? options.transfer.zIndex : item.options.transfer.zIndex;
+	            item.options.transfer.fastResize = (options.transfer && (options.transfer.fastResize !== undefined)) ? options.transfer.fastResize : item.options.transfer.fastResize;
+	        }
+	    }
+	
+	    /**
+	     * Updates the state.
+	     */
+	    function _updateState() {
+	        var prevItem;
+	        var invalidated = false;
+	        for (var i = 0; i < Math.min(this._viewStack.length, 2); i++) {
+	            var item = this._viewStack[i];
+	            if (item.state === ItemState.QUEUED) {
+	                if (!prevItem ||
+	                    (prevItem.state === ItemState.VISIBLE) ||
+	                    (prevItem.state === ItemState.HIDING)) {
+	                    if (prevItem && (prevItem.state === ItemState.VISIBLE)) {
+	                        prevItem.state = ItemState.HIDE;
+	                    }
+	                    item.state = ItemState.SHOW;
+	                    invalidated = true;
+	                }
+	                break;
+	            }
+	            else if ((item.state === ItemState.VISIBLE) && item.hide) {
+	                item.state = ItemState.HIDE;
+	            }
+	            if ((item.state === ItemState.SHOW) || (item.state === ItemState.HIDE)) {
+	                this.layout.reflowLayout();
+	            }
+	            prevItem = item;
+	        }
+	        if (invalidated) {
+	            _updateState.call(this);
+	            this.layout.reflowLayout();
+	        }
+	    }
+	
+	    function _resume() {
+	        for (var i = 0; i < Math.min(this._viewStack.length, 2); i++) {
+	            var item = this._viewStack[i];
+	            if (item.halted) {
+	                item.halted = false;
+	                if (item.endSpec) {
+	                    var callback;
+	                    switch (item.state) {
+	                        case ItemState.HIDE:
+	                        case ItemState.HIDING:
+	                            callback = item.hideCallback;
+	                            break;
+	                        case ItemState.SHOW:
+	                        case ItemState.SHOWING:
+	                            callback = item.showCallback;
+	                            break;
+	                    }
+	                    item.mod.halt();
+	                    if (item.endSpec.transform) {
+	                        item.mod.setTransform(item.endSpec.transform, item.options.show.transition, callback);
+	                        callback = undefined;
+	                    }
+	                    if (item.endSpec.opacity !== undefined) {
+	                        item.mod.setOpacity(item.endSpec.opacity, item.options.show.transition, callback);
+	                    }
+	                    if (callback) {
+	                        callback();
+	                    }
+	                }
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Shows a renderable using an animation and hides the old renderable.
+	     *
+	     * When multiple show operations are executed, they are queued and
+	     * shown in that sequence. Use `.halt` to cancel any pending show
+	     * operations from the queue.
+	     *
+	     * @param {Renderable} renderable View or surface to show
+	     * @param {Object} [options] Options.
+	     * @param {Object} [options.transition] Transition options for both show & hide.
+	     * @param {Function} [options.animation] Animation function for both show & hide.
+	     * @param {Object} [options.show] Show specific options.
+	     * @param {Object} [options.show.transition] Show specific transition options.
+	     * @param {Function} [options.show.animation] Show specific animation function.
+	     * @param {Object} [options.hide] Hide specific options.
+	     * @param {Object} [options.hide.transition] Hide specific transition options.
+	     * @param {Function} [options.hide.animation] Hide specific animation function.
+	     * @param {Object} [options.transfer] Transfer options.
+	     * @param {Object} [options.transfer.transition] Transfer specific transition options.
+	     * @param {Number} [options.transfer.zIndex] Z-index the tranferables are moved on top while animating.
+	     * @param {Array} [options.transfer.items] Ids (key/value) pairs (source-id/target-id) of the renderables that should be transferred.
+	     * @param {Function} [callback] Function that is called on completion.
+	     * @return {AnimationController} this
+	     */
+	    AnimationController.prototype.show = function(renderable, options, callback) {
+	        _resume.call(this, renderable);
+	        if (!renderable) {
+	            return this.hide(options, callback);
+	        }
+	        var item = this._viewStack.length ? this._viewStack[this._viewStack.length - 1] : undefined;
+	        if (item && (item.view === renderable)) {
+	            item.hide = false;
+	            if (item.state === ItemState.HIDE) {
+	                item.state = ItemState.QUEUED;
+	                _setItemOptions.call(this, item, options);
+	                _updateState.call(this);
+	            }
+	            if (callback) {
+	                callback();
+	            }
+	            return this;
+	        }
+	        if (item && (item.state !== ItemState.HIDING) && options) {
+	            item.options.hide.transition = (options.hide ? options.hide.transition : undefined) || options.transition || item.options.hide.transition;
+	            if (options && options.hide && (options.hide.animation !== undefined)) {
+	                item.options.hide.animation = options.hide.animation;
+	            }
+	            else if (options && (options.animation !== undefined)) {
+	                item.options.hide.animation = options.animation;
+	            }
+	        }
+	        item = {
+	            view: renderable,
+	            mod: new StateModifier(),
+	            state: ItemState.QUEUED,
+	            callback: callback,
+	            transferables: [] // renderables currently being transfered
+	        };
+	        item.node = new RenderNode(item.mod);
+	        item.node.add(renderable);
+	        _setItemOptions.call(this, item, options);
+	        item.showCallback = function() {
+	            item.showCallback = undefined;
+	            item.state = ItemState.VISIBLE;
+	            _updateState.call(this);
+	            _endTransferableAnimations.call(this, item);
+	            item.endSpec = undefined;
+	            item.startSpec = undefined;
+	            if (callback) {
+	                callback();
+	            }
+	        }.bind(this);
+	        item.hideCallback = function() {
+	            item.hideCallback = undefined;
+	            var index = this._viewStack.indexOf(item);
+	            this._renderables.views.splice(index, 1);
+	            this._viewStack.splice(index, 1);
+	            item.view = undefined;
+	            _updateState.call(this);
+	            this.layout.reflowLayout();
+	        }.bind(this);
+	        this._renderables.views.push(item.node);
+	        this._viewStack.push(item);
+	        _updateState.call(this);
+	        return this;
+	    };
+	
+	    /**
+	     * Hides the current view with an animation.
+	     *
+	     * @param {Object} [options] Hide options
+	     * @param {Object} [options.transition] Hide transition options.
+	     * @param {Function} [options.animation] Hide animation function.
+	     * @param {Function} [callback] Function that is called an completion.
+	     * @return {AnimationController} this
+	     */
+	    AnimationController.prototype.hide = function(options, callback) {
+	        _resume.call(this);
+	        var item = this._viewStack.length ? this._viewStack[this._viewStack.length - 1] : undefined;
+	        if (!item || (item.state === ItemState.HIDING)) {
+	            return this;
+	        }
+	        item.hide = true;
+	        if (options) {
+	            item.options.hide.transition = (options.hide ? options.hide.transition : undefined) || options.transition || item.options.hide.transition;
+	            if (options && options.hide && (options.hide.animation !== undefined)) {
+	                item.options.hide.animation = options.hide.animation;
+	            }
+	            else if (options && (options.animation !== undefined)) {
+	                item.options.hide.animation = options.animation;
+	            }
+	        }
+	        item.hideCallback = function() {
+	            var index = this._viewStack.indexOf(item);
+	            this._renderables.views.splice(index, 1);
+	            this._viewStack.splice(index, 1);
+	            item.view = undefined;
+	            _updateState.call(this);
+	            this.layout.reflowLayout();
+	            if (callback) {
+	                callback();
+	            }
+	        }.bind(this);
+	        _updateState.call(this);
+	        return this;
+	    };
+	
+	    /**
+	     * Clears the queue of any pending show animations.
+	     *
+	     * @param {Boolean} [stopAnimation] Freezes the current animation.
+	     * @param {Number} [framePerc] Frame at which to freeze the animation (in percentage).
+	     * @return {AnimationController} this
+	     */
+	    AnimationController.prototype.halt = function(stopAnimation, framePerc) {
+	        var item;
+	        for (var i = 0; i < this._viewStack.length; i++) {
+	            if (stopAnimation) {
+	                item = this._viewStack[i];
+	                switch (item.state) {
+	                    case ItemState.SHOW:
+	                    case ItemState.SHOWING:
+	                    case ItemState.HIDE:
+	                    case ItemState.HIDING:
+	                    case ItemState.VISIBLE:
+	                        _haltItemAtFrame(item, framePerc);
+	                        break;
+	                }
+	            }
+	            else {
+	                item = this._viewStack[this._viewStack.length - 1];
+	                if ((item.state === ItemState.QUEUED) || (item.state === ItemState.SHOW)) {
+	                    this._renderables.views.splice(this._viewStack.length - 1, 1);
+	                    this._viewStack.splice(this._viewStack.length - 1, 1);
+	                    item.view = undefined;
+	                }
+	                else {
+	                    break;
+	                }
+	            }
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Aborts the currently active show or hide operation, effectively
+	     * reversing the animation.
+	     *
+	     * @param {Function} [callback] Function that is called on completion.
+	     * @return {AnimationController} this
+	     */
+	    AnimationController.prototype.abort = function(callback) {
+	        if ((this._viewStack.length >= 2) && (this._viewStack[0].state === ItemState.HIDING) && (this._viewStack[1].state === ItemState.SHOWING)) {
+	            var prevItem = this._viewStack[0];
+	            var item = this._viewStack[1];
+	            var swapSpec;
+	
+	            item.halted = true;
+	            swapSpec = item.endSpec;
+	            item.endSpec = item.startSpec;
+	            item.startSpec = swapSpec;
+	            item.state = ItemState.HIDING;
+	            item.hideCallback = function() {
+	                item.hideCallback = undefined;
+	                var index = this._viewStack.indexOf(item);
+	                this._renderables.views.splice(index, 1);
+	                this._viewStack.splice(index, 1);
+	                item.view = undefined;
+	                _updateState.call(this);
+	                this.layout.reflowLayout();
+	            }.bind(this);
+	
+	            prevItem.halted = true;
+	            swapSpec = prevItem.endSpec;
+	            prevItem.endSpec = prevItem.startSpec;
+	            prevItem.startSpec = swapSpec;
+	            prevItem.state = ItemState.SHOWING;
+	            prevItem.showCallback = function() {
+	                prevItem.showCallback = undefined;
+	                prevItem.state = ItemState.VISIBLE;
+	                _updateState.call(this);
+	                _endTransferableAnimations.call(this, prevItem);
+	                prevItem.endSpec = undefined;
+	                prevItem.startSpec = undefined;
+	                if (callback) {
+	                    callback();
+	                }
+	            }.bind(this);
+	
+	            _resume.call(this);
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Gets the currently visible or being shown renderable.
+	     *
+	     * @return {Renderable} currently visible view/surface
+	     */
+	    AnimationController.prototype.get = function() {
+	        for (var i = 0; i < this._viewStack.length; i++) {
+	            var item = this._viewStack[i];
+	            if ((item.state === ItemState.VISIBLE) ||
+	                (item.state === ItemState.SHOW) ||
+	                (item.state === ItemState.SHOWING)) {
+	                return item.view;
+	            }
+	        }
+	        return undefined;
+	    };
+	
+	    /**
+	     * Gets the size of the view.
+	     *
+	     * @return {Array.Number} size
+	     */
+	    AnimationController.prototype.getSize = function() {
+	        return this._size || this.options.size;
+	    };
+	
+	    module.exports = AnimationController;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 59 */
+/*!**********************************************!*\
+  !*** ../~/famous-flex/src/widgets/TabBar.js ***!
+  \**********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2015
+	 */
+	
+	/**
+	 * TabBar widget for famo.us.
+	 *
+	 * ```javascript
+	 * var TabBar = require('famous-flex/widgets/TabBar');
+	 *
+	 * var tabBar = new TabBar({
+	 *   classes: ['black'],
+	 *   createRenderables: {
+	 *     background: true,
+	 *     selectedItemOverlay: true,
+	 *     spacers: true
+	 *   }
+	 * });
+	 * tabBar.setItems([
+	 *   'one',
+	 *   'two',
+	 *   'three'
+	 * ]);
+	 * this.add(tabBar); // add to the render-tree
+	 *
+	 * tabBar.on('tabchange', function(event) {
+	 *   console.log('new tab selected: ' + event.index);
+	 * });
+	 * ```
+	 *
+	 * The surfaces that are created, use the the css-classes `ff-widget` and `ff-tabbar`.
+	 * You can add additional css-classes by using the `classes` option in the constructor.
+	 *
+	 * Example css styles for a black theme:
+	 *
+	 * ```css
+	 * .ff-tabbar.background.black {
+	 *   background-color: #101010;
+	 * }
+	 * .ff-tabbar.item.black {
+	 *   color: #f7f3f7;
+	 * }
+	 * .ff-tabbar.selectedItemOverlay.black {
+	 *   border-bottom: 6px solid #30b6e7;
+	 * }
+	 * .ff-tabbar.spacer.black:after {
+	 *   content: "";
+	 *   background-color: #333333;
+	 *   width: 100%;
+	 *   top: 10px;
+	 *   bottom: 10px;
+	 *   position: absolute;
+	 * }
+	 * ```
+	 *
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var Surface = __webpack_require__(/*! famous/core/Surface */ 17);
+	    var View = __webpack_require__(/*! famous/core/View */ 16);
+	    var LayoutController = __webpack_require__(/*! ../LayoutController */ 24);
+	    var TabBarLayout = __webpack_require__(/*! ../layouts/TabBarLayout */ 72);
+	
+	    /**
+	     * @class
+	     * @extends View
+	     * @param {Object} options Configurable options.
+	     * @param {Object} [options.tabBarLayout] Layout-options that are passed to the TabBarLayout.
+	     * @param {Object} [options.layoutController] Options that are passed to the underlying layout-controller.
+	     * @param {Array.String} [options.classes] Css-classes that are added to the surfaces that are created.
+	     * @param {Object} [options.createRenderables] Options that specify which renderables should be created.
+	     * @alias module:TabBar
+	     */
+	    function TabBar(options) {
+	        View.apply(this, arguments);
+	
+	        // init
+	        this._selectedItemIndex = -1;
+	        options = options || {};
+	        this.classes = options.classes ? this.classes.concat(options.classes) : this.classes;
+	
+	        // create TabBar layout
+	        this.layout = new LayoutController(this.options.layoutController);
+	        this.add(this.layout);
+	        this.layout.pipe(this._eventOutput);
+	
+	        // create initial renderables
+	        this._renderables = {
+	            items: [],
+	            spacers: [],
+	            background: _createRenderable.call(this, 'background'),
+	            selectedItemOverlay: _createRenderable.call(this, 'selectedItemOverlay')
+	        };
+	
+	        this.setOptions(this.options);
+	    }
+	    TabBar.prototype = Object.create(View.prototype);
+	    TabBar.prototype.constructor = TabBar;
+	    TabBar.prototype.classes = ['ff-widget', 'ff-tabbar'];
+	
+	    TabBar.DEFAULT_OPTIONS = {
+	        tabBarLayout: {
+	            margins: [0, 0, 0, 0],
+	            spacing: 0
+	        },
+	        createRenderables: {
+	            item: true,
+	            background: false,
+	            selectedItemOverlay: false,
+	            spacer: false
+	        },
+	        layoutController: {
+	            autoPipeEvents: true,
+	            layout: TabBarLayout,
+	            flow: true,
+	            flowOptions: {
+	                reflowOnResize: false,
+	                spring: {
+	                    dampingRatio: 0.8,
+	                    period: 300
+	                }
+	            }
+	        }
+	    };
+	
+	    /**
+	     * Helper function that is called whenever a new item is selected
+	     */
+	    function _setSelectedItem(index) {
+	        if (index !== this._selectedItemIndex) {
+	            var oldIndex = this._selectedItemIndex;
+	            this._selectedItemIndex = index;
+	            this.layout.setLayoutOptions({
+	                selectedItemIndex: index
+	            });
+	            if ((oldIndex >= 0) && this._renderables.items[oldIndex].removeClass){
+	                this._renderables.items[oldIndex].removeClass('selected');
+	            }
+	            if (this._renderables.items[index].addClass) {
+	                this._renderables.items[index].addClass('selected');
+	            }
+	            if (oldIndex >= 0) {
+	                this._eventOutput.emit('tabchange', {
+	                    target: this,
+	                    index: index,
+	                    oldIndex: oldIndex,
+	                    item: this._renderables.items[index],
+	                    oldItem: ((oldIndex >= 0) && (oldIndex < this._renderables.items.length)) ? this._renderables.items[oldIndex] : undefined
+	                });
+	            }
+	        }
+	    }
+	
+	    /**
+	     * Creates a new renderable for the given renderable-id.
+	     *
+	     */
+	    function _createRenderable (id, data) {
+	        var option = this.options.createRenderables[id];
+	        if (option instanceof Function) {
+	            return option.call(this, id, data);
+	        }
+	        else if (!option) {
+	            return undefined;
+	        }
+	        if ((data !== undefined) && (data instanceof Object)) {
+	            return data;
+	        }
+	        var surface = new Surface({
+	            classes: this.classes,
+	            content: data ? ('<div>' + data + '</div>') : undefined
+	        });
+	        surface.addClass(id);
+	        if (id === 'item') {
+	            if (this.options.tabBarLayout && this.options.tabBarLayout.itemSize && (this.options.tabBarLayout.itemSize === true)) {
+	                surface.setSize(this.layout.getDirection() ? [undefined, true] : [true, undefined]);
+	            }
+	        }
+	        return surface;
+	    }
+	
+	    /**
+	     * Patches the TabBar instance's options with the passed-in ones.
+	     *
+	     * @param {Object} options Configurable options.
+	     * @param {Object} [options.tabBarLayout] Layout-options that are passed to the TabBarLayout.
+	     * @param {Object} [options.layoutController] Options that are passed to the underlying layout-controller.
+	     * @return {TabBar} this
+	     */
+	    TabBar.prototype.setOptions = function(options) {
+	        View.prototype.setOptions.call(this, options);
+	        if (!this.layout) {
+	            return this;
+	        }
+	        if (options.tabBarLayout !== undefined) {
+	            this.layout.setLayoutOptions(options.tabBarLayout);
+	        }
+	        if (options.layoutController) {
+	            this.layout.setOptions(options.layoutController);
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Sets the items for the tab-bar.
+	     *
+	     * Example 1:
+	     *
+	     * ```javascript
+	     * var tabBar = new TabBar();
+	     * tabBar.setItems([
+	     *   'one',
+	     *   'two',
+	     *   'three'
+	     * ]);
+	     *```
+	     *
+	     * Example using Ionic icons:
+	     *
+	     * ```javascript
+	     * var tabBar = new TabBar();
+	     * tabBar.setItems([
+	     *   '<div class="icon ion-flag"></div>Flag',
+	     *   '<div class="icon ion-map"></div>Map',
+	     *   '<div class="icon ion-gear-a"></div>Settings'
+	     * ]);
+	     *```
+	     *
+	     * CSS:
+	     *
+	     * ```css
+	     * .ff-tabbar.item {
+	     *   font-size: 12px;
+	     * }
+	     * .ff-tabbar.item .icon {
+	     *   font-size: 24px;
+	     * }
+	     * ```
+	     *
+	     * @param {Array} items Array of tab-item renderables.
+	     * @return {TabBar} this
+	     */
+	    TabBar.prototype.setItems = function(items) {
+	        var currentIndex = this._selectedItemIndex;
+	        this._selectedItemIndex = -1;
+	        this._renderables.items = [];
+	        this._renderables.spacers = [];
+	        if (items) {
+	            for (var i = 0; i < items.length; i++) {
+	                var item = _createRenderable.call(this, 'item', items[i]);
+	                if (item.on) {
+	                    item.on('click', _setSelectedItem.bind(this, i));
+	                }
+	                this._renderables.items.push(item);
+	                if ((i < (items.length - 1))) {
+	                    var spacer = _createRenderable.call(this, 'spacer', ' ');
+	                    if (spacer) {
+	                        this._renderables.spacers.push(spacer);
+	                    }
+	                }
+	            }
+	        }
+	        this.layout.setDataSource(this._renderables);
+	        if (this._renderables.items.length) {
+	            _setSelectedItem.call(this, Math.max(Math.min(currentIndex, this._renderables.items.length - 1), 0));
+	        }
+	        return this;
+	    };
+	
+	    /**
+	     * Get the tab-item renderables for the tab-bar.
+	     *
+	     * @return {Array} tab-item renderables
+	     */
+	    TabBar.prototype.getItems = function() {
+	        return this._renderables.items;
+	    };
+	
+	    /**
+	     * Get the spec (size, transform, etc..) of the given tab-item.
+	     *
+	     * @param {Number} index Index of the tab-item.
+	     * @return {Spec} item spec
+	     */
+	    TabBar.prototype.getItemSpec = function(index, normalize) {
+	        return this.layout.getSpec(this._renderables.items[index], normalize);
+	    };
+	
+	    /**
+	     * Sets the index of the selected tab.
+	     *
+	     * @param {Number} index selected index.
+	     * @return {TabBar} this
+	     */
+	    TabBar.prototype.setSelectedItemIndex = function(index) {
+	        _setSelectedItem.call(this, index);
+	        return this;
+	    };
+	
+	    /**
+	     * Get the index of the selected tab-item.
+	     *
+	     * @return {Number} selected index
+	     */
+	    TabBar.prototype.getSelectedItemIndex = function() {
+	        return this._selectedItemIndex;
+	    };
+	
+	    /**
+	     * Get the size of the widget.
+	     *
+	     * @return {Array} size.
+	     */
+	    TabBar.prototype.getSize = function() {
+	        return this.options.size || (this.layout ? this.layout.getSize() : View.prototype.getSize.call(this));
+	    };
+	
+	    module.exports = TabBar;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 60 */
+/*!*****************************************!*\
+  !*** ../~/famous/transitions/Easing.js ***!
+  \*****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var Easing = {
+	    inQuad: function (t) {
+	        return t * t;
+	    },
+	    outQuad: function (t) {
+	        return -(t -= 1) * t + 1;
+	    },
+	    inOutQuad: function (t) {
+	        if ((t /= 0.5) < 1)
+	            return 0.5 * t * t;
+	        return -0.5 * (--t * (t - 2) - 1);
+	    },
+	    inCubic: function (t) {
+	        return t * t * t;
+	    },
+	    outCubic: function (t) {
+	        return --t * t * t + 1;
+	    },
+	    inOutCubic: function (t) {
+	        if ((t /= 0.5) < 1)
+	            return 0.5 * t * t * t;
+	        return 0.5 * ((t -= 2) * t * t + 2);
+	    },
+	    inQuart: function (t) {
+	        return t * t * t * t;
+	    },
+	    outQuart: function (t) {
+	        return -(--t * t * t * t - 1);
+	    },
+	    inOutQuart: function (t) {
+	        if ((t /= 0.5) < 1)
+	            return 0.5 * t * t * t * t;
+	        return -0.5 * ((t -= 2) * t * t * t - 2);
+	    },
+	    inQuint: function (t) {
+	        return t * t * t * t * t;
+	    },
+	    outQuint: function (t) {
+	        return --t * t * t * t * t + 1;
+	    },
+	    inOutQuint: function (t) {
+	        if ((t /= 0.5) < 1)
+	            return 0.5 * t * t * t * t * t;
+	        return 0.5 * ((t -= 2) * t * t * t * t + 2);
+	    },
+	    inSine: function (t) {
+	        return -1 * Math.cos(t * (Math.PI / 2)) + 1;
+	    },
+	    outSine: function (t) {
+	        return Math.sin(t * (Math.PI / 2));
+	    },
+	    inOutSine: function (t) {
+	        return -0.5 * (Math.cos(Math.PI * t) - 1);
+	    },
+	    inExpo: function (t) {
+	        return t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
+	    },
+	    outExpo: function (t) {
+	        return t === 1 ? 1 : -Math.pow(2, -10 * t) + 1;
+	    },
+	    inOutExpo: function (t) {
+	        if (t === 0)
+	            return 0;
+	        if (t === 1)
+	            return 1;
+	        if ((t /= 0.5) < 1)
+	            return 0.5 * Math.pow(2, 10 * (t - 1));
+	        return 0.5 * (-Math.pow(2, -10 * --t) + 2);
+	    },
+	    inCirc: function (t) {
+	        return -(Math.sqrt(1 - t * t) - 1);
+	    },
+	    outCirc: function (t) {
+	        return Math.sqrt(1 - --t * t);
+	    },
+	    inOutCirc: function (t) {
+	        if ((t /= 0.5) < 1)
+	            return -0.5 * (Math.sqrt(1 - t * t) - 1);
+	        return 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1);
+	    },
+	    inElastic: function (t) {
+	        var s = 1.70158;
+	        var p = 0;
+	        var a = 1;
+	        if (t === 0)
+	            return 0;
+	        if (t === 1)
+	            return 1;
+	        if (!p)
+	            p = 0.3;
+	        s = p / (2 * Math.PI) * Math.asin(1 / a);
+	        return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t - s) * (2 * Math.PI) / p));
+	    },
+	    outElastic: function (t) {
+	        var s = 1.70158;
+	        var p = 0;
+	        var a = 1;
+	        if (t === 0)
+	            return 0;
+	        if (t === 1)
+	            return 1;
+	        if (!p)
+	            p = 0.3;
+	        s = p / (2 * Math.PI) * Math.asin(1 / a);
+	        return a * Math.pow(2, -10 * t) * Math.sin((t - s) * (2 * Math.PI) / p) + 1;
+	    },
+	    inOutElastic: function (t) {
+	        var s = 1.70158;
+	        var p = 0;
+	        var a = 1;
+	        if (t === 0)
+	            return 0;
+	        if ((t /= 0.5) === 2)
+	            return 1;
+	        if (!p)
+	            p = 0.3 * 1.5;
+	        s = p / (2 * Math.PI) * Math.asin(1 / a);
+	        if (t < 1)
+	            return -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t - s) * (2 * Math.PI) / p));
+	        return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t - s) * (2 * Math.PI) / p) * 0.5 + 1;
+	    },
+	    inBack: function (t, s) {
+	        if (s === undefined)
+	            s = 1.70158;
+	        return t * t * ((s + 1) * t - s);
+	    },
+	    outBack: function (t, s) {
+	        if (s === undefined)
+	            s = 1.70158;
+	        return --t * t * ((s + 1) * t + s) + 1;
+	    },
+	    inOutBack: function (t, s) {
+	        if (s === undefined)
+	            s = 1.70158;
+	        if ((t /= 0.5) < 1)
+	            return 0.5 * (t * t * (((s *= 1.525) + 1) * t - s));
+	        return 0.5 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2);
+	    },
+	    inBounce: function (t) {
+	        return 1 - Easing.outBounce(1 - t);
+	    },
+	    outBounce: function (t) {
+	        if (t < 1 / 2.75) {
+	            return 7.5625 * t * t;
+	        } else if (t < 2 / 2.75) {
+	            return 7.5625 * (t -= 1.5 / 2.75) * t + 0.75;
+	        } else if (t < 2.5 / 2.75) {
+	            return 7.5625 * (t -= 2.25 / 2.75) * t + 0.9375;
+	        } else {
+	            return 7.5625 * (t -= 2.625 / 2.75) * t + 0.984375;
+	        }
+	    },
+	    inOutBounce: function (t) {
+	        if (t < 0.5)
+	            return Easing.inBounce(t * 2) * 0.5;
+	        return Easing.outBounce(t * 2 - 1) * 0.5 + 0.5;
+	    }
+	};
+	module.exports = Easing;
+
+/***/ },
+/* 61 */
 /*!*****************************************************!*\
   !*** ../~/famous/transitions/MultipleTransition.js ***!
   \*****************************************************/
@@ -14624,7 +14296,7 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Utility = __webpack_require__(/*! ../utilities/Utility */ 44);
+	var Utility = __webpack_require__(/*! ../utilities/Utility */ 42);
 	function MultipleTransition(method) {
 	    this.method = method;
 	    this._instances = [];
@@ -14655,7 +14327,7 @@
 	module.exports = MultipleTransition;
 
 /***/ },
-/* 65 */
+/* 62 */
 /*!**************************************************!*\
   !*** ../~/famous/transitions/TweenTransition.js ***!
   \**************************************************/
@@ -14908,7 +14580,57 @@
 	module.exports = TweenTransition;
 
 /***/ },
-/* 66 */
+/* 63 */
+/*!****************************************!*\
+  !*** ../~/famous/core/EventEmitter.js ***!
+  \****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	function EventEmitter() {
+	    this.listeners = {};
+	    this._owner = this;
+	}
+	EventEmitter.prototype.emit = function emit(type, event) {
+	    var handlers = this.listeners[type];
+	    if (handlers) {
+	        for (var i = 0; i < handlers.length; i++) {
+	            handlers[i].call(this._owner, event);
+	        }
+	    }
+	    return this;
+	};
+	EventEmitter.prototype.on = function on(type, handler) {
+	    if (!(type in this.listeners))
+	        this.listeners[type] = [];
+	    var index = this.listeners[type].indexOf(handler);
+	    if (index < 0)
+	        this.listeners[type].push(handler);
+	    return this;
+	};
+	EventEmitter.prototype.addListener = EventEmitter.prototype.on;
+	EventEmitter.prototype.removeListener = function removeListener(type, handler) {
+	    var listener = this.listeners[type];
+	    if (listener !== undefined) {
+	        var index = listener.indexOf(handler);
+	        if (index >= 0)
+	            listener.splice(index, 1);
+	    }
+	    return this;
+	};
+	EventEmitter.prototype.bindThis = function bindThis(owner) {
+	    this._owner = owner;
+	};
+	module.exports = EventEmitter;
+
+/***/ },
+/* 64 */
 /*!********************************************!*\
   !*** ../~/famous/core/ElementAllocator.js ***!
   \********************************************/
@@ -14968,57 +14690,7 @@
 	module.exports = ElementAllocator;
 
 /***/ },
-/* 67 */
-/*!****************************************!*\
-  !*** ../~/famous/core/EventEmitter.js ***!
-  \****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	function EventEmitter() {
-	    this.listeners = {};
-	    this._owner = this;
-	}
-	EventEmitter.prototype.emit = function emit(type, event) {
-	    var handlers = this.listeners[type];
-	    if (handlers) {
-	        for (var i = 0; i < handlers.length; i++) {
-	            handlers[i].call(this._owner, event);
-	        }
-	    }
-	    return this;
-	};
-	EventEmitter.prototype.on = function on(type, handler) {
-	    if (!(type in this.listeners))
-	        this.listeners[type] = [];
-	    var index = this.listeners[type].indexOf(handler);
-	    if (index < 0)
-	        this.listeners[type].push(handler);
-	    return this;
-	};
-	EventEmitter.prototype.addListener = EventEmitter.prototype.on;
-	EventEmitter.prototype.removeListener = function removeListener(type, handler) {
-	    var listener = this.listeners[type];
-	    if (listener !== undefined) {
-	        var index = listener.indexOf(handler);
-	        if (index >= 0)
-	            listener.splice(index, 1);
-	    }
-	    return this;
-	};
-	EventEmitter.prototype.bindThis = function bindThis(owner) {
-	    this._owner = owner;
-	};
-	module.exports = EventEmitter;
-
-/***/ },
-/* 68 */
+/* 65 */
 /*!**************************************!*\
   !*** ../~/famous/core/SpecParser.js ***!
   \**************************************/
@@ -15031,7 +14703,7 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Transform = __webpack_require__(/*! ./Transform */ 28);
+	var Transform = __webpack_require__(/*! ./Transform */ 19);
 	function SpecParser() {
 	    this.result = {};
 	}
@@ -15157,139 +14829,7 @@
 	module.exports = SpecParser;
 
 /***/ },
-/* 69 */
-/*!**********************************************************!*\
-  !*** ../~/famous/transitions/TransitionableTransform.js ***!
-  \**********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2015
-	 */
-	var Transitionable = __webpack_require__(/*! ./Transitionable */ 34);
-	var Transform = __webpack_require__(/*! ../core/Transform */ 28);
-	var Utility = __webpack_require__(/*! ../utilities/Utility */ 44);
-	function TransitionableTransform(transform) {
-	    this._final = Transform.identity.slice();
-	    this._finalTranslate = [
-	        0,
-	        0,
-	        0
-	    ];
-	    this._finalRotate = [
-	        0,
-	        0,
-	        0
-	    ];
-	    this._finalSkew = [
-	        0,
-	        0,
-	        0
-	    ];
-	    this._finalScale = [
-	        1,
-	        1,
-	        1
-	    ];
-	    this.translate = new Transitionable(this._finalTranslate);
-	    this.rotate = new Transitionable(this._finalRotate);
-	    this.skew = new Transitionable(this._finalSkew);
-	    this.scale = new Transitionable(this._finalScale);
-	    if (transform)
-	        this.set(transform);
-	}
-	function _build() {
-	    return Transform.build({
-	        translate: this.translate.get(),
-	        rotate: this.rotate.get(),
-	        skew: this.skew.get(),
-	        scale: this.scale.get()
-	    });
-	}
-	function _buildFinal() {
-	    return Transform.build({
-	        translate: this._finalTranslate,
-	        rotate: this._finalRotate,
-	        skew: this._finalSkew,
-	        scale: this._finalScale
-	    });
-	}
-	TransitionableTransform.prototype.setTranslate = function setTranslate(translate, transition, callback) {
-	    this._finalTranslate = translate;
-	    this._final = _buildFinal.call(this);
-	    this.translate.set(translate, transition, callback);
-	    return this;
-	};
-	TransitionableTransform.prototype.setScale = function setScale(scale, transition, callback) {
-	    this._finalScale = scale;
-	    this._final = _buildFinal.call(this);
-	    this.scale.set(scale, transition, callback);
-	    return this;
-	};
-	TransitionableTransform.prototype.setRotate = function setRotate(eulerAngles, transition, callback) {
-	    this._finalRotate = eulerAngles;
-	    this._final = _buildFinal.call(this);
-	    this.rotate.set(eulerAngles, transition, callback);
-	    return this;
-	};
-	TransitionableTransform.prototype.setSkew = function setSkew(skewAngles, transition, callback) {
-	    this._finalSkew = skewAngles;
-	    this._final = _buildFinal.call(this);
-	    this.skew.set(skewAngles, transition, callback);
-	    return this;
-	};
-	TransitionableTransform.prototype.set = function set(transform, transition, callback) {
-	    var components = Transform.interpret(transform);
-	    this._finalTranslate = components.translate;
-	    this._finalRotate = components.rotate;
-	    this._finalSkew = components.skew;
-	    this._finalScale = components.scale;
-	    this._final = transform;
-	    var _callback = callback ? Utility.after(4, callback) : null;
-	    this.translate.set(components.translate, transition, _callback);
-	    this.rotate.set(components.rotate, transition, _callback);
-	    this.skew.set(components.skew, transition, _callback);
-	    this.scale.set(components.scale, transition, _callback);
-	    return this;
-	};
-	TransitionableTransform.prototype.setDefaultTransition = function setDefaultTransition(transition) {
-	    this.translate.setDefault(transition);
-	    this.rotate.setDefault(transition);
-	    this.skew.setDefault(transition);
-	    this.scale.setDefault(transition);
-	};
-	TransitionableTransform.prototype.get = function get() {
-	    if (this.isActive()) {
-	        return _build.call(this);
-	    } else
-	        return this._final;
-	};
-	TransitionableTransform.prototype.getFinal = function getFinal() {
-	    return this._final;
-	};
-	TransitionableTransform.prototype.isActive = function isActive() {
-	    return this.translate.isActive() || this.rotate.isActive() || this.scale.isActive() || this.skew.isActive();
-	};
-	TransitionableTransform.prototype.halt = function halt() {
-	    this.translate.halt();
-	    this.rotate.halt();
-	    this.skew.halt();
-	    this.scale.halt();
-	    this._final = this.get();
-	    this._finalTranslate = this.translate.get();
-	    this._finalRotate = this.rotate.get();
-	    this._finalSkew = this.skew.get();
-	    this._finalScale = this.scale.get();
-	    return this;
-	};
-	module.exports = TransitionableTransform;
-
-/***/ },
-/* 70 */
+/* 66 */
 /*!*********************************************!*\
   !*** ../~/famous-flex/src/LayoutContext.js ***!
   \*********************************************/
@@ -15560,7 +15100,7 @@
 
 
 /***/ },
-/* 71 */
+/* 67 */
 /*!**********************************************************!*\
   !*** ../~/famous/physics/integrators/SymplecticEuler.js ***!
   \**********************************************************/
@@ -15606,7 +15146,7 @@
 	module.exports = SymplecticEuler;
 
 /***/ },
-/* 72 */
+/* 68 */
 /*!*******************************************!*\
   !*** ../~/famous/physics/forces/Force.js ***!
   \*******************************************/
@@ -15619,8 +15159,8 @@
 	 * @license MPL 2.0
 	 * @copyright Famous Industries, Inc. 2015
 	 */
-	var Vector = __webpack_require__(/*! ../../math/Vector */ 58);
-	var EventHandler = __webpack_require__(/*! ../../core/EventHandler */ 41);
+	var Vector = __webpack_require__(/*! ../../math/Vector */ 49);
+	var EventHandler = __webpack_require__(/*! ../../core/EventHandler */ 38);
 	function Force(force) {
 	    this.force = new Vector(force);
 	    this._eventOutput = new EventHandler();
@@ -15639,6 +15179,868 @@
 	    return 0;
 	};
 	module.exports = Force;
+
+/***/ },
+/* 69 */
+/*!************************************!*\
+  !*** ../~/famous/core/Modifier.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var Transform = __webpack_require__(/*! ./Transform */ 19);
+	var Transitionable = __webpack_require__(/*! ../transitions/Transitionable */ 33);
+	var TransitionableTransform = __webpack_require__(/*! ../transitions/TransitionableTransform */ 73);
+	function Modifier(options) {
+	    this._transformGetter = null;
+	    this._opacityGetter = null;
+	    this._originGetter = null;
+	    this._alignGetter = null;
+	    this._sizeGetter = null;
+	    this._proportionGetter = null;
+	    this._legacyStates = {};
+	    this._output = {
+	        transform: Transform.identity,
+	        opacity: 1,
+	        origin: null,
+	        align: null,
+	        size: null,
+	        proportions: null,
+	        target: null
+	    };
+	    if (options) {
+	        if (options.transform)
+	            this.transformFrom(options.transform);
+	        if (options.opacity !== undefined)
+	            this.opacityFrom(options.opacity);
+	        if (options.origin)
+	            this.originFrom(options.origin);
+	        if (options.align)
+	            this.alignFrom(options.align);
+	        if (options.size)
+	            this.sizeFrom(options.size);
+	        if (options.proportions)
+	            this.proportionsFrom(options.proportions);
+	    }
+	}
+	Modifier.prototype.transformFrom = function transformFrom(transform) {
+	    if (transform instanceof Function)
+	        this._transformGetter = transform;
+	    else if (transform instanceof Object && transform.get)
+	        this._transformGetter = transform.get.bind(transform);
+	    else {
+	        this._transformGetter = null;
+	        this._output.transform = transform;
+	    }
+	    return this;
+	};
+	Modifier.prototype.opacityFrom = function opacityFrom(opacity) {
+	    if (opacity instanceof Function)
+	        this._opacityGetter = opacity;
+	    else if (opacity instanceof Object && opacity.get)
+	        this._opacityGetter = opacity.get.bind(opacity);
+	    else {
+	        this._opacityGetter = null;
+	        this._output.opacity = opacity;
+	    }
+	    return this;
+	};
+	Modifier.prototype.originFrom = function originFrom(origin) {
+	    if (origin instanceof Function)
+	        this._originGetter = origin;
+	    else if (origin instanceof Object && origin.get)
+	        this._originGetter = origin.get.bind(origin);
+	    else {
+	        this._originGetter = null;
+	        this._output.origin = origin;
+	    }
+	    return this;
+	};
+	Modifier.prototype.alignFrom = function alignFrom(align) {
+	    if (align instanceof Function)
+	        this._alignGetter = align;
+	    else if (align instanceof Object && align.get)
+	        this._alignGetter = align.get.bind(align);
+	    else {
+	        this._alignGetter = null;
+	        this._output.align = align;
+	    }
+	    return this;
+	};
+	Modifier.prototype.sizeFrom = function sizeFrom(size) {
+	    if (size instanceof Function)
+	        this._sizeGetter = size;
+	    else if (size instanceof Object && size.get)
+	        this._sizeGetter = size.get.bind(size);
+	    else {
+	        this._sizeGetter = null;
+	        this._output.size = size;
+	    }
+	    return this;
+	};
+	Modifier.prototype.proportionsFrom = function proportionsFrom(proportions) {
+	    if (proportions instanceof Function)
+	        this._proportionGetter = proportions;
+	    else if (proportions instanceof Object && proportions.get)
+	        this._proportionGetter = proportions.get.bind(proportions);
+	    else {
+	        this._proportionGetter = null;
+	        this._output.proportions = proportions;
+	    }
+	    return this;
+	};
+	Modifier.prototype.setTransform = function setTransform(transform, transition, callback) {
+	    if (transition || this._legacyStates.transform) {
+	        if (!this._legacyStates.transform) {
+	            this._legacyStates.transform = new TransitionableTransform(this._output.transform);
+	        }
+	        if (!this._transformGetter)
+	            this.transformFrom(this._legacyStates.transform);
+	        this._legacyStates.transform.set(transform, transition, callback);
+	        return this;
+	    } else
+	        return this.transformFrom(transform);
+	};
+	Modifier.prototype.setOpacity = function setOpacity(opacity, transition, callback) {
+	    if (transition || this._legacyStates.opacity) {
+	        if (!this._legacyStates.opacity) {
+	            this._legacyStates.opacity = new Transitionable(this._output.opacity);
+	        }
+	        if (!this._opacityGetter)
+	            this.opacityFrom(this._legacyStates.opacity);
+	        return this._legacyStates.opacity.set(opacity, transition, callback);
+	    } else
+	        return this.opacityFrom(opacity);
+	};
+	Modifier.prototype.setOrigin = function setOrigin(origin, transition, callback) {
+	    if (transition || this._legacyStates.origin) {
+	        if (!this._legacyStates.origin) {
+	            this._legacyStates.origin = new Transitionable(this._output.origin || [
+	                0,
+	                0
+	            ]);
+	        }
+	        if (!this._originGetter)
+	            this.originFrom(this._legacyStates.origin);
+	        this._legacyStates.origin.set(origin, transition, callback);
+	        return this;
+	    } else
+	        return this.originFrom(origin);
+	};
+	Modifier.prototype.setAlign = function setAlign(align, transition, callback) {
+	    if (transition || this._legacyStates.align) {
+	        if (!this._legacyStates.align) {
+	            this._legacyStates.align = new Transitionable(this._output.align || [
+	                0,
+	                0
+	            ]);
+	        }
+	        if (!this._alignGetter)
+	            this.alignFrom(this._legacyStates.align);
+	        this._legacyStates.align.set(align, transition, callback);
+	        return this;
+	    } else
+	        return this.alignFrom(align);
+	};
+	Modifier.prototype.setSize = function setSize(size, transition, callback) {
+	    if (size && (transition || this._legacyStates.size)) {
+	        if (!this._legacyStates.size) {
+	            this._legacyStates.size = new Transitionable(this._output.size || [
+	                0,
+	                0
+	            ]);
+	        }
+	        if (!this._sizeGetter)
+	            this.sizeFrom(this._legacyStates.size);
+	        this._legacyStates.size.set(size, transition, callback);
+	        return this;
+	    } else
+	        return this.sizeFrom(size);
+	};
+	Modifier.prototype.setProportions = function setProportions(proportions, transition, callback) {
+	    if (proportions && (transition || this._legacyStates.proportions)) {
+	        if (!this._legacyStates.proportions) {
+	            this._legacyStates.proportions = new Transitionable(this._output.proportions || [
+	                0,
+	                0
+	            ]);
+	        }
+	        if (!this._proportionGetter)
+	            this.proportionsFrom(this._legacyStates.proportions);
+	        this._legacyStates.proportions.set(proportions, transition, callback);
+	        return this;
+	    } else
+	        return this.proportionsFrom(proportions);
+	};
+	Modifier.prototype.halt = function halt() {
+	    if (this._legacyStates.transform)
+	        this._legacyStates.transform.halt();
+	    if (this._legacyStates.opacity)
+	        this._legacyStates.opacity.halt();
+	    if (this._legacyStates.origin)
+	        this._legacyStates.origin.halt();
+	    if (this._legacyStates.align)
+	        this._legacyStates.align.halt();
+	    if (this._legacyStates.size)
+	        this._legacyStates.size.halt();
+	    if (this._legacyStates.proportions)
+	        this._legacyStates.proportions.halt();
+	    this._transformGetter = null;
+	    this._opacityGetter = null;
+	    this._originGetter = null;
+	    this._alignGetter = null;
+	    this._sizeGetter = null;
+	    this._proportionGetter = null;
+	};
+	Modifier.prototype.getTransform = function getTransform() {
+	    return this._transformGetter();
+	};
+	Modifier.prototype.getFinalTransform = function getFinalTransform() {
+	    return this._legacyStates.transform ? this._legacyStates.transform.getFinal() : this._output.transform;
+	};
+	Modifier.prototype.getOpacity = function getOpacity() {
+	    return this._opacityGetter();
+	};
+	Modifier.prototype.getOrigin = function getOrigin() {
+	    return this._originGetter();
+	};
+	Modifier.prototype.getAlign = function getAlign() {
+	    return this._alignGetter();
+	};
+	Modifier.prototype.getSize = function getSize() {
+	    return this._sizeGetter ? this._sizeGetter() : this._output.size;
+	};
+	Modifier.prototype.getProportions = function getProportions() {
+	    return this._proportionGetter ? this._proportionGetter() : this._output.proportions;
+	};
+	function _update() {
+	    if (this._transformGetter)
+	        this._output.transform = this._transformGetter();
+	    if (this._opacityGetter)
+	        this._output.opacity = this._opacityGetter();
+	    if (this._originGetter)
+	        this._output.origin = this._originGetter();
+	    if (this._alignGetter)
+	        this._output.align = this._alignGetter();
+	    if (this._sizeGetter)
+	        this._output.size = this._sizeGetter();
+	    if (this._proportionGetter)
+	        this._output.proportions = this._proportionGetter();
+	}
+	Modifier.prototype.modify = function modify(target) {
+	    _update.call(this);
+	    this._output.target = target;
+	    return this._output;
+	};
+	module.exports = Modifier;
+
+/***/ },
+/* 70 */
+/*!**********************************************!*\
+  !*** ../~/famous/modifiers/StateModifier.js ***!
+  \**********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var Modifier = __webpack_require__(/*! ../core/Modifier */ 69);
+	var Transform = __webpack_require__(/*! ../core/Transform */ 19);
+	var Transitionable = __webpack_require__(/*! ../transitions/Transitionable */ 33);
+	var TransitionableTransform = __webpack_require__(/*! ../transitions/TransitionableTransform */ 73);
+	function StateModifier(options) {
+	    this._transformState = new TransitionableTransform(Transform.identity);
+	    this._opacityState = new Transitionable(1);
+	    this._originState = new Transitionable([
+	        0,
+	        0
+	    ]);
+	    this._alignState = new Transitionable([
+	        0,
+	        0
+	    ]);
+	    this._sizeState = new Transitionable([
+	        0,
+	        0
+	    ]);
+	    this._proportionsState = new Transitionable([
+	        0,
+	        0
+	    ]);
+	    this._modifier = new Modifier({
+	        transform: this._transformState,
+	        opacity: this._opacityState,
+	        origin: null,
+	        align: null,
+	        size: null,
+	        proportions: null
+	    });
+	    this._hasOrigin = false;
+	    this._hasAlign = false;
+	    this._hasSize = false;
+	    this._hasProportions = false;
+	    if (options) {
+	        if (options.transform)
+	            this.setTransform(options.transform);
+	        if (options.opacity !== undefined)
+	            this.setOpacity(options.opacity);
+	        if (options.origin)
+	            this.setOrigin(options.origin);
+	        if (options.align)
+	            this.setAlign(options.align);
+	        if (options.size)
+	            this.setSize(options.size);
+	        if (options.proportions)
+	            this.setProportions(options.proportions);
+	    }
+	}
+	StateModifier.prototype.setTransform = function setTransform(transform, transition, callback) {
+	    this._transformState.set(transform, transition, callback);
+	    return this;
+	};
+	StateModifier.prototype.setOpacity = function setOpacity(opacity, transition, callback) {
+	    this._opacityState.set(opacity, transition, callback);
+	    return this;
+	};
+	StateModifier.prototype.setOrigin = function setOrigin(origin, transition, callback) {
+	    if (origin === null) {
+	        if (this._hasOrigin) {
+	            this._modifier.originFrom(null);
+	            this._hasOrigin = false;
+	        }
+	        return this;
+	    } else if (!this._hasOrigin) {
+	        this._hasOrigin = true;
+	        this._modifier.originFrom(this._originState);
+	    }
+	    this._originState.set(origin, transition, callback);
+	    return this;
+	};
+	StateModifier.prototype.setAlign = function setOrigin(align, transition, callback) {
+	    if (align === null) {
+	        if (this._hasAlign) {
+	            this._modifier.alignFrom(null);
+	            this._hasAlign = false;
+	        }
+	        return this;
+	    } else if (!this._hasAlign) {
+	        this._hasAlign = true;
+	        this._modifier.alignFrom(this._alignState);
+	    }
+	    this._alignState.set(align, transition, callback);
+	    return this;
+	};
+	StateModifier.prototype.setSize = function setSize(size, transition, callback) {
+	    if (size === null) {
+	        if (this._hasSize) {
+	            this._modifier.sizeFrom(null);
+	            this._hasSize = false;
+	        }
+	        return this;
+	    } else if (!this._hasSize) {
+	        this._hasSize = true;
+	        this._modifier.sizeFrom(this._sizeState);
+	    }
+	    this._sizeState.set(size, transition, callback);
+	    return this;
+	};
+	StateModifier.prototype.setProportions = function setSize(proportions, transition, callback) {
+	    if (proportions === null) {
+	        if (this._hasProportions) {
+	            this._modifier.proportionsFrom(null);
+	            this._hasProportions = false;
+	        }
+	        return this;
+	    } else if (!this._hasProportions) {
+	        this._hasProportions = true;
+	        this._modifier.proportionsFrom(this._proportionsState);
+	    }
+	    this._proportionsState.set(proportions, transition, callback);
+	    return this;
+	};
+	StateModifier.prototype.halt = function halt() {
+	    this._transformState.halt();
+	    this._opacityState.halt();
+	    this._originState.halt();
+	    this._alignState.halt();
+	    this._sizeState.halt();
+	    this._proportionsState.halt();
+	};
+	StateModifier.prototype.getTransform = function getTransform() {
+	    return this._transformState.get();
+	};
+	StateModifier.prototype.getFinalTransform = function getFinalTransform() {
+	    return this._transformState.getFinal();
+	};
+	StateModifier.prototype.getOpacity = function getOpacity() {
+	    return this._opacityState.get();
+	};
+	StateModifier.prototype.getOrigin = function getOrigin() {
+	    return this._hasOrigin ? this._originState.get() : null;
+	};
+	StateModifier.prototype.getAlign = function getAlign() {
+	    return this._hasAlign ? this._alignState.get() : null;
+	};
+	StateModifier.prototype.getSize = function getSize() {
+	    return this._hasSize ? this._sizeState.get() : null;
+	};
+	StateModifier.prototype.getProportions = function getProportions() {
+	    return this._hasProportions ? this._proportionsState.get() : null;
+	};
+	StateModifier.prototype.modify = function modify(target) {
+	    return this._modifier.modify(target);
+	};
+	module.exports = StateModifier;
+
+/***/ },
+/* 71 */
+/*!**************************************!*\
+  !*** ../~/famous/utilities/Timer.js ***!
+  \**************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var FamousEngine = __webpack_require__(/*! ../core/Engine */ 14);
+	var _event = 'prerender';
+	var getTime = window.performance && window.performance.now ? function () {
+	    return window.performance.now();
+	} : function () {
+	    return Date.now();
+	};
+	function addTimerFunction(fn) {
+	    FamousEngine.on(_event, fn);
+	    return fn;
+	}
+	function setTimeout(fn, duration) {
+	    var t = getTime();
+	    var callback = function () {
+	        var t2 = getTime();
+	        if (t2 - t >= duration) {
+	            fn.apply(this, arguments);
+	            FamousEngine.removeListener(_event, callback);
+	        }
+	    };
+	    return addTimerFunction(callback);
+	}
+	function setInterval(fn, duration) {
+	    var t = getTime();
+	    var callback = function () {
+	        var t2 = getTime();
+	        if (t2 - t >= duration) {
+	            fn.apply(this, arguments);
+	            t = getTime();
+	        }
+	    };
+	    return addTimerFunction(callback);
+	}
+	function after(fn, numTicks) {
+	    if (numTicks === undefined)
+	        return undefined;
+	    var callback = function () {
+	        numTicks--;
+	        if (numTicks <= 0) {
+	            fn.apply(this, arguments);
+	            clear(callback);
+	        }
+	    };
+	    return addTimerFunction(callback);
+	}
+	function every(fn, numTicks) {
+	    numTicks = numTicks || 1;
+	    var initial = numTicks;
+	    var callback = function () {
+	        numTicks--;
+	        if (numTicks <= 0) {
+	            fn.apply(this, arguments);
+	            numTicks = initial;
+	        }
+	    };
+	    return addTimerFunction(callback);
+	}
+	function clear(fn) {
+	    FamousEngine.removeListener(_event, fn);
+	}
+	function debounce(func, wait) {
+	    var timeout;
+	    var ctx;
+	    var timestamp;
+	    var result;
+	    var args;
+	    return function () {
+	        ctx = this;
+	        args = arguments;
+	        timestamp = getTime();
+	        var fn = function () {
+	            var last = getTime - timestamp;
+	            if (last < wait) {
+	                timeout = setTimeout(fn, wait - last);
+	            } else {
+	                timeout = null;
+	                result = func.apply(ctx, args);
+	            }
+	        };
+	        clear(timeout);
+	        timeout = setTimeout(fn, wait);
+	        return result;
+	    };
+	}
+	module.exports = {
+	    setTimeout: setTimeout,
+	    setInterval: setInterval,
+	    debounce: debounce,
+	    after: after,
+	    every: every,
+	    clear: clear
+	};
+
+/***/ },
+/* 72 */
+/*!****************************************************!*\
+  !*** ../~/famous-flex/src/layouts/TabBarLayout.js ***!
+  \****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * This Source Code is licensed under the MIT license. If a copy of the
+	 * MIT-license was not distributed with this file, You can obtain one at:
+	 * http://opensource.org/licenses/mit-license.html.
+	 *
+	 * @author: Hein Rutjes (IjzerenHein)
+	 * @license MIT
+	 * @copyright Gloey Apps, 2015
+	 */
+	
+	/**
+	 * Tab-bar layout supporting both horizontal (default) and vertical orientation.
+	 *
+	 * |options|type|description|
+	 * |---|---|---|
+	 * |`[margins]`|Number/Array|Margins shorthand (e.g. 5, [10, 20], [2, 5, 2, 10])|
+	 * |`[spacing]`|Number|Space in between items|
+	 * |`[zIncrement]`|Number|Z-translation increment used to stack the elements correctly (default: 2)|
+	 * |`[itemSize]`|Number/Bool|Width or height of the item (see below)|
+	 *
+	 * `itemSize` can have of the following values:
+	 *
+	 * |itemSize|description|
+	 * |---|---|---|
+	 * |`undefined`|When itemSize is undefined or omitted, all items are spread out equally over the full size.|
+	 * |`Number`|Size of the item.|
+	 * |`true`|Use the size of the renderable (calls `getSize` on the item).|
+	 *
+	 * Example:
+	 *
+	 * ```javascript
+	 * var TabBarLayout = require('famous-flex/layouts/TabBarLayout');
+	 *
+	 * var layout = new LayoutController({
+	 *   layout: TabBarLayout,
+	 *   layoutOptions: {
+	 *     itemSize: undefined,   // undefined = fill equally to full width
+	 *     margins: [5, 1, 5, 1], // margins to utilize
+	 *     spacing: 10            // space in between items
+	 *   },
+	 *   dataSource: {
+	 *     background: new Surface({properties: {backgroundColor: 'black'}}),
+	 *     items: [
+	 *       new Surface({ content: 'one' }),
+	 *       new Surface({ content: 'two' }),
+	 *       new Surface({ content: 'three' })
+	 *     ],
+	 *     spacers: [ // spacers in between the items
+	 *       new Surface({properties: {backgroundColor: 'gray'}}),
+	 *       new Surface({properties: {backgroundColor: 'gray'}})
+	 *     ],
+	 *     selectedItemOverlay: {
+	 *       new Surface({ properties: {borderBottom: '4px solid blue'}})
+	 *     }
+	 *   }
+	 * });
+	 * ```
+	 * @module
+	 */
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	
+	    // import dependencies
+	    var Utility = __webpack_require__(/*! famous/utilities/Utility */ 42);
+	    var LayoutUtility = __webpack_require__(/*! ../LayoutUtility */ 43);
+	
+	    // Define capabilities of this layout function
+	    var capabilities = {
+	        sequence: true,
+	        direction: [Utility.Direction.X, Utility.Direction.Y],
+	        trueSize: true
+	    };
+	
+	    // global data
+	    var size;
+	    var direction;
+	    var revDirection;
+	    var items;
+	    var spacers;
+	    var margins;
+	    var spacing;
+	    var sizeLeft;
+	    var set = {
+	        size: [0, 0],
+	        translate: [0, 0, 0],
+	        align: [0, 0],
+	        origin: [0, 0]
+	    };
+	    var nodeSize;
+	    var offset;
+	    var zIncrement;
+	
+	    // Layout function
+	    function TabBarLayout(context, options) {
+	
+	        // Prepare data
+	        size = context.size;
+	        direction = context.direction;
+	        revDirection = direction ? 0 : 1;
+	        spacing = options.spacing || 0;
+	        items = context.get('items');
+	        spacers = context.get('spacers');
+	        margins = LayoutUtility.normalizeMargins(options.margins);
+	        zIncrement = options.zIncrement || 2;
+	        set.size[0] = context.size[0];
+	        set.size[1] = context.size[1];
+	        set.size[revDirection] -= (margins[1 - revDirection] + margins[3 - revDirection]);
+	        set.translate[0] = 0;
+	        set.translate[1] = 0;
+	        set.translate[2] = zIncrement;
+	        set.translate[revDirection] = margins[direction ? 3 : 0];
+	        set.align[0] = 0;
+	        set.align[1] = 0;
+	        set.origin[0] = 0;
+	        set.origin[1] = 0;
+	
+	        // When no item-size specified, spread all items
+	        // out equally over the full width/height, taking into
+	        // account margins & spacing
+	        offset = direction ? margins[0] : margins[3];
+	        sizeLeft = size[direction] - (offset + (direction ? margins[2] : margins[1]));
+	        sizeLeft -= ((items.length - 1) * spacing);
+	        for (var i = 0; i < items.length; i++) {
+	
+	            // Calculate item size
+	            if (options.itemSize === undefined) {
+	                nodeSize = Math.round(sizeLeft / (items.length - i));
+	            }
+	            else {
+	                nodeSize = (options.itemSize === true) ? context.resolveSize(items[i], size)[direction] : options.itemSize;
+	            }
+	
+	            // Calculate length used
+	            set.scrollLength = nodeSize;
+	            if (i === 0) {
+	                set.scrollLength += direction ? margins[0] : margins[3];
+	            }
+	            if (i === (items.length - 1)) {
+	                set.scrollLength += direction ? margins[2] : margins[1];
+	            }
+	            else {
+	                set.scrollLength += spacing;
+	            }
+	
+	            // Position item
+	            set.size[direction] = nodeSize;
+	            set.translate[direction] = offset;
+	            context.set(items[i], set);
+	            offset += nodeSize;
+	            sizeLeft -= nodeSize;
+	
+	            // Place selected item overlay
+	            if (i === options.selectedItemIndex) {
+	                set.scrollLength = 0;
+	                set.translate[direction] += (nodeSize / 2);
+	                set.translate[2] = zIncrement * 2;
+	                set.origin[direction] = 0.5;
+	                context.set('selectedItemOverlay', set);
+	                set.origin[direction] = 0;
+	                set.translate[2] = zIncrement;
+	            }
+	
+	            // Position spacer (optional)
+	            if (i < (items.length - 1)) {
+	                if (spacers && (i < spacers.length)) {
+	                    set.size[direction] = spacing;
+	                    set.translate[direction] = offset;
+	                    context.set(spacers[i], set);
+	                }
+	                offset += spacing;
+	            }
+	            else {
+	                offset += direction ? margins[2] : margins[1];
+	            }
+	        }
+	
+	        // Set background
+	        set.scrollLength = 0;
+	        set.size[0] = size[0];
+	        set.size[1] = size[1];
+	        set.size[direction] = size[direction];
+	        set.translate[0] = 0;
+	        set.translate[1] = 0;
+	        set.translate[2] = 0;
+	        set.translate[direction] = 0;
+	        context.set('background', set);
+	    }
+	
+	    TabBarLayout.Capabilities = capabilities;
+	    TabBarLayout.Name = 'TabBarLayout';
+	    TabBarLayout.Description = 'TabBar widget layout';
+	    module.exports = TabBarLayout;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 73 */
+/*!**********************************************************!*\
+  !*** ../~/famous/transitions/TransitionableTransform.js ***!
+  \**********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2015
+	 */
+	var Transitionable = __webpack_require__(/*! ./Transitionable */ 33);
+	var Transform = __webpack_require__(/*! ../core/Transform */ 19);
+	var Utility = __webpack_require__(/*! ../utilities/Utility */ 42);
+	function TransitionableTransform(transform) {
+	    this._final = Transform.identity.slice();
+	    this._finalTranslate = [
+	        0,
+	        0,
+	        0
+	    ];
+	    this._finalRotate = [
+	        0,
+	        0,
+	        0
+	    ];
+	    this._finalSkew = [
+	        0,
+	        0,
+	        0
+	    ];
+	    this._finalScale = [
+	        1,
+	        1,
+	        1
+	    ];
+	    this.translate = new Transitionable(this._finalTranslate);
+	    this.rotate = new Transitionable(this._finalRotate);
+	    this.skew = new Transitionable(this._finalSkew);
+	    this.scale = new Transitionable(this._finalScale);
+	    if (transform)
+	        this.set(transform);
+	}
+	function _build() {
+	    return Transform.build({
+	        translate: this.translate.get(),
+	        rotate: this.rotate.get(),
+	        skew: this.skew.get(),
+	        scale: this.scale.get()
+	    });
+	}
+	function _buildFinal() {
+	    return Transform.build({
+	        translate: this._finalTranslate,
+	        rotate: this._finalRotate,
+	        skew: this._finalSkew,
+	        scale: this._finalScale
+	    });
+	}
+	TransitionableTransform.prototype.setTranslate = function setTranslate(translate, transition, callback) {
+	    this._finalTranslate = translate;
+	    this._final = _buildFinal.call(this);
+	    this.translate.set(translate, transition, callback);
+	    return this;
+	};
+	TransitionableTransform.prototype.setScale = function setScale(scale, transition, callback) {
+	    this._finalScale = scale;
+	    this._final = _buildFinal.call(this);
+	    this.scale.set(scale, transition, callback);
+	    return this;
+	};
+	TransitionableTransform.prototype.setRotate = function setRotate(eulerAngles, transition, callback) {
+	    this._finalRotate = eulerAngles;
+	    this._final = _buildFinal.call(this);
+	    this.rotate.set(eulerAngles, transition, callback);
+	    return this;
+	};
+	TransitionableTransform.prototype.setSkew = function setSkew(skewAngles, transition, callback) {
+	    this._finalSkew = skewAngles;
+	    this._final = _buildFinal.call(this);
+	    this.skew.set(skewAngles, transition, callback);
+	    return this;
+	};
+	TransitionableTransform.prototype.set = function set(transform, transition, callback) {
+	    var components = Transform.interpret(transform);
+	    this._finalTranslate = components.translate;
+	    this._finalRotate = components.rotate;
+	    this._finalSkew = components.skew;
+	    this._finalScale = components.scale;
+	    this._final = transform;
+	    var _callback = callback ? Utility.after(4, callback) : null;
+	    this.translate.set(components.translate, transition, _callback);
+	    this.rotate.set(components.rotate, transition, _callback);
+	    this.skew.set(components.skew, transition, _callback);
+	    this.scale.set(components.scale, transition, _callback);
+	    return this;
+	};
+	TransitionableTransform.prototype.setDefaultTransition = function setDefaultTransition(transition) {
+	    this.translate.setDefault(transition);
+	    this.rotate.setDefault(transition);
+	    this.skew.setDefault(transition);
+	    this.scale.setDefault(transition);
+	};
+	TransitionableTransform.prototype.get = function get() {
+	    if (this.isActive()) {
+	        return _build.call(this);
+	    } else
+	        return this._final;
+	};
+	TransitionableTransform.prototype.getFinal = function getFinal() {
+	    return this._final;
+	};
+	TransitionableTransform.prototype.isActive = function isActive() {
+	    return this.translate.isActive() || this.rotate.isActive() || this.scale.isActive() || this.skew.isActive();
+	};
+	TransitionableTransform.prototype.halt = function halt() {
+	    this.translate.halt();
+	    this.rotate.halt();
+	    this.skew.halt();
+	    this.scale.halt();
+	    this._final = this.get();
+	    this._finalTranslate = this.translate.get();
+	    this._finalRotate = this.rotate.get();
+	    this._finalSkew = this.skew.get();
+	    this._finalScale = this.scale.get();
+	    return this;
+	};
+	module.exports = TransitionableTransform;
 
 /***/ }
 /******/ ]);

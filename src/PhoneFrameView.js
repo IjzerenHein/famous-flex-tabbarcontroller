@@ -137,21 +137,22 @@ define(function(require, exports, module) {
                     (context.size[1] - imageSize[1]) / 2,
                     100
                 ];
+                var z = 10;
                 context.set('left', {
                     size: [imageTranslate[0] + margins[3], context.size[1]],
-                    translate: [0, 0, 99]
+                    translate: [0, 0, imageTranslate[2] - z]
                 });
                 context.set('right', {
                     size: [context.size[0] - imageTranslate[0] - imageSize[0] + margins[1], context.size[1]],
-                    translate: [imageTranslate[0] + imageSize[0] - margins[1], 0, 99]
+                    translate: [imageTranslate[0] + imageSize[0] - margins[1], 0, imageTranslate[2] - z]
                 });
                 context.set('top', {
                     size: [context.size[0], imageTranslate[1] + margins[0]],
-                    translate: [0, 0, 99]
+                    translate: [0, 0, imageTranslate[2] - z]
                 });
                 context.set('bottom', {
                     size: [context.size[0], context.size[1] - imageTranslate[1] - imageSize[1] + margins[2]],
-                    translate: [0, imageTranslate[1] + imageSize[1] - margins[2], 99]
+                    translate: [0, imageTranslate[1] + imageSize[1] - margins[2], imageTranslate[2] - z]
                 });
                 var content = context.set('content', {
                     size: [

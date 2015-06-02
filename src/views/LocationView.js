@@ -98,7 +98,7 @@ define(function(require, exports, module) {
                     var imageSize = [this.options.marker.size[0] - (this.options.marker.borderWidth * 2), this.options.marker.size[0] - (this.options.marker.borderWidth * 2)];
                     context.set('image', {
                         size: imageSize,
-                        translate: [imageSize[0] / -2, top + ((backSize[1] - imageSize[1]) / 2), 2]
+                        translate: [imageSize[0] / -2, top + ((backSize[1] - imageSize[1]) / 2), 5]
                     });
                     context.set('pin', {
                         size: marker.pinSize,

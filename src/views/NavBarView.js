@@ -51,11 +51,11 @@ define(function(require, exports, module) {
                 });
                 context.set('navBarTitle', {
                     size: [context.size[0], this.options.navBar.height],
-                    translate: [0, 0, 3]
+                    translate: [0, 0, 5]
                 });
                 context.set('navBarImage', {
                     size: [32, 32],
-                    translate: [this.options.navBar.left ? 20 : (context.size[0] - 20 - 32), 9, 3]
+                    translate: [this.options.navBar.left ? 20 : (context.size[0] - 20 - 32), 9, 5]
                 });
                 var textSize = context.resolveSize('text', context.size);
                 context.set('text', {

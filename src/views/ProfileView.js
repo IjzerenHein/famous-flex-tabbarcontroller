@@ -40,6 +40,7 @@ define(function(require, exports, module) {
 
     function _createLayout() {
         this.layout = new ScrollController({
+            mouseMove: true,
             autoPipeEvents: true,
             layout: function(context, options) {
                 context.set('background', {
@@ -66,6 +67,16 @@ define(function(require, exports, module) {
         });
         this.add(this.layout);
         this.layout.pipe(this._eventOutput);
+
+        this.layout.on(['swipestart', 'swipeupdate'], function(event) {
+            console.log('swipestart, delta: ' + event.delta + ', total: ' + event.total);
+        });
+        /*this.layout.on('swipeupdate', function(event) {
+            console.log('swipeupdate, delta: ' + event.delta + ', total: ' + event.total);
+        });*/
+        this.layout.on('swipeend', function(event) {
+            console.log('swipeend, delta: ' + event.delta + ', total: ' + event.total + ', velocity: ' + event.velocity);
+        });
     }
 
     function _createRenderables() {
